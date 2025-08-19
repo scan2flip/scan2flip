@@ -6,7 +6,6 @@
     <meta name="theme-color" content="#0d1f2d">
     <title>Scan2Flip - Scan It. Flip It. Profit.</title>
     
-    <!-- Favicon using your main logo -->
     <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
     <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
     <link rel="manifest" href="/manifest.json">
@@ -14,19 +13,16 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Scan2Flip">
     
-    <!-- Open Graph for social sharing -->
     <meta property="og:title" content="Scan2Flip - Instant Profit Calculator for Resellers">
     <meta property="og:description" content="Scan any item and instantly know if it's worth flipping. Power Score™ technology shows you exactly what to buy and what to skip.">
     <meta property="og:image" content="https://scan2flip.vercel.app/icons/scan2flip-logo.png">
     <meta property="og:url" content="https://scan2flip.vercel.app">
     <meta property="og:type" content="website">
     
-    <!-- Preconnect to external services -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <!-- Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
@@ -164,8 +160,17 @@
         }
         
         .nav-item img {
-            width: 24px;
-            height: 24px;
+            width: 28px !important;
+            height: 28px !important;
+            filter: grayscale(1) brightness(1.5);
+            opacity: 0.7;
+            transition: all 0.2s;
+        }
+
+        .nav-item.active img,
+        .nav-item:hover img {
+            filter: none;
+            opacity: 1;
         }
         
         .nav-item span {
@@ -861,7 +866,6 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Main Header -->
         <header class="app-header">
             <div class="logo-container">
                 <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
@@ -880,7 +884,6 @@
             </div>
         </header>
 
-        <!-- Main Page -->
         <div class="page active" id="mainPage">
             <div class="scan-button-container">
                 <button class="scan-button" id="scanButton">
@@ -904,7 +907,6 @@
             </div>
         </div>
 
-        <!-- Results Page -->
         <div class="page" id="resultsPage">
             <div class="results-container">
                 <div class="result-header">
@@ -950,25 +952,8 @@
                     </div>
                 </div>
                 
-                <!-- Part-Out Analysis (shows when applicable) -->
-                <div id="partOutSection" style="display: none; margin-top: 1.5rem; margin-bottom: 1.5rem;">
-                    <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 2px; border-radius: 12px;">
-                        <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem;">
-                            <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #FFD700;">
-                                💎 HIDDEN GOLD FOUND!
-                            </h3>
-                            <div id="partOutList" style="display: flex; flex-direction: column; gap: 0.75rem;">
-                                <!-- Parts will be inserted here -->
-                            </div>
-                            <div style="border-top: 1px solid var(--bg-tertiary); margin-top: 1rem; padding-top: 1rem;">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-weight: 600;">Total Part-Out Value:</span>
-                                    <span style="font-size: 1.5rem; font-weight: 800; color: #FFD700;" id="totalPartOutValue">$0</span>
-                                </div>
-                            </div>
-                        </div>
+                <div id="partOutSection" style="display: none;">
                     </div>
-                </div>
                 
                 <div class="action-buttons">
                     <button class="btn btn-success" onclick="addToInventory()">
@@ -984,7 +969,6 @@
             </div>
         </div>
 
-        <!-- Inventory Page -->
         <div class="page" id="inventoryPage">
             <div class="inventory-grid" id="inventoryGrid">
                 <div class="empty-state">
@@ -997,7 +981,6 @@
             </div>
         </div>
 
-        <!-- Expenses Page with Mileage Tracker -->
         <div class="page" id="expensesPage">
             <div style="padding: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
@@ -1005,69 +988,51 @@
                     <h2 style="font-size: 1.5rem; font-weight: 700;">Expense Tracking</h2>
                 </div>
                 
-                <!-- Mileage Tracker Section -->
-                <div class="mileage-section" style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent-gold);">
-                        <img src="/icons/mileage.png" alt="Mileage" style="width: 28px; height: 28px;">
-                        Mileage Tracker
-                    </h3>
-                    
-                    <!-- Quick Add Mileage -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
-                        <button class="btn btn-primary" onclick="startMileageTracking()">
-                            📍 Start Trip
-                        </button>
-                        <button class="btn btn-success" onclick="quickAddMileage()">
-                            ➕ Quick Add
-                        </button>
-                    </div>
-                    
-                    <!-- Current Month Stats -->
-                    <div class="stats-grid" style="margin: 1rem 0;">
-                        <div class="stat-card">
-                            <div class="stat-value" id="monthlyMiles">0</div>
-                            <div class="stat-label">Miles This Month</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value" id="mileageDeduction">$0</div>
-                            <div class="stat-label">Tax Deduction</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Active Trip Tracker -->
-                    <div id="activeTripTracker" style="display: none; background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <div style="color: var(--accent-green); font-weight: 600;">🔴 TRACKING ACTIVE</div>
-                                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
-                                    Started: <span id="tripStartTime"></span>
-                                </div>
-                                <div style="color: var(--text-secondary); font-size: 0.9rem;">
-                                    From: <span id="tripStartLocation"></span>
-                                </div>
-                            </div>
-                            <button class="btn btn-danger" onclick="endMileageTracking()">
-                                End Trip
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Recent Trips -->
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Recent Trips</h3>
-                    <div id="recentTrips"></div>
-                </div>
-                
-                <!-- Other Expenses -->
-                <button class="btn btn-secondary" style="width: 100%;" onclick="openExpenseModal()">
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="openExpenseModal()">
                     Add Other Expense
                 </button>
-                <div id="expensesList" style="margin-top: 1.5rem;"></div>
+                <div id="expensesList" style="margin-top: 1.5rem;">
+                    <div class="empty-state">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <div class="empty-title">No Expenses Logged</div>
+                        <div class="empty-text">Track your costs to calculate real profit.</div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Power Score History Page -->
+        <div class="page" id="mileagePage">
+            <div style="padding: 1.5rem;">
+                 <div class="result-header">
+                    <button class="back-button" onclick="showPage('expensesPage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Mileage Tracker</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                <div class="stats-grid" style="margin-top: 2rem;">
+                    <div class="stat-card">
+                        <div class="stat-value" id="monthlyMiles">0</div>
+                        <div class="stat-label">Miles This Month</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="mileageDeduction">$0.00</div>
+                        <div class="stat-label">Tax Deduction</div>
+                    </div>
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin: 2rem 0;" onclick="quickAddMileage()">
+                    Add New Trip
+                </button>
+                <div id="tripList">
+                    <div class="empty-state">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM19 17.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM5 15V8.5A3.5 3.5 0 018.5 5h7A3.5 3.5 0 0119 8.5V15M5 15H3.5a1.5 1.5 0 00-1.5 1.5v1A1.5 1.5 0 003.5 19H5m14 0h1.5a1.5 1.5 0 00-1.5-1.5v-1a1.5 1.5 0 00-1.5-1.5H19"></path></svg>
+                        <div class="empty-title">No Trips Logged</div>
+                        <div class="empty-text">Track your drives for sourcing and shipping.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="page" id="powerScorePage">
             <div style="padding: 1.5rem;">
                 <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
@@ -1075,7 +1040,6 @@
                     <h2 style="font-size: 1.5rem; font-weight: 700;">Power Score History</h2>
                 </div>
                 
-                <!-- Filter Tabs -->
                 <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto;">
                     <button class="filter-tab active" onclick="filterScores('all')">All</button>
                     <button class="filter-tab gold" onclick="filterScores('gold')">
@@ -1087,28 +1051,25 @@
                     <button class="filter-tab" onclick="filterScores('red')">Red (<50)</button>
                 </div>
                 
-                <!-- Gold Mine Alert for Power Pro -->
-                <div id="goldMineAlert" style="display: none; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
-                    <div style="display: flex; align-items: center; gap: 0.5rem;">
-                        <img src="/icons/goldmine.png" alt="Gold Mine" style="width: 24px; height: 24px;">
-                        <span style="font-weight: 700;">Gold Mine™ Database</span>
-                    </div>
-                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">Access crowdsourced gold finds from all Power Pro users!</p>
-                    <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="showGoldMineDatabase()">View Gold Mine</button>
-                </div>
-                
-                <!-- Scan History List -->
                 <div id="scanHistoryList"></div>
             </div>
         </div>
 
-        <!-- More/Settings Page -->
         <div class="page" id="morePage">
             <div style="padding: 1.5rem;">
                 <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">More</h2>
                 <div style="display: flex; flex-direction: column; gap: 1rem;">
                     <button class="btn btn-secondary" onclick="showPage('upgradePage')">
                         Upgrade Plan
+                    </button>
+                    <button class="btn btn-secondary" id="goldMineBtn" onclick="showGoldMineDatabase()">
+                        View Gold Mine™
+                    </button>
+                     <button class="btn btn-secondary" onclick="showPage('flipping101Page')">
+                        Flipping 101
+                    </button>
+                     <button class="btn btn-secondary" onclick="showPage('irs101Page')">
+                        IRS 101
                     </button>
                     <button class="btn btn-secondary" onclick="exportData()">
                         Export Data
@@ -1123,151 +1084,184 @@
             </div>
         </div>
 
-        <!-- Upgrade Page -->
         <div class="page" id="upgradePage">
             <div class="tier-container">
-                <h2 style="font-size: 1.75rem; font-weight: 700; text-align: center; margin-bottom: 2rem;">Choose Your Plan</h2>
+                <div class="result-header">
+                    <button class="back-button" onclick="showPage('morePage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Choose Your Plan</h2>
+                    <div style="width: 24px;"></div>
+                </div>
                 
-                <!-- Freemium Tier -->
                 <div class="tier-card">
                     <div class="tier-name">Freemium</div>
                     <div class="tier-price">$0<span>/month</span></div>
                     <ul class="tier-features">
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            5 scans per day
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Basic inventory tracking
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Power Score analysis
-                        </li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>5 scans per day</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Basic inventory tracking</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Power Score analysis</li>
                     </ul>
                     <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
                 </div>
                 
-                <!-- Pro Tier -->
                 <div class="tier-card recommended">
                     <div class="tier-badge">RECOMMENDED</div>
                     <div class="tier-name">Pro</div>
                     <div class="tier-price">$6.99<span>/month</span></div>
                     <ul class="tier-features">
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            2,000 scans per month
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Unlimited inventory & expenses
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Mileage tracking
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            CSV exports
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Add scan packs: 500 for $1.99
-                        </li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>2,000 scans per month</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Unlimited inventory & expenses</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Mileage tracking</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>CSV exports</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Add scan packs: 500 for $1.99</li>
                     </ul>
                     <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPro()">Upgrade to Pro</button>
                 </div>
                 
-                <!-- Power Pro Tier -->
                 <div class="tier-card">
                     <div class="tier-name">Power Pro</div>
                     <div class="tier-price">$9.99<span>/month</span></div>
                     <ul class="tier-features">
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            3,500 scans per month
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Everything in Pro
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Gold Mine BOLO lists
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Part-Out Calculator™
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Advanced PDF reports
-                        </li>
-                        <li>
-                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                            </svg>
-                            Priority support
-                        </li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>3,500 scans per month</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Everything in Pro</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Gold Mine BOLO lists</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Part-Out Calculator™</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Advanced PDF reports</li>
+                        <li><svg class="check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>Priority support</li>
                     </ul>
                     <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()">Upgrade to Power Pro</button>
                 </div>
             </div>
         </div>
+        
+        <div class="page" id="goldMinePage">
+            <div style="padding: 1.5rem;">
+                <div class="result-header">
+                     <button class="back-button" onclick="showPage('morePage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Gold Mine™ Database</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                <p style="color: var(--text-secondary); margin: 1rem 0; text-align: center;">
+                    Crowdsourced gold finds from the Power Pro community
+                </p>
+                <div id="goldMineList" style="max-height: 70vh; overflow-y: auto;">
+                    </div>
+            </div>
+        </div>
+
+
+        <div class="page" id="flipping101Page">
+            <div style="padding: 1.5rem;">
+                <div class="result-header">
+                    <button class="back-button" onclick="showPage('morePage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <div></div><div style="width: 24px;"></div>
+                </div>
+                <h1 style="text-align: center; font-size: 1.5rem; font-weight: 700;">Flipping 101</h1>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">A Complete Beginner-to-Pro Playbook</p>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <p>Welcome to Flipping 101! If you're looking to turn everyday items into extra cash—or even a full-time income—this guide is your roadmap. Flipping, also known as reselling, involves buying undervalued items and selling them at a higher price for profit. It's a flexible side hustle that anyone can start with minimal investment, but success requires research, strategy, and persistence.</p>
+                </div>
+
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Quick Start: Your First 30 Days</h2>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Week 1 – Setup & Skill Reps</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Create seller accounts: eBay, Facebook Marketplace, OfferUp, Mercari, Poshmark (choose 2–3 to start).</li>
+                        <li>Tools: phone camera + daylight, tape measure, small scale (to 10 lb), printer + 30-up labels (Avery 5160 or thermal).</li>
+                        <li>Learn comps: spend 60 minutes a day pulling 20 “sold” comps in your target niche (shoes, small electronics, tools, toys, vintage).</li>
+                        <li>Sourcing reps: hit 2 thrift stores + 1 garage sale; buy 5 items with expected ROI ≥ 60% and gross profit ≥ $15.</li>
+                    </ul>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Week 2 – List & Ship</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Photo booth: neutral backdrop, 8–12 photos per item (all angles + flaws + tags/labels + measurements). Short 10–20s video when allowed.</li>
+                        <li>Titles: Brand + Model + Size/Spec + Keywords (max signal, no fluff). Fill item specifics.</li>
+                        <li>Pricing: price at or just below last 90-day sold comp; enable offers.</li>
+                        <li>Shipping: under 1 lb → poly mailer; fragile → box + void fill; oversize → weigh & measure before listing.</li>
+                    </ul>
+                </div>
+                 <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Week 3 – Routines + Cash Flow</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Daily: 10 new listings or 10 relists. Respond to offers fast. Pack same day.</li>
+                        <li>Track: SKU, buy price (COGS), list price, sale price, fees, ship cost, net, ROI, days to sell. (Spreadsheet or Airtable.)</li>
+                        <li>Reinvest 100% of profits into faster-moving inventory.</li>
+                    </ul>
+                </div>
+                 <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Week 4 – Niches & Scale</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Pick 1–2 winning niches (e.g., sneakers, small kitchen appliances, vintage hats, tools, sealed LEGO, video games).</li>
+                        <li>Add a sourcing route: estate/moving sales, bin stores, local auctions, gov surplus.</li>
+                        <li>Start a simple SKU/bin system and cross-list with a tool (Vendoo/List Perfectly) once your workflow is smooth.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="page" id="irs101Page">
+            <div style="padding: 1.5rem;">
+                 <div class="result-header">
+                    <button class="back-button" onclick="showPage('morePage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">IRS 101</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                <div style="background: #442B32; border: 1px solid var(--accent-red); color: white; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+                    <h3>⚠️ IMPORTANT DISCLAIMER ⚠️</h3>
+                    <p style="opacity: 0.9; font-size: 0.9rem;">This information is for educational purposes only and is not a substitute for professional tax advice. These are common deductions, but may not apply to your specific situation. Always consult with a qualified tax professional.</p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Cost of Goods Sold (COGS)</h3>
+                    <p>This is the #1 deduction. It's the original price you paid for the items you sold. If you bought a video game for $5 and sold it for $40, your COGS is $5.</p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Shipping Costs</h3>
+                    <p>You can deduct the full cost of postage and shipping fees you pay to send items to buyers.</p>
+                </div>
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Business Mileage</h3>
+                    <p>Track the miles you drive for your business, such as trips to the post office or to source inventory. Use the Mileage Tracker in this app! The IRS sets a standard rate per mile each year.</p>
+                </div>
+                 <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3>Supplies</h3>
+                    <p>Boxes, bubble wrap, packing tape, printer ink, and labels are all deductible business expenses.</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <<!-- Bottom Navigation -->
-<nav class="bottom-nav">
-    <a class="nav-item active" onclick="showPage('mainPage')">
-        <img src="/icons/home.png" alt="Home">
-        <span>Home</span>
-    </a>
-    <a class="nav-item" onclick="showPage('inventoryPage')">
-        <img src="/icons/inventory.png" alt="Inventory">
-        <span>Inventory</span>
-    </a>
-    <a class="nav-item" onclick="showPage('expensesPage')">
-        <img src="/icons/dollar.png" alt="Expenses">
-        <span>Expenses</span>
-    </a>
-    <a class="nav-item" onclick="showPage('powerScorePage')">
-        <img src="/icons/powerscore.png" alt="History">
-        <span>History</span>
-    </a>
-    <a class="nav-item" onclick="showPage('morePage')">
-        <img src="/icons/coins.png" alt="More">
-        <span>More</span>
-    </a>
-</nav>
+    <nav class="bottom-nav">
+        <a class="nav-item" onclick="showPage('inventoryPage')">
+            <img src="/icons/inventory.png" alt="Inventory">
+            <span>Inventory</span>
+        </a>
+        <a class="nav-item" onclick="showPage('expensesPage')">
+            <img src="/icons/dollar.png" alt="Expenses">
+            <span>Expenses</span>
+        </a>
+         <a class="nav-item" onclick="showPage('mileagePage')">
+            <img src="/icons/mileage.png" alt="Mileage">
+            <span>Mileage</span>
+        </a>
+        <a class="nav-item" onclick="showPage('powerScorePage')">
+            <img src="/icons/powerscore.png" alt="History">
+            <span>Scores</span>
+        </a>
+        <a class="nav-item" onclick="showPage('morePage')">
+            <img src="/icons/coins.png" alt="More">
+            <span>More</span>
+        </a>
+    </nav>
 
-    <!-- Scan Pack Purchase Modal -->
     <div class="modal-overlay" id="scanPackModal">
         <div class="modal-content scan-pack-modal">
             <div class="modal-header">
@@ -1285,7 +1279,6 @@
         </div>
     </div>
 
-    <!-- Toast Container -->
     <div class="toast" id="toast"></div>
 
     <script>
@@ -1307,22 +1300,16 @@
             currentScan: null
         };
 
-        // Mileage Tracking Variables
-        let activeTrip = null;
-        const IRS_MILEAGE_RATE = 0.655; // 2024 IRS standard mileage rate
+        const IRS_MILEAGE_RATE = 0.67; // 2024 IRS standard mileage rate
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             updateUI();
             setupEventListeners();
-            if (document.getElementById('monthlyMiles')) {
-                updateMileageStats();
-                displayRecentTrips();
-            }
-            if (document.getElementById('scanHistoryList')) {
-                displayScanHistory();
-            }
+            showPage('mainPage'); // Start on the main scan page
+            updateMileageStats();
+            displayScanHistory();
         });
 
         // Page Navigation
@@ -1332,22 +1319,25 @@
             });
             document.getElementById(pageId).classList.add('active');
             
-            // Update nav
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Map pages to nav items
             const navMap = {
-                'mainPage': 0,
-                'inventoryPage': 1,
-                'expensesPage': 2,
+                'inventoryPage': 0,
+                'expensesPage': 1,
+                'mileagePage': 2,
                 'powerScorePage': 3,
-                'morePage': 4
+                'morePage': 4,
+                'upgradePage': 4, // Belongs to 'more' section
+                'goldMinePage': 4, // Belongs to 'more' section
+                'flipping101Page': 4, // Belongs to 'more' section
+                'irs101Page': 4 // Belongs to 'more' section
             };
-            
-            if (navMap[pageId] !== undefined) {
-                document.querySelectorAll('.nav-item')[navMap[pageId]].classList.add('active');
+             
+            let navIndex = navMap[pageId];
+            if (navIndex !== undefined) {
+                document.querySelectorAll('.nav-item')[navIndex].classList.add('active');
             }
         }
 
@@ -1356,11 +1346,9 @@
             document.getElementById('scanButton').addEventListener('click', performScan);
         }
 
-        // Camera and Barcode Scanning
         async function performScan() {
             const { user } = state;
             
-            // Check scan limits
             if (user.tier === 'freemium' && user.dailyScansRemaining <= 0) {
                 showToast('Daily scan limit reached. Upgrade to Pro for more scans!', 'error');
                 showPage('upgradePage');
@@ -1372,7 +1360,6 @@
                 return;
             }
             
-            // Show scanning options
             const scanChoice = await showScanOptions();
             
             if (scanChoice === 'camera') {
@@ -1391,26 +1378,17 @@
                         <h3>Choose Scan Method</h3>
                         <div style="display: flex; gap: 1rem; margin-top: 2rem;">
                             <button class="btn btn-primary" style="flex: 1;" onclick="resolveScan('barcode')">
-                                <svg width="24" height="24" fill="currentColor" style="margin-bottom: 0.5rem;">
-                                    <path d="M2 6h2v12H2zm3 0h1v12H5zm2 0h1v12H7zm3 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2z"/>
-                                </svg>
+                                <svg width="24" height="24" fill="currentColor" style="margin-bottom: 0.5rem;"><path d="M2 6h2v12H2zm3 0h1v12H5zm2 0h1v12H7zm3 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2z"/></svg>
                                 <div>Scan Barcode</div>
                             </button>
                             <button class="btn btn-secondary" style="flex: 1;" onclick="resolveScan('camera')">
-                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
-                                    <circle cx="12" cy="13" r="4"/>
-                                </svg>
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
                                 <div>Snap Photo</div>
                             </button>
                         </div>
-                        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="resolveScan(null)">
-                            Cancel
-                        </button>
-                    </div>
-                `;
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="resolveScan(null)">Cancel</button>
+                    </div>`;
                 document.body.appendChild(modal);
-                
                 window.resolveScan = (choice) => {
                     document.body.removeChild(modal);
                     resolve(choice);
@@ -1434,18 +1412,10 @@
                         <button class="btn btn-secondary" style="flex: 1;" onclick="cancelManualEntry()">Cancel</button>
                         <button class="btn btn-primary" style="flex: 1;" onclick="submitManualBarcode()">Search</button>
                     </div>
-                </div>
-            `;
+                </div>`;
             document.body.appendChild(modal);
-            
-            setTimeout(() => {
-                document.getElementById('manual-barcode').focus();
-            }, 100);
-            
-            window.cancelManualEntry = () => {
-                document.body.removeChild(modal);
-            };
-            
+            setTimeout(() => document.getElementById('manual-barcode').focus(), 100);
+            window.cancelManualEntry = () => document.body.removeChild(modal);
             window.submitManualBarcode = () => {
                 const barcode = document.getElementById('manual-barcode').value;
                 if (barcode) {
@@ -1460,541 +1430,149 @@
         }
         
         async function processBarcodeResult(barcode) {
-            // Show loading
             document.getElementById('scanButton').innerHTML = '<div class="loading-spinner"></div>';
             
-            // Mock data for testing
             const mockData = {
-                '096619119449': { 
-                    name: 'Nintendo Switch Pro Controller', 
-                    category: 'Gaming', 
-                    powerScore: 88, 
-                    avgPrice: 59.99, 
-                    sellThrough: 82, 
-                    worthPaying: 35, 
-                    daysToSell: 7 
-                },
-                '036000291452': { // VCR example with valuable parts
-                    name: 'Sony SLV-D370P VCR/DVD Combo', 
-                    category: 'Electronics', 
-                    powerScore: 35, // RED - main unit sucks
-                    avgPrice: 25, 
-                    sellThrough: 20, 
-                    worthPaying: 8, 
-                    daysToSell: 45,
-                    partOut: [ // BUT THE PARTS ARE GOLD!
-                        { name: 'Remote Control (RMT-V501C)', powerScore: 94, value: 45, sellThrough: 92 },
-                        { name: 'Power Cord', powerScore: 72, value: 15, sellThrough: 75 },
-                        { name: 'AV Cables (Original)', powerScore: 65, value: 12, sellThrough: 68 },
-                        { name: 'DVD Laser Assembly', powerScore: 81, value: 35, sellThrough: 78 }
-                    ]
-                },
-                '047875847255': { // Printer with valuable ink
-                    name: 'HP OfficeJet Pro 8600', 
-                    category: 'Electronics', 
-                    powerScore: 28, // RED - printer is trash
-                    avgPrice: 30, 
-                    sellThrough: 15, 
-                    worthPaying: 10, 
-                    daysToSell: 60,
-                    partOut: [
-                        { name: 'Ink Cartridge Set (950XL/951XL)', powerScore: 91, value: 65, sellThrough: 88 },
-                        { name: 'Print Head Assembly', powerScore: 75, value: 40, sellThrough: 70 },
-                        { name: 'Power Supply Board', powerScore: 68, value: 25, sellThrough: 65 }
-                    ]
-                },
-                'default': { 
-                    name: 'Unknown Item', 
-                    category: 'General', 
-                    powerScore: 50, 
-                    avgPrice: 20, 
-                    sellThrough: 50, 
-                    worthPaying: 10, 
-                    daysToSell: 14 
-                }
+                '096619119449': { name: 'Nintendo Switch Pro Controller', category: 'Gaming', powerScore: 88, avgPrice: 59.99, sellThrough: 82, worthPaying: 35, daysToSell: 7 },
+                '036000291452': { name: 'Sony SLV-D370P VCR/DVD Combo', category: 'Electronics', powerScore: 35, avgPrice: 25, sellThrough: 20, worthPaying: 8, daysToSell: 45, partOut: [
+                    { name: 'Remote Control (RMT-V501C)', powerScore: 94, value: 45, sellThrough: 92 }, { name: 'Power Cord', powerScore: 72, value: 15, sellThrough: 75 }, { name: 'AV Cables (Original)', powerScore: 65, value: 12, sellThrough: 68 }, { name: 'DVD Laser Assembly', powerScore: 81, value: 35, sellThrough: 78 }
+                ]},
+                '047875847255': { name: 'HP OfficeJet Pro 8600', category: 'Electronics', powerScore: 28, avgPrice: 30, sellThrough: 15, worthPaying: 10, daysToSell: 60, partOut: [
+                    { name: 'Ink Cartridge Set (950XL/951XL)', powerScore: 91, value: 65, sellThrough: 88 }, { name: 'Print Head Assembly', powerScore: 75, value: 40, sellThrough: 70 }, { name: 'Power Supply Board', powerScore: 68, value: 25, sellThrough: 65 }
+                ]},
+                'default': { name: 'Unknown Item', category: 'General', powerScore: 50, avgPrice: 20, sellThrough: 50, worthPaying: 10, daysToSell: 14 }
             };
             
             const result = mockData[barcode] || mockData['default'];
             
-            // Display result
             setTimeout(() => {
                 displayScanResult(result);
-                
-                // Deduct scan
                 const { user } = state;
-                if (user.tier === 'freemium') {
-                    user.dailyScansRemaining--;
-                } else if (user.monthlyScansRemaining > 0) {
-                    user.monthlyScansRemaining--;
-                } else {
-                    user.scanPacks--;
-                }
-                
+                if (user.tier === 'freemium') user.dailyScansRemaining--;
+                else if (user.monthlyScansRemaining > 0) user.monthlyScansRemaining--;
+                else user.scanPacks--;
                 updateUI();
                 saveState();
                 
-                // Reset button
                 document.getElementById('scanButton').innerHTML = `
-                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
-                    </svg>
+                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                     <div class="scan-text">SCAN OR SNAP</div>
-                    <div class="scan-subtext">Tap to analyze item</div>
-                `;
+                    <div class="scan-subtext">Tap to analyze item</div>`;
             }, 1500);
         }
 
         function displayScanResult(result) {
             state.currentScan = result;
-            
-            // Save to scan history
             if (!state.scanHistory) state.scanHistory = [];
-            state.scanHistory.push({
-                ...result,
-                timestamp: Date.now()
-            });
+            state.scanHistory.push({ ...result, timestamp: Date.now() });
             saveState();
             
-            // Update result page
             document.getElementById('powerScore').textContent = result.powerScore;
             document.getElementById('itemName').textContent = result.name;
             document.getElementById('itemCategory').textContent = result.category;
-            document.getElementById('avgPrice').textContent = `${result.avgPrice}`;
+            document.getElementById('avgPrice').textContent = `$${result.avgPrice}`;
             document.getElementById('sellThrough').textContent = `${result.sellThrough}%`;
-            document.getElementById('worthPaying').textContent = `${result.worthPaying}`;
+            document.getElementById('worthPaying').textContent = `$${result.worthPaying}`;
             document.getElementById('daysToSell').textContent = result.daysToSell;
             
-            // Check for part-out opportunities
             const partOutSection = document.getElementById('partOutSection');
+            const powerScoreCircle = document.querySelector('.power-score-circle');
             
+            // Clear previous indicators
+            const existingIndicator = document.getElementById('partsIndicator');
+            if(existingIndicator) existingIndicator.remove();
+
             if (result.partOut && result.partOut.length > 0) {
-                // Check if user has Power Pro access
                 if (state.user.tier === 'powerPro') {
-                    // POWER PRO USERS: Show full part-out analysis
-                    partOutSection.style.display = 'block';
-                    
-                    // Calculate total part-out value
                     let totalValue = 0;
-                    let hasGoldPart = false;
-                    
-                    // Generate part HTML
-                    const partOutList = document.getElementById('partOutList');
-                    partOutList.innerHTML = result.partOut.map(part => {
-                        totalValue += part.value;
-                        
-                        // Determine badge color
-                        let badgeClass = 'poor';
-                        let badgeColor = '#f44336';
-                        if (part.powerScore >= 90) {
-                            badgeClass = 'gold-mine';
-                            badgeColor = '#FFD700';
-                            hasGoldPart = true;
-                        } else if (part.powerScore >= 70) {
-                            badgeClass = 'excellent';
-                            badgeColor = '#4CAF50';
-                        } else if (part.powerScore >= 50) {
-                            badgeClass = 'good';
-                            badgeColor = '#2196F3';
-                        }
-                        
-                        return `
-                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-primary); border-radius: 8px;">
-                                <div style="flex: 1;">
-                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${part.name}</div>
-                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                        Sells ${part.sellThrough}% of the time
-                                    </div>
+                    partOutSection.innerHTML = `
+                        <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 2px; border-radius: 12px; margin-top: 1.5rem;">
+                            <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #FFD700;">💎 HIDDEN GOLD FOUND!</h3>
+                                <div id="partOutList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    ${result.partOut.map(part => {
+                                        totalValue += part.value;
+                                        let badgeColor = '#f44336';
+                                        if (part.powerScore >= 90) badgeColor = '#FFD700';
+                                        else if (part.powerScore >= 70) badgeColor = '#4CAF50';
+                                        else if (part.powerScore >= 50) badgeColor = '#2196F3';
+                                        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-primary); border-radius: 8px;">
+                                                    <div><div style="font-weight: 600;">${part.name}</div><div style="font-size: 0.85rem; color: var(--text-secondary);">Sells ${part.sellThrough}% of the time</div></div>
+                                                    <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 50px; height: 50px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white;">${part.powerScore}</div><div style="font-weight: 700; font-size: 1.1rem; color: ${badgeColor};">$${part.value}</div></div>
+                                                </div>`;
+                                    }).join('')}
                                 </div>
-                                <div style="display: flex; align-items: center; gap: 1rem;">
-                                    <div style="text-align: center;">
-                                        <div style="width: 50px; height: 50px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white;">
-                                            ${part.powerScore}
-                                        </div>
-                                    </div>
-                                    <div style="font-weight: 700; font-size: 1.1rem; color: ${badgeColor};">
-                                        ${part.value}
-                                    </div>
-                                </div>
+                                <div style="border-top: 1px solid var(--bg-tertiary); margin-top: 1rem; padding-top: 1rem;"><div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: 600;">Total Part-Out Value:</span><span style="font-size: 1.5rem; font-weight: 800; color: #FFD700;" id="totalPartOutValue">$${totalValue}</span></div></div>
                             </div>
-                        `;
-                    }).join('');
-                    
-                    // Update total value
-                    document.getElementById('totalPartOutValue').textContent = `${totalValue}`;
-                    
-                    // If has gold part, show special notification
-                    if (hasGoldPart && result.powerScore < 50) {
-                        setTimeout(() => {
-                            showToast('🏆 HIDDEN GOLD FOUND! Check the part-out values!', 'success');
-                            // Mini confetti for finding hidden gold
-                            if (typeof confetti !== 'undefined') {
-                                confetti({
-                                    particleCount: 50,
-                                    spread: 45,
-                                    origin: { y: 0.3 },
-                                    colors: ['#FFD700', '#FFA500']
-                                });
-                            }
-                        }, 1000);
-                    }
-                    
+                        </div>`;
+                    partOutSection.style.display = 'block';
                 } else {
-                    // FREE/PRO USERS: Show locked part-out teaser
                     partOutSection.innerHTML = `
                         <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)); padding: 2px; border-radius: 12px; margin-top: 1.5rem;">
                             <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem; text-align: center;">
-                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
-                                    <img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px; opacity: 0.5;">
-                                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary);">
-                                        Part-Out Calculator™
-                                    </h3>
-                                </div>
-                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
-                                    This item has ${result.partOut.length} valuable parts that could be worth more when sold separately!
-                                </p>
-                                <div style="font-size: 2rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 1rem;">
-                                    💰 Hidden Value Detected
-                                </div>
-                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
-                                    Unlock the Part-Out Calculator with Power Pro to see exact values and maximize your profits
-                                </p>
-                                <button class="btn btn-primary" style="width: 100%;" onclick="showPartOutUpgrade()">
-                                    🔓 Upgrade to Power Pro
-                                </button>
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;"><img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px; opacity: 0.5;"><h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary);">Part-Out Calculator™</h3></div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">This item has ${result.partOut.length} valuable parts that could be worth more when sold separately!</p>
+                                <div style="font-size: 2rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 1rem;">💰 Hidden Value Detected</div>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Unlock the Part-Out Calculator with Power Pro to see exact values and maximize your profits</p>
+                                <button class="btn btn-primary" style="width: 100%;" onclick="showPartOutUpgrade()">🔓 Upgrade to Power Pro</button>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                     partOutSection.style.display = 'block';
                 }
             } else {
                 partOutSection.style.display = 'none';
             }
             
-            // Update score badge and color based on score
             const badge = document.getElementById('powerScoreBadge');
-            const scoreContainer = document.querySelector('.power-score-container');
-            
-            // Add Parts Alert Indicator if parts detected
-            if (result.partOut && result.partOut.length > 0) {
-                // Find the highest part score to determine wrench color
-                const bestPartScore = Math.max(...result.partOut.map(p => p.powerScore));
-                let wrenchColor = '#f44336'; // red default
-                let pulseAnimation = '';
-                
-                if (bestPartScore >= 90) {
-                    wrenchColor = '#FFD700'; // gold
-                    pulseAnimation = 'goldPulse';
-                } else if (bestPartScore >= 70) {
-                    wrenchColor = '#4CAF50'; // green
-                    pulseAnimation = 'pulse';
-                } else if (bestPartScore >= 50) {
-                    wrenchColor = '#2196F3'; // blue
-                    pulseAnimation = 'pulse';
-                }
-                
-                // Add wrench indicator to power score container
-                const partsIndicator = document.getElementById('partsIndicator') || document.createElement('div');
-                partsIndicator.id = 'partsIndicator';
-                partsIndicator.style.cssText = `
-                    position: absolute;
-                    top: -10px;
-                    right: -10px;
-                    width: 40px;
-                    height: 40px;
-                    background: ${wrenchColor};
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    cursor: ${state.user.tier === 'powerPro' ? 'pointer' : 'not-allowed'};
-                    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-                    animation: ${pulseAnimation} 2s infinite;
-                    z-index: 10;
-                `;
-                
-                partsIndicator.innerHTML = `
-                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
-                        <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
-                    </svg>
-                `;
-                
-                // Add click handler based on tier
-                partsIndicator.onclick = () => {
-                    if (state.user.tier === 'powerPro') {
-                        // Power Pro: Show detailed parts breakdown
-                        showPartsBreakdown(result.partOut);
-                    } else {
-                        // Free/Pro: Show upgrade prompt
-                        showPartOutUpgrade();
-                    }
-                };
-                
-                // Add tooltip
-                partsIndicator.title = state.user.tier === 'powerPro' 
-                    ? `Click to see ${result.partOut.length} valuable parts!` 
-                    : `${result.partOut.length} valuable parts detected - Upgrade to Power Pro to reveal!`;
-                
-                // Append to power score container
-                const circleContainer = document.querySelector('.power-score-circle');
-                circleContainer.style.position = 'relative';
-                circleContainer.appendChild(partsIndicator);
-                
-                // Show notification about parts
-                if (bestPartScore >= 90 && result.powerScore < 50) {
-                    // Hidden gold scenario - trash item with gold parts!
-                    setTimeout(() => {
-                        if (state.user.tier === 'powerPro') {
-                            showToast('🔧 HIDDEN GOLD IN PARTS! Click the wrench to see details!', 'success');
-                        } else {
-                            showToast('🔧 Valuable parts detected! Upgrade to see what they\'re worth!', 'success');
-                        }
-                    }, 1000);
-                }
-            }
-            
             if (result.powerScore >= 90) {
-                // GOLD MINE! - 90+ scores
                 badge.className = 'power-score-badge gold-mine';
-                scoreContainer.style.borderColor = '#FFD700';
-                
-                // Special "You've Struck Gold!" animation
-                setTimeout(() => {
-                    showGoldStrike();
-                }, 500);
-                
-                // Add to Gold Mine database for Power Pro users
-                if (state.user.tier === 'powerPro') {
-                    addToGoldMine(result);
-                }
+                setTimeout(showGoldStrike, 500);
+                if (state.user.tier === 'powerPro') addToGoldMine(result);
             } else if (result.powerScore >= 70) {
-                // Green - Good Profit Potential (70-89)
                 badge.className = 'power-score-badge excellent';
-                scoreContainer.style.borderColor = '#4CAF50';
             } else if (result.powerScore >= 50) {
-                // Blue - Fair Opportunity (50-69)
                 badge.className = 'power-score-badge good';
-                scoreContainer.style.borderColor = '#2196F3';
             } else {
-                // Red - Skip It (below 50)
                 badge.className = 'power-score-badge poor';
-                scoreContainer.style.borderColor = '#f44336';
             }
-            
             showPage('resultsPage');
         }
         
         function showGoldStrike() {
-            // Create gold strike notification
             const goldNotification = document.createElement('div');
             goldNotification.className = 'gold-strike-notification';
-            goldNotification.innerHTML = `
-                <div class="gold-strike-content">
-                    <div class="gold-strike-icon">⚡</div>
-                    <div class="gold-strike-text">YOU'VE STRUCK GOLD!</div>
-                    <div class="gold-strike-subtext">Added to Gold Mine</div>
-                </div>
-            `;
+            goldNotification.innerHTML = `<div class="gold-strike-content"><div class="gold-strike-icon">⚡</div><div class="gold-strike-text">YOU'VE STRUCK GOLD!</div><div class="gold-strike-subtext">Added to Gold Mine</div></div>`;
             document.body.appendChild(goldNotification);
-            
-            // Gold confetti effect
-            if (typeof confetti !== 'undefined') {
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 },
-                    colors: ['#FFD700', '#FFA500', '#FFD700']
-                });
-            }
-            
-            // Remove notification after animation
+            if (typeof confetti !== 'undefined') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#FFD700', '#FFA500', '#FFD700'] });
             setTimeout(() => {
                 goldNotification.classList.add('fade-out');
-                setTimeout(() => {
-                    document.body.removeChild(goldNotification);
-                }, 500);
+                setTimeout(() => document.body.removeChild(goldNotification), 500);
             }, 3000);
         }
         
         function addToGoldMine(item) {
-            // This will sync to cloud for all Power Pro users to see
             if (!state.goldMineFinds) state.goldMineFinds = [];
-            state.goldMineFinds.push({
-                ...item,
-                foundBy: state.user.email || 'Anonymous',
-                timestamp: Date.now()
-            });
+            state.goldMineFinds.push({ ...item, foundBy: state.user.email || 'Anonymous', timestamp: Date.now() });
             saveState();
         }
 
-        // Part-Out Functions (Power Pro)
         function showPartOutUpgrade() {
             const modal = document.createElement('div');
             modal.className = 'modal-overlay active';
             modal.innerHTML = `
                 <div class="modal-content" style="max-width: 500px;">
-                    <div class="modal-header">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px;">
-                            <div class="modal-title">Unlock Part-Out Calculator™</div>
-                        </div>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    
-                    <div style="text-align: center; padding: 1rem 0;">
-                        <div style="font-size: 3rem; margin-bottom: 1rem;">💎</div>
-                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">
-                            Turn Trash Into Treasure!
-                        </h3>
-                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                            The Part-Out Calculator reveals hidden gold in items others would skip. 
-                            One VCR remote can be worth more than the entire unit!
-                        </p>
-                    </div>
-                    
-                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Power Pro Includes:</h4>
-                        <ul style="list-style: none; padding: 0;">
-                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span style="color: var(--accent-green);">✓</span>
-                                Part-Out Calculator with exact values
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span style="color: var(--accent-green);">✓</span>
-                                Gold Mine™ crowdsourced database
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span style="color: var(--accent-green);">✓</span>
-                                3,500 scans per month
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
-                                <span style="color: var(--accent-green);">✓</span>
-                                Advanced PDF reports
-                            </li>
-                        </ul>
-                    </div>
-                    
-                    <div style="text-align: center; margin-bottom: 1rem;">
-                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent-gold);">
-                            $9.99<span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">/month</span>
-                        </div>
-                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
-                            Pays for itself with one part-out find!
-                        </p>
-                    </div>
-                    
-                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()">
-                        Upgrade to Power Pro Now
-                    </button>
-                    <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="this.closest('.modal-overlay').remove()">
-                        Maybe Later
-                    </button>
-                </div>
-            `;
+                    <div class="modal-header"><div style="display: flex; align-items: center; gap: 0.5rem;"><img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px;"><div class="modal-title">Unlock Part-Out Calculator™</div></div><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button></div>
+                    <div style="text-align: center; padding: 1rem 0;"><div style="font-size: 3rem; margin-bottom: 1rem;">💎</div><h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">Turn Trash Into Treasure!</h3><p style="color: var(--text-secondary); margin-bottom: 1.5rem;">The Part-Out Calculator reveals hidden gold in items others would skip. One VCR remote can be worth more than the entire unit!</p></div>
+                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;"><h4 style="font-weight: 600; margin-bottom: 1rem;">Power Pro Includes:</h4><ul style="list-style: none; padding: 0;"><li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;"><span style="color: var(--accent-green);">✓</span>Part-Out Calculator with exact values</li><li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;"><span style="color: var(--accent-green);">✓</span>Gold Mine™ crowdsourced database</li><li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;"><span style="color: var(--accent-green);">✓</span>3,500 scans per month</li><li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;"><span style="color: var(--accent-green);">✓</span>Advanced PDF reports</li></ul></div>
+                    <div style="text-align: center; margin-bottom: 1rem;"><div style="font-size: 2.5rem; font-weight: 800; color: var(--accent-gold);">$9.99<span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">/month</span></div><p style="font-size: 0.9rem; color: var(--text-secondary);">Pays for itself with one part-out find!</p></div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()">Upgrade to Power Pro Now</button><button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="this.closest('.modal-overlay').remove()">Maybe Later</button>
+                </div>`;
             document.body.appendChild(modal);
         }
 
-        // Function to show detailed parts breakdown (Power Pro only)
-        function showPartsBreakdown(parts) {
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay active';
-            
-            // Calculate total value
-            const totalValue = parts.reduce((sum, part) => sum + part.value, 0);
-            
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 600px;">
-                    <div class="modal-header">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <svg width="32" height="32" fill="#FFD700" viewBox="0 0 24 24">
-                                <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
-                            </svg>
-                            <div class="modal-title">Part-Out Analysis</div>
-                        </div>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
-                        <div style="text-align: center;">
-                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Total Part-Out Value</div>
-                            <div style="font-size: 2.5rem; font-weight: 800; color: #FFD700;">${totalValue}</div>
-                        </div>
-                    </div>
-                    
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        ${parts.map(part => {
-                            let badgeColor = '#f44336';
-                            if (part.powerScore >= 90) {
-                                badgeColor = '#FFD700';
-                            } else if (part.powerScore >= 70) {
-                                badgeColor = '#4CAF50';
-                            } else if (part.powerScore >= 50) {
-                                badgeColor = '#2196F3';
-                            }
-                            
-                            return `
-                                <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${badgeColor};">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <div style="flex: 1;">
-                                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">${part.name}</div>
-                                            <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
-                                                <span>Sells ${part.sellThrough}% of the time</span>
-                                                <span>• Avg ${Math.round(30 / (part.sellThrough / 100))} days to sell</span>
-                                            </div>
-                                        </div>
-                                        <div style="display: flex; align-items: center; gap: 1rem;">
-                                            <div style="text-align: center;">
-                                                <div style="width: 60px; height: 60px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: white;">
-                                                    ${part.powerScore}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 700; font-size: 1.25rem; color: ${badgeColor};">
-                                                    ${part.value}
-                                                </div>
-                                                <div style="font-size: 0.75rem; color: var(--text-secondary);">
-                                                    per unit
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                    
-                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-top: 1rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #FFD700;">
-                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
-                            </svg>
-                            <span style="font-size: 0.9rem; font-weight: 600;">
-                                Pro Tip: List parts separately on eBay for maximum profit!
-                            </span>
-                        </div>
-                    </div>
-                    
-                    <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="this.closest('.modal-overlay').remove()">
-                        Got It! Time to Buy This Item!
-                    </button>
-                </div>
-            `;
-            document.body.appendChild(modal);
-        }
-
-        // Inventory Management
         function addToInventory() {
             if (!state.currentScan) return;
-            
-            const item = {
-                id: Date.now(),
-                ...state.currentScan,
-                status: 'unlisted',
-                dateAdded: new Date().toISOString(),
-                cost: null,
-                soldPrice: null,
-                soldDate: null
-            };
-            
+            const item = { id: Date.now(), ...state.currentScan, status: 'unlisted', dateAdded: new Date().toISOString() };
             state.inventory.push(item);
             saveState();
             showToast('Added to inventory!', 'success');
@@ -2004,160 +1582,25 @@
 
         function addToWatchlist() {
             if (!state.currentScan) return;
-            
-            state.watchlist.push({
-                id: Date.now(),
-                ...state.currentScan,
-                dateAdded: new Date().toISOString()
-            });
-            
+            state.watchlist.push({ id: Date.now(), ...state.currentScan, dateAdded: new Date().toISOString() });
             saveState();
             showToast('Added to watchlist!', 'success');
         }
 
         function addToFlopList() {
             if (!state.currentScan) return;
-            
-            state.flopList.push({
-                id: Date.now(),
-                name: state.currentScan.name,
-                category: state.currentScan.category,
-                reason: 'Low profit margin',
-                dateAdded: new Date().toISOString()
-            });
-            
+            state.flopList.push({ id: Date.now(), name: state.currentScan.name, category: state.currentScan.category, dateAdded: new Date().toISOString() });
             saveState();
             showToast('Added to flop list', 'success');
         }
 
         function updateInventoryDisplay() {
             const grid = document.getElementById('inventoryGrid');
-            
             if (state.inventory.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
-                        </svg>
-                        <div class="empty-title">No Items Yet</div>
-                        <div class="empty-text">Start scanning items to build your inventory</div>
-                    </div>
-                `;
+                grid.innerHTML = `<div class="empty-state"><svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/></svg><div class="empty-title">No Items Yet</div><div class="empty-text">Start scanning items to build your inventory</div></div>`;
                 return;
             }
-            
-            grid.innerHTML = state.inventory.map(item => `
-                <div class="inventory-item">
-                    <div class="inventory-item-info">
-                        <h3>${item.name}</h3>
-                        <p>Worth: ${item.worthPaying} | Sells for: ${item.avgPrice}</p>
-                    </div>
-                    <div class="inventory-item-status status-${item.status}">
-                        ${item.status}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Mileage Tracking Functions
-        function startMileageTracking() {
-            if (state.user.tier === 'freemium') {
-                showToast('Mileage tracking is a Pro feature. Upgrade to unlock!', 'error');
-                showPage('upgradePage');
-                return;
-            }
-            
-            if (activeTrip) {
-                showToast('Trip already in progress!', 'error');
-                return;
-            }
-            
-            // Get current location if available
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        activeTrip = {
-                            startTime: new Date(),
-                            startLat: position.coords.latitude,
-                            startLng: position.coords.longitude,
-                            startLocation: 'Current Location'
-                        };
-                        updateActiveTripUI();
-                    },
-                    (error) => {
-                        // Fallback if location denied
-                        activeTrip = {
-                            startTime: new Date(),
-                            startLocation: 'Manual Entry'
-                        };
-                        updateActiveTripUI();
-                    }
-                );
-            } else {
-                activeTrip = {
-                    startTime: new Date(),
-                    startLocation: 'Manual Entry'
-                };
-                updateActiveTripUI();
-            }
-            
-            showToast('Trip tracking started!', 'success');
-        }
-
-        function endMileageTracking() {
-            if (!activeTrip) return;
-            
-            // Get end location and calculate distance
-            if (navigator.geolocation && activeTrip.startLat) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const distance = calculateDistance(
-                            activeTrip.startLat,
-                            activeTrip.startLng,
-                            position.coords.latitude,
-                            position.coords.longitude
-                        );
-                        
-                        saveMileageTrip(distance, 'GPS Tracked');
-                    },
-                    (error) => {
-                        // Manual entry if GPS fails
-                        promptForMileage();
-                    }
-                );
-            } else {
-                promptForMileage();
-            }
-        }
-
-        function promptForMileage() {
-            const miles = prompt('Enter miles driven for this trip:');
-            if (miles && !isNaN(miles)) {
-                saveMileageTrip(parseFloat(miles), 'Manual Entry');
-            }
-        }
-
-        function saveMileageTrip(miles, method) {
-            if (!state.mileageTrips) state.mileageTrips = [];
-            
-            const trip = {
-                id: Date.now(),
-                date: activeTrip.startTime.toISOString(),
-                miles: miles,
-                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
-                method: method,
-                notes: ''
-            };
-            
-            state.mileageTrips.push(trip);
-            activeTrip = null;
-            
-            updateActiveTripUI();
-            updateMileageStats();
-            displayRecentTrips();
-            saveState();
-            
-            showToast(`Trip saved: ${miles} miles (${trip.deduction} deduction)`, 'success');
+            grid.innerHTML = state.inventory.map(item => `<div class="inventory-item"><div class="inventory-item-info"><h3>${item.name}</h3><p>Worth: $${item.worthPaying} | Sells for: $${item.avgPrice}</p></div><div class="inventory-item-status status-${item.status}">${item.status}</div></div>`).join('');
         }
 
         function quickAddMileage() {
@@ -2166,42 +1609,21 @@
                 showPage('upgradePage');
                 return;
             }
-            
             const modal = document.createElement('div');
             modal.className = 'modal-overlay active';
             modal.innerHTML = `
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="modal-title">Quick Add Mileage</div>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Date</label>
-                        <input type="date" id="quick-miles-date" class="form-input" value="${new Date().toISOString().split('T')[0]}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Miles Driven</label>
-                        <input type="number" id="quick-miles-amount" class="form-input" placeholder="e.g. 25.5" step="0.1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Trip Purpose (Optional)</label>
-                        <input type="text" id="quick-miles-notes" class="form-input" placeholder="e.g. Goodwill + estate sales">
-                    </div>
-                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Tax Deduction:</span>
-                            <span id="quick-deduction" style="color: var(--accent-green); font-weight: 600;">$0.00</span>
-                        </div>
-                    </div>
+                    <div class="modal-header"><div class="modal-title">Quick Add Mileage</div><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button></div>
+                    <div class="form-group"><label class="form-label">Date</label><input type="date" id="quick-miles-date" class="form-input" value="${new Date().toISOString().split('T')[0]}"></div>
+                    <div class="form-group"><label class="form-label">Miles Driven</label><input type="number" id="quick-miles-amount" class="form-input" placeholder="e.g. 25.5" step="0.1"></div>
+                    <div class="form-group"><label class="form-label">Trip Purpose (Optional)</label><input type="text" id="quick-miles-notes" class="form-input" placeholder="e.g. Goodwill + estate sales"></div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;"><div style="display: flex; justify-content: space-between;"><span>Tax Deduction:</span><span id="quick-deduction" style="color: var(--accent-green); font-weight: 600;">$0.00</span></div></div>
                     <button class="btn btn-primary" style="width: 100%;" onclick="saveQuickMileage()">Save Trip</button>
-                </div>
-            `;
+                </div>`;
             document.body.appendChild(modal);
-            
-            // Calculate deduction as user types
             document.getElementById('quick-miles-amount').addEventListener('input', (e) => {
                 const miles = parseFloat(e.target.value) || 0;
-                document.getElementById('quick-deduction').textContent = `${(miles * IRS_MILEAGE_RATE).toFixed(2)}`;
+                document.getElementById('quick-deduction').textContent = `$${(miles * IRS_MILEAGE_RATE).toFixed(2)}`;
             });
         }
 
@@ -2209,196 +1631,65 @@
             const date = document.getElementById('quick-miles-date').value;
             const miles = parseFloat(document.getElementById('quick-miles-amount').value);
             const notes = document.getElementById('quick-miles-notes').value;
-            
             if (!miles || miles <= 0) {
                 showToast('Please enter valid mileage', 'error');
                 return;
             }
-            
             if (!state.mileageTrips) state.mileageTrips = [];
-            
-            const trip = {
-                id: Date.now(),
-                date: new Date(date).toISOString(),
-                miles: miles,
-                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
-                method: 'Manual Entry',
-                notes: notes
-            };
-            
+            const trip = { id: Date.now(), date: new Date(date).toISOString(), miles: miles, deduction: (miles * IRS_MILEAGE_RATE).toFixed(2), notes: notes };
             state.mileageTrips.push(trip);
             saveState();
-            
             document.querySelector('.modal-overlay').remove();
             updateMileageStats();
-            displayRecentTrips();
-            showToast(`Added ${miles} miles (${trip.deduction} deduction)`, 'success');
-        }
-
-        function updateActiveTripUI() {
-            const tracker = document.getElementById('activeTripTracker');
-            if (activeTrip) {
-                tracker.style.display = 'block';
-                document.getElementById('tripStartTime').textContent = activeTrip.startTime.toLocaleTimeString();
-                document.getElementById('tripStartLocation').textContent = activeTrip.startLocation;
-            } else {
-                tracker.style.display = 'none';
-            }
+            showToast(`Added ${miles} miles ($${trip.deduction} deduction)`, 'success');
         }
 
         function updateMileageStats() {
+            if (!document.getElementById('monthlyMiles')) return;
             if (!state.mileageTrips) state.mileageTrips = [];
-            
-            // Calculate current month stats
             const now = new Date();
-            const currentMonth = now.getMonth();
-            const currentYear = now.getFullYear();
-            
             const monthTrips = state.mileageTrips.filter(trip => {
                 const tripDate = new Date(trip.date);
-                return tripDate.getMonth() === currentMonth && tripDate.getFullYear() === currentYear;
+                return tripDate.getMonth() === now.getMonth() && tripDate.getFullYear() === now.getFullYear();
             });
-            
             const totalMiles = monthTrips.reduce((sum, trip) => sum + trip.miles, 0);
             const totalDeduction = totalMiles * IRS_MILEAGE_RATE;
-            
             document.getElementById('monthlyMiles').textContent = totalMiles.toFixed(1);
-            document.getElementById('mileageDeduction').textContent = `${totalDeduction.toFixed(2)}`;
+            document.getElementById('mileageDeduction').textContent = `$${totalDeduction.toFixed(2)}`;
         }
 
-        function displayRecentTrips() {
-            const container = document.getElementById('recentTrips');
-            if (!state.mileageTrips || state.mileageTrips.length === 0) {
-                container.innerHTML = '<p style="color: var(--text-secondary);">No trips recorded yet</p>';
-                return;
-            }
-            
-            // Show last 5 trips
-            const recentTrips = state.mileageTrips.slice(-5).reverse();
-            container.innerHTML = recentTrips.map(trip => `
-                <div style="background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="font-weight: 600;">${trip.miles} miles</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                ${new Date(trip.date).toLocaleDateString()}
-                                ${trip.notes ? ` - ${trip.notes}` : ''}
-                            </div>
-                        </div>
-                        <div style="color: var(--accent-green); font-weight: 600;">
-                            ${trip.deduction}
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function calculateDistance(lat1, lng1, lat2, lng2) {
-            // Haversine formula for distance between two points
-            const R = 3959; // Radius of Earth in miles
-            const dLat = (lat2 - lat1) * Math.PI / 180;
-            const dLng = (lng2 - lng1) * Math.PI / 180;
-            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                      Math.sin(dLng/2) * Math.sin(dLng/2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-            return R * c;
-        }
-
-        // Power Score History Functions
         function displayScanHistory() {
+            if (!document.getElementById('scanHistoryList')) return;
             if (!state.scanHistory) state.scanHistory = [];
-            
             const container = document.getElementById('scanHistoryList');
-            
-            // Show Gold Mine alert for Power Pro users
-            if (state.user.tier === 'powerPro') {
-                document.getElementById('goldMineAlert').style.display = 'block';
-            }
-            
             if (state.scanHistory.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <img src="/icons/powerscore.png" alt="No scans" style="width: 60px; height: 60px; opacity: 0.3;">
-                        <div class="empty-title">No Scans Yet</div>
-                        <div class="empty-text">Your Power Score history will appear here</div>
-                    </div>
-                `;
+                container.innerHTML = `<div class="empty-state"><img src="/icons/powerscore.png" alt="No scans" style="width: 60px; height: 60px; opacity: 0.3;"><div class="empty-title">No Scans Yet</div><div class="empty-text">Your Power Score history will appear here</div></div>`;
                 return;
             }
-            
-            // Group scans by date
-            const grouped = {};
-            state.scanHistory.forEach(scan => {
+            const grouped = state.scanHistory.reduce((acc, scan) => {
                 const date = new Date(scan.timestamp).toDateString();
-                if (!grouped[date]) grouped[date] = [];
-                grouped[date].push(scan);
-            });
-            
-            // Display grouped scans
+                if (!acc[date]) acc[date] = [];
+                acc[date].push(scan);
+                return acc;
+            }, {});
             container.innerHTML = Object.entries(grouped).map(([date, scans]) => `
                 <div style="margin-bottom: 1.5rem;">
                     <h4 style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">${date}</h4>
                     ${scans.map(scan => {
-                        let scoreColor = '#f44336'; // red
+                        let scoreColor = '#f44336';
                         let scoreIcon = '';
-                        if (scan.powerScore >= 90) {
-                            scoreColor = '#FFD700';
-                            scoreIcon = '<img src="/icons/goldmine.png" style="width: 20px; height: 20px; margin-left: 0.5rem;">';
-                        } else if (scan.powerScore >= 70) {
-                            scoreColor = '#4CAF50';
-                        } else if (scan.powerScore >= 50) {
-                            scoreColor = '#2196F3';
-                        }
-                        
-                        return `
-                            <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${scoreColor};">
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
-                                    <div>
-                                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${scan.name}</div>
-                                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                            ${scan.category} • Worth ${scan.worthPaying}
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; align-items: center;">
-                                        <div style="font-size: 1.5rem; font-weight: 800; color: ${scoreColor};">
-                                            ${scan.powerScore}
-                                        </div>
-                                        ${scoreIcon}
-                                    </div>
-                                </div>
-                                ${scan.partOut && state.user.tier === 'powerPro' ? `
-                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--bg-tertiary);">
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #FFD700;">
-                                            <img src="/icons/goldmine.png" style="width: 16px; height: 16px;">
-                                            <span style="font-size: 0.85rem; font-weight: 600;">
-                                                Part-Out Value: ${scan.partOut.reduce((sum, part) => sum + part.value, 0)}
-                                            </span>
-                                        </div>
-                                    </div>
-                                ` : scan.partOut && state.user.tier !== 'powerPro' ? `
-                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--bg-tertiary);">
-                                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); opacity: 0.7;">
-                                            <span style="font-size: 0.85rem;">
-                                                🔒 Part-Out Calculator (Power Pro Only)
-                                            </span>
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        `;
+                        if (scan.powerScore >= 90) { scoreColor = '#FFD700'; scoreIcon = '<img src="/icons/goldmine.png" style="width: 20px; height: 20px; margin-left: 0.5rem;">'; }
+                        else if (scan.powerScore >= 70) scoreColor = '#4CAF50';
+                        else if (scan.powerScore >= 50) scoreColor = '#2196F3';
+                        return `<div style="background: var(--bg-secondary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${scoreColor};"><div style="display: flex; justify-content: space-between; align-items: center;"><div><div style="font-weight: 600;">${scan.name}</div><div style="font-size: 0.85rem; color: var(--text-secondary);">${scan.category} • Worth $${scan.worthPaying}</div></div><div style="display: flex; align-items: center;"><div style="font-size: 1.5rem; font-weight: 800; color: ${scoreColor};">${scan.powerScore}</div>${scoreIcon}</div></div></div>`;
                     }).join('')}
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
         function filterScores(type) {
-            // Update active tab
             document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
             event.target.classList.add('active');
-            
-            // Filter and redisplay
-            displayScanHistory(); // For now, just redisplay all
+            displayScanHistory(); 
         }
 
         function showGoldMineDatabase() {
@@ -2407,161 +1698,78 @@
                 showPage('upgradePage');
                 return;
             }
-            
-            // Show Gold Mine modal with crowdsourced finds
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay active';
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 600px;">
-                    <div class="modal-header">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <img src="/icons/goldmine.png" alt="Gold Mine" style="width: 32px; height: 32px;">
-                            <div class="modal-title">Gold Mine™ Database</div>
-                        </div>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
-                        Crowdsourced gold finds from the Power Pro community
-                    </p>
-                    <div style="max-height: 400px; overflow-y: auto;">
-                        ${getGoldMineItems()}
-                    </div>
-                </div>
-            `;
-            document.body.appendChild(modal);
+            document.getElementById('goldMineList').innerHTML = getGoldMineItems();
+            showPage('goldMinePage');
         }
 
         function getGoldMineItems() {
-            // Mock data for Gold Mine items
             const goldItems = [
                 { name: 'Vintage Pyrex Bowls', powerScore: 94, category: 'Kitchenware', foundBy: 'Sarah K.', location: 'Estate Sales' },
                 { name: 'Ti-84 Calculator', powerScore: 91, category: 'Electronics', foundBy: 'Mike R.', location: 'Garage Sales' },
                 { name: 'Patagonia Fleece', powerScore: 92, category: 'Clothing', foundBy: 'Jessica L.', location: 'Goodwill' },
                 { name: 'Cast Iron Skillet (Griswold)', powerScore: 96, category: 'Cookware', foundBy: 'Tom B.', location: 'Thrift Stores' }
             ];
-            
+            if (goldItems.length === 0) return `<div class="empty-state">...No Gold Found Yet...</div>`;
             return goldItems.map(item => `
-                <div style="background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border: 2px solid #FFD700;">
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border: 2px solid #FFD700;">
                     <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="font-weight: 700; color: #FFD700;">${item.name}</div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                ${item.category} • Found at ${item.location}
-                            </div>
-                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
-                                Discovered by ${item.foundBy}
-                            </div>
-                        </div>
-                        <div style="font-size: 2rem; font-weight: 800; color: #FFD700;">
-                            ${item.powerScore}
-                        </div>
+                        <div><div style="font-weight: 700; color: #FFD700;">${item.name}</div><div style="font-size: 0.85rem; color: var(--text-secondary);">${item.category} • Found at ${item.location}</div><div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">Discovered by ${item.foundBy}</div></div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #FFD700;">${item.powerScore}</div>
                     </div>
-                </div>
-            `).join('');
+                </div>`).join('');
         }
 
-        // Scan Pack Purchase
         async function purchaseScanPack() {
-            // This would integrate with Stripe
             showToast('Processing payment...', 'success');
-            
-            // Simulate payment
             setTimeout(() => {
                 state.user.scanPacks++;
                 closeModal('scanPackModal');
                 updateUI();
                 saveState();
                 showToast('500 scans added to your account!', 'success');
-                
-                // Celebrate
-                confetti({
-                    particleCount: 100,
-                    spread: 70,
-                    origin: { y: 0.6 }
-                });
+                if(typeof confetti !== 'undefined') confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
             }, 2000);
         }
 
-        // Upgrade Functions
-        async function upgradeToPro() {
-            // Stripe integration would go here
+        async function upgradeToTier(tier, scans) {
             showToast('Redirecting to payment...', 'success');
-            
-            // For demo purposes
             setTimeout(() => {
-                state.user.tier = 'pro';
-                state.user.monthlyScansRemaining = 2000;
+                state.user.tier = tier;
+                state.user.monthlyScansRemaining = scans;
                 updateUI();
                 saveState();
-                showToast('Welcome to Pro!', 'success');
+                showToast(`Welcome to ${tier.charAt(0).toUpperCase() + tier.slice(1)}!`, 'success');
                 showPage('mainPage');
-                
-                confetti({
-                    particleCount: 200,
-                    spread: 100,
-                    origin: { y: 0.6 }
-                });
+                if(typeof confetti !== 'undefined') confetti({ particleCount: 200, spread: 100, origin: { y: 0.6 } });
             }, 2000);
         }
+        const upgradeToPro = () => upgradeToTier('pro', 2000);
+        const upgradeToPowerPro = () => upgradeToTier('powerPro', 3500);
 
-        async function upgradeToPowerPro() {
-            // Stripe integration would go here
-            showToast('Redirecting to payment...', 'success');
-            
-            setTimeout(() => {
-                state.user.tier = 'powerPro';
-                state.user.monthlyScansRemaining = 3500;
-                updateUI();
-                saveState();
-                showToast('Welcome to Power Pro!', 'success');
-                showPage('mainPage');
-                
-                confetti({
-                    particleCount: 300,
-                    spread: 120,
-                    origin: { y: 0.6 },
-                    colors: ['#FFD700', '#FFA500', '#FF6347']
-                });
-            }, 2000);
-        }
-
-        // UI Updates
         function updateUI() {
             const { user } = state;
-            
-            // Update scan counter
             const scanCountEl = document.getElementById('scanCount');
             const scanCounter = document.getElementById('scanCounter');
-            
             if (user.tier === 'freemium') {
                 scanCountEl.textContent = `${user.dailyScansRemaining}/5 Daily`;
-                if (user.dailyScansRemaining <= 1) {
-                    scanCounter.classList.add('low');
-                }
+                scanCounter.classList.toggle('low', user.dailyScansRemaining <= 1);
             } else {
                 scanCountEl.textContent = `${user.monthlyScansRemaining} Scans`;
-                if (user.monthlyScansRemaining <= 50) {
-                    scanCounter.classList.add('low');
-                }
+                scanCounter.classList.toggle('low', user.monthlyScansRemaining <= 50);
             }
-            
-            // Update scan pack badge
             const packBadge = document.getElementById('scanPackBadge');
-            const packCount = document.getElementById('packCount');
             if (user.scanPacks > 0) {
-                packBadge.style.display = 'block';
-                packCount.textContent = user.scanPacks * 500;
+                packBadge.style.display = 'flex';
+                document.getElementById('packCount').textContent = user.scanPacks * 500;
             } else {
                 packBadge.style.display = 'none';
             }
-            
+            document.getElementById('goldMineBtn').style.display = user.tier === 'powerPro' ? 'block' : 'none';
             updateInventoryDisplay();
         }
 
-        // Other Functions
-        function openExpenseModal() {
-            showToast('Expense tracking coming soon!', 'success');
-        }
+        function openExpenseModal() { showToast('Expense tracking coming soon!', 'success'); }
+        function showSettings() { showToast('Settings coming soon!', 'success'); }
 
         function exportData() {
             const dataStr = JSON.stringify(state, null, 2);
@@ -2575,10 +1783,6 @@
             showToast('Data exported successfully!', 'success');
         }
 
-        function showSettings() {
-            showToast('Settings coming soon!', 'success');
-        }
-
         function logout() {
             if (confirm('Are you sure you want to sign out?')) {
                 localStorage.clear();
@@ -2586,33 +1790,24 @@
             }
         }
 
-        // Utility Functions
         function showToast(message, type = 'success') {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = `toast ${type} show`;
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // State Persistence
         function saveState() {
             localStorage.setItem('scan2flip_state', JSON.stringify(state));
         }
 
         function loadState() {
             const saved = localStorage.getItem('scan2flip_state');
-            if (saved) {
-                state = JSON.parse(saved);
-            }
-            
-            // Reset daily scans if new day
+            if (saved) state = JSON.parse(saved);
             const lastReset = localStorage.getItem('scan2flip_last_reset');
             const today = new Date().toDateString();
             if (lastReset !== today && state.user.tier === 'freemium') {
@@ -2620,16 +1815,6 @@
                 localStorage.setItem('scan2flip_last_reset', today);
                 saveState();
             }
-        }
-
-        // Service Worker Registration (for PWA)
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').then(
-                    registration => console.log('ServiceWorker registered'),
-                    err => console.log('ServiceWorker registration failed')
-                );
-            });
         }
     </script>
 </body>

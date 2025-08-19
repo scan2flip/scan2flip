@@ -1,0 +1,22 @@
+# Mac system files
+.DS_Store
+
+# Windows system files
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# Node modules (if you ever add any)
+node_modules/
+
+# Environment variables (if you add API keys later)
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+
+# Logs
+*.log

@@ -784,6 +784,79 @@
         .empty-text {
             font-size: 0.95rem;
         }
+        /* Responsive sizing for desktop */
+@media (min-width: 768px) {
+    /* Bigger navigation icons on desktop */
+    .nav-item img {
+        width: 32px !important;
+        height: 32px !important;
+    }
+    
+    .nav-item span {
+        font-size: 0.85rem !important;
+    }
+    
+    /* Bigger header logo on desktop */
+    .app-header img {
+        width: 64px !important;
+        height: 64px !important;
+    }
+    
+    .logo-text {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Bigger main scan button on desktop */
+    .scan-button {
+        width: min(450px, 90vw) !important;
+    }
+    
+    .scan-icon {
+        width: 100px !important;
+        height: 100px !important;
+    }
+    
+    .scan-text {
+        font-size: 1.75rem !important;
+    }
+    
+    /* Better desktop layout */
+    .bottom-nav {
+        padding: 0.75rem 0;
+    }
+    
+    .nav-item {
+        padding: 0.75rem;
+    }
+}
+/* Make nav icons bigger on ALL screens */
+.nav-item img {
+    width: 28px !important;
+    height: 28px !important;
+}
+
+/* Make header logo bigger */
+.app-header img {
+    width: 56px !important;
+    height: 56px !important;
+}
+
+/* Desktop - even BIGGER */
+@media (min-width: 768px) {
+    .nav-item img {
+        width: 36px !important;
+        height: 36px !important;
+    }
+    
+    .app-header img {
+        width: 72px !important;
+        height: 72px !important;
+    }
+    
+    .logo-text {
+        font-size: 2rem !important;
+    }
+}
     </style>
 </head>
 <body>
@@ -1170,29 +1243,29 @@
         </div>
     </div>
 
-    <!-- Bottom Navigation -->
-    <nav class="bottom-nav">
-        <a class="nav-item active" onclick="showPage('mainPage')">
-            <img src="/icons/barcode-camera.png" alt="Scan" style="width: 24px; height: 24px;">
-            <span>Scan</span>
-        </a>
-        <a class="nav-item" onclick="showPage('inventoryPage')">
-            <img src="/icons/inventory.png" alt="Inventory" style="width: 24px; height: 24px;">
-            <span>Inventory</span>
-        </a>
-        <a class="nav-item" onclick="showPage('expensesPage')">
-            <img src="/icons/dollar.png" alt="Expenses" style="width: 24px; height: 24px;">
-            <span>Expenses</span>
-        </a>
-        <a class="nav-item" onclick="showPage('powerScorePage')">
-            <img src="/icons/powerscore.png" alt="History" style="width: 24px; height: 24px;">
-            <span>History</span>
-        </a>
-        <a class="nav-item" onclick="showPage('morePage')">
-            <img src="/icons/coins.png" alt="More" style="width: 24px; height: 24px;">
-            <span>More</span>
-        </a>
-    </nav>
+    <<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+    <a class="nav-item active" onclick="showPage('mainPage')">
+        <img src="/icons/home.png" alt="Home">
+        <span>Home</span>
+    </a>
+    <a class="nav-item" onclick="showPage('inventoryPage')">
+        <img src="/icons/inventory.png" alt="Inventory">
+        <span>Inventory</span>
+    </a>
+    <a class="nav-item" onclick="showPage('expensesPage')">
+        <img src="/icons/dollar.png" alt="Expenses">
+        <span>Expenses</span>
+    </a>
+    <a class="nav-item" onclick="showPage('powerScorePage')">
+        <img src="/icons/powerscore.png" alt="History">
+        <span>History</span>
+    </a>
+    <a class="nav-item" onclick="showPage('morePage')">
+        <img src="/icons/coins.png" alt="More">
+        <span>More</span>
+    </a>
+</nav>
 
     <!-- Scan Pack Purchase Modal -->
     <div class="modal-overlay" id="scanPackModal">

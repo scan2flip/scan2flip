@@ -1138,15 +1138,22 @@
         async function startBarcodeScanning() {
             // Check if we can access camera
             if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                showToast('Camera not available on this device', 'error');
+                // No camera available - show manual entry for testing
+                showManualBarcodeEntry();
                 return;
             }
             
             try {
-                // Create video element for camera
-                const video = document.createElement('video');
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
+                // Test camera availability
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                }).catch(err => null);
+                
+                if (!stream) {
+                    // Camera denied or not available
+                    showManualBarcodeEntry();
+                    return;
+                }
                 
                 // Create scanning UI
                 const scannerUI = document.createElement('div');
@@ -1168,11 +1175,6 @@
                     </div>
                 `;
                 document.body.appendChild(scannerUI);
-                
-                // Get camera stream
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment' }
-                });
                 
                 const videoElement = document.getElementById('scanner-video');
                 videoElement.srcObject = stream;
@@ -1279,8 +1281,42 @@
                 
             } catch (err) {
                 console.error('Camera error:', err);
-                showToast('Could not access camera', 'error');
+                showManualBarcodeEntry();
             }
+        }
+        
+        function showManualBarcodeEntry() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <h3>Enter Barcode Manually</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Camera not available. Enter UPC/ISBN code:</p>
+                    <input type="text" id="manual-barcode" class="form-input" placeholder="e.g. 096619119449" value="096619119449">
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <button class="btn btn-secondary" style="flex: 1;" onclick="cancelManualEntry()">Cancel</button>
+                        <button class="btn btn-primary" style="flex: 1;" onclick="submitManualBarcode()">Search</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Focus input
+            setTimeout(() => {
+                document.getElementById('manual-barcode').focus();
+            }, 100);
+            
+            window.cancelManualEntry = () => {
+                document.body.removeChild(modal);
+            };
+            
+            window.submitManualBarcode = () => {
+                const barcode = document.getElementById('manual-barcode').value;
+                if (barcode) {
+                    document.body.removeChild(modal);
+                    processBarcodeResult(barcode);
+                }
+            };
         }
         
         async function startCameraScanning() {

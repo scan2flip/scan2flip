@@ -756,13 +756,11 @@
                 
                 <div class="power-score-container">
                     <div class="power-score-circle">
-                        <svg viewBox="0 0 150 150" style="transform: rotate(-90deg);">
-                            <circle cx="75" cy="75" r="65" fill="none" stroke="var(--bg-tertiary)" stroke-width="10"/>
-                            <circle id="scoreCircle" cx="75" cy="75" r="65" fill="none" stroke="var(--accent-gold)" stroke-width="10" stroke-dasharray="408" stroke-dashoffset="100" stroke-linecap="round"/>
-                        </svg>
-                        <div class="power-score-value" id="powerScore">85</div>
+                        <div id="powerScoreBadge" class="power-score-badge excellent">
+                            <span id="powerScore">85</span>
+                        </div>
                     </div>
-                    <div class="power-score-label">POWER SCORE</div>
+                    <div class="power-score-label">POWER SCORE™</div>
                 </div>
                 
                 <div id="itemInfo" style="text-align: center; padding: 1rem;">
@@ -1393,39 +1391,82 @@
             document.getElementById('worthPaying').textContent = `${result.worthPaying}`;
             document.getElementById('daysToSell').textContent = result.daysToSell;
             
-            // Update score circle and color based on score
-            const circle = document.getElementById('scoreCircle');
-            const circumference = 2 * Math.PI * 65;
-            const offset = circumference - (result.powerScore / 100) * circumference;
-            circle.style.strokeDashoffset = offset;
-            
-            // Dynamic badge styling based on Power Score
-            const scoreEl = document.getElementById('powerScore');
+            // Update score badge and color based on score
+            const badge = document.getElementById('powerScoreBadge');
             const scoreContainer = document.querySelector('.power-score-container');
             
-            if (result.powerScore >= 80) {
-                // Green badge - Excellent (80+)
-                scoreEl.className = 'power-score-value score-excellent';
-                circle.style.stroke = '#4CAF50';
-                scoreContainer.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
-            } else if (result.powerScore >= 60) {
-                // Blue badge - Good (60-79)
-                scoreEl.className = 'power-score-value score-good';
-                circle.style.stroke = '#2196F3';
-                scoreContainer.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
-            } else if (result.powerScore >= 40) {
-                // Gold badge - Fair (40-59)
-                scoreEl.className = 'power-score-value score-fair';
-                circle.style.stroke = '#FFD700';
-                scoreContainer.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+            if (result.powerScore >= 90) {
+                // GOLD MINE! - 90+ scores
+                badge.className = 'power-score-badge gold-mine';
+                scoreContainer.style.borderColor = '#FFD700';
+                
+                // Special "You've Struck Gold!" animation
+                setTimeout(() => {
+                    showGoldStrike();
+                }, 500);
+                
+                // Add to Gold Mine database for Power Pro users
+                if (state.user.tier === 'powerPro') {
+                    addToGoldMine(result);
+                }
+            } else if (result.powerScore >= 70) {
+                // Green - Good Profit Potential (70-89)
+                badge.className = 'power-score-badge excellent';
+                scoreContainer.style.borderColor = '#4CAF50';
+            } else if (result.powerScore >= 50) {
+                // Blue - Fair Opportunity (50-69)
+                badge.className = 'power-score-badge good';
+                scoreContainer.style.borderColor = '#2196F3';
             } else {
-                // Red badge - Poor (below 40)
-                scoreEl.className = 'power-score-value score-poor';
-                circle.style.stroke = '#f44336';
-                scoreContainer.style.backgroundColor = 'rgba(244, 67, 54, 0.1)';
+                // Red - Skip It (below 50)
+                badge.className = 'power-score-badge poor';
+                scoreContainer.style.borderColor = '#f44336';
             }
             
             showPage('resultsPage');
+        }
+        
+        function showGoldStrike() {
+            // Create gold strike notification
+            const goldNotification = document.createElement('div');
+            goldNotification.className = 'gold-strike-notification';
+            goldNotification.innerHTML = `
+                <div class="gold-strike-content">
+                    <div class="gold-strike-icon">⚡</div>
+                    <div class="gold-strike-text">YOU'VE STRUCK GOLD!</div>
+                    <div class="gold-strike-subtext">Added to Gold Mine</div>
+                </div>
+            `;
+            document.body.appendChild(goldNotification);
+            
+            // Gold confetti effect
+            if (typeof confetti !== 'undefined') {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 },
+                    colors: ['#FFD700', '#FFA500', '#FFD700']
+                });
+            }
+            
+            // Remove notification after animation
+            setTimeout(() => {
+                goldNotification.classList.add('fade-out');
+                setTimeout(() => {
+                    document.body.removeChild(goldNotification);
+                }, 500);
+            }, 3000);
+        }
+        
+        function addToGoldMine(item) {
+            // This will sync to cloud for all Power Pro users to see
+            if (!state.goldMineFinds) state.goldMineFinds = [];
+            state.goldMineFinds.push({
+                ...item,
+                foundBy: state.user.email || 'Anonymous',
+                timestamp: Date.now()
+            });
+            saveState();
         }
 
         // Inventory Management

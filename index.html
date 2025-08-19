@@ -1,0 +1,1645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Scan2Flip - Scan It. Flip It. Profit.</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Preconnect to external services -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        :root {
+            --bg-primary: #0d1f2d;
+            --bg-secondary: #132b41;
+            --bg-tertiary: #1f3a53;
+            --text-primary: #ffffff;
+            --text-secondary: #a0b3c4;
+            --accent-gold: #FFD700;
+            --accent-green: #4CAF50;
+            --accent-red: #f44336;
+            --accent-blue: #2196F3;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { 
+            background-color: var(--bg-primary); 
+            color: var(--text-primary); 
+            font-family: 'Inter', sans-serif; 
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overscroll-behavior-y: contain;
+        }
+        
+        .app-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+        
+        /* Pages */
+        .page {
+            display: none;
+            flex-direction: column;
+            min-height: calc(100vh - 120px);
+            padding-bottom: 80px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .page.active { display: flex; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Header Styles */
+        .app-header {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--bg-tertiary);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .logo-shield {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-gold), #FFA500);
+            clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+        
+        .logo-shield::before {
+            content: "S2F";
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--bg-primary);
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-gold), #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header-stats {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .scan-counter {
+            background: var(--bg-tertiary);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .scan-counter.low { color: var(--accent-red); }
+        
+        .scan-pack-badge {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--bg-tertiary);
+            display: flex;
+            justify-content: space-around;
+            padding: 0.5rem 0;
+            z-index: 100;
+        }
+        
+        /* Icon Integration */
+        .nav-icon-home { 
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50 10 L80 40 L80 85 L65 85 L65 60 L35 60 L35 85 L20 85 L20 40 Z" fill="%23FFD700"/></svg>');
+        }
+        
+        .nav-icon-inventory {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect x="20" y="30" width="60" height="50" rx="5" fill="none" stroke="%23FFD700" stroke-width="3"/><rect x="20" y="20" width="60" height="15" rx="5" fill="%23FFD700"/></svg>');
+        }
+        
+        .nav-icon-expenses {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text x="50" y="70" font-size="60" text-anchor="middle" fill="%23FFD700">$</text></svg>');
+        }
+        
+        .nav-icon-mileage {
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M25 60 L75 60 L70 40 L30 40 Z M20 65 L80 65 L80 75 L20 75 Z" fill="%234CAF50"/><circle cx="30" cy="75" r="5" fill="%23333"/><circle cx="70" cy="75" r="5" fill="%23333"/></svg>');
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+        
+        .nav-item.active,
+        .nav-item:hover {
+            color: var(--accent-gold);
+        }
+        
+        .nav-item svg {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .nav-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Main Page Scan Button */
+        .scan-button-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            gap: 2rem;
+        }
+        
+        .scan-button {
+            width: min(350px, 90vw);
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border: 3px solid var(--accent-gold);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .scan-button::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, var(--accent-gold), transparent);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+            opacity: 0.3;
+        }
+        
+        .scan-button:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .scan-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+        }
+        
+        .scan-icon {
+            width: 80px;
+            height: 80px;
+            color: var(--accent-gold);
+        }
+        
+        .scan-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-gold);
+            text-align: center;
+        }
+        
+        .scan-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Results Page */
+        .results-container {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+        
+        .back-button {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .power-score-container {
+            text-align: center;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .power-score-circle {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .power-score-value {
+            font-size: 4rem;
+            font-weight: 800;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .power-score-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 1rem;
+        }
+        
+        .score-excellent { color: var(--accent-green); }
+        .score-good { color: var(--accent-blue); }
+        .score-fair { color: var(--accent-gold); }
+        .score-poor { color: var(--accent-red); }
+        
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+        
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 1.25rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .btn {
+            padding: 1rem;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn-primary {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+        }
+        
+        .btn-success {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+        
+        /* Inventory Grid */
+        .inventory-grid {
+            padding: 1rem;
+            display: grid;
+            gap: 1rem;
+        }
+        
+        .inventory-item {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .inventory-item-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .inventory-item-info p {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .inventory-item-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        
+        .status-listed {
+            background: var(--accent-blue);
+            color: white;
+        }
+        
+        .status-sold {
+            background: var(--accent-green);
+            color: white;
+        }
+        
+        .status-unlisted {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+        }
+        
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        
+        .modal-overlay.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--bg-primary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--accent-gold);
+        }
+        
+        /* Upgrade Page */
+        .tier-container {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .tier-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--bg-tertiary);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .tier-card.recommended {
+            border-color: var(--accent-gold);
+            transform: scale(1.02);
+        }
+        
+        .tier-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            padding: 0.25rem 1rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .tier-name {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .tier-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+        }
+        
+        .tier-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-secondary);
+        }
+        
+        .tier-features {
+            margin: 1.5rem 0;
+            list-style: none;
+        }
+        
+        .tier-features li {
+            padding: 0.75rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+        
+        .tier-features li:last-child {
+            border-bottom: none;
+        }
+        
+        .check-icon {
+            width: 20px;
+            height: 20px;
+            color: var(--accent-green);
+        }
+        
+        /* Scan Pack Purchase */
+        .scan-pack-modal {
+            text-align: center;
+        }
+        
+        .scan-pack-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            color: var(--accent-gold);
+        }
+        
+        .scan-pack-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scan-pack-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-gold);
+            margin: 1rem 0;
+        }
+        
+        /* Loading State */
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--bg-tertiary);
+            border-top-color: var(--accent-gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 2000;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--accent-green);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--accent-red);
+        }
+        
+        /* Empty States */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1.5rem;
+            color: var(--text-secondary);
+        }
+        
+        .empty-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1rem;
+            opacity: 0.5;
+        }
+        
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+        
+        .empty-text {
+            font-size: 0.95rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Main Header -->
+        <header class="app-header">
+            <div class="logo-container">
+                <div class="logo-shield"></div>
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Page -->
+        <div class="page active" id="mainPage">
+            <div class="scan-button-container">
+                <button class="scan-button" id="scanButton">
+                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                    </svg>
+                    <div class="scan-text">SCAN OR SNAP</div>
+                    <div class="scan-subtext">Tap to analyze item</div>
+                </button>
+                
+                <div class="stats-grid" style="width: 100%; max-width: 400px;">
+                    <div class="stat-card">
+                        <div class="stat-value">$1,247</div>
+                        <div class="stat-label">Month Profit</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">68%</div>
+                        <div class="stat-label">Win Rate</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Page -->
+        <div class="page" id="resultsPage">
+            <div class="results-container">
+                <div class="result-header">
+                    <button class="back-button" onclick="showPage('mainPage')">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </button>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Scan Results</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <div class="power-score-container">
+                    <div class="power-score-circle">
+                        <svg viewBox="0 0 150 150" style="transform: rotate(-90deg);">
+                            <circle cx="75" cy="75" r="65" fill="none" stroke="var(--bg-tertiary)" stroke-width="10"/>
+                            <circle id="scoreCircle" cx="75" cy="75" r="65" fill="none" stroke="var(--accent-gold)" stroke-width="10" stroke-dasharray="408" stroke-dashoffset="100" stroke-linecap="round"/>
+                        </svg>
+                        <div class="power-score-value" id="powerScore">85</div>
+                    </div>
+                    <div class="power-score-label">POWER SCORE</div>
+                </div>
+                
+                <div id="itemInfo" style="text-align: center; padding: 1rem;">
+                    <h2 id="itemName" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Nintendo Switch Game</h2>
+                    <p id="itemCategory" style="color: var(--text-secondary);">Video Games</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgPrice">$45</div>
+                        <div class="stat-label">Avg. Sale Price</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sellThrough">78%</div>
+                        <div class="stat-label">Sell-Through Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="worthPaying">$28</div>
+                        <div class="stat-label">Worth Paying</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="daysToSell">12</div>
+                        <div class="stat-label">Days to Sell</div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addToInventory()">
+                        Add to Inventory
+                    </button>
+                    <button class="btn btn-secondary" onclick="addToWatchlist()">
+                        Save to Watchlist
+                    </button>
+                    <button class="btn btn-danger" onclick="addToFlopList()">
+                        Add to Flop List
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Inventory Page -->
+        <div class="page" id="inventoryPage">
+            <div class="inventory-grid" id="inventoryGrid">
+                <div class="empty-state">
+                    <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
+                    </svg>
+                    <div class="empty-title">No Items Yet</div>
+                    <div class="empty-text">Start scanning items to build your inventory</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Expenses Page -->
+        <div class="page" id="expensesPage">
+            <div style="padding: 1.5rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Expense Tracking</h2>
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="openExpenseModal()">
+                    Add New Expense
+                </button>
+                <div id="expensesList"></div>
+            </div>
+        </div>
+
+        <!-- More/Settings Page -->
+        <div class="page" id="morePage">
+            <div style="padding: 1.5rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">More</h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <button class="btn btn-secondary" onclick="showPage('upgradePage')">
+                        Upgrade Plan
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSettings()">
+                        Settings
+                    </button>
+                    <button class="btn btn-secondary" onclick="logout()">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrade Page -->
+        <div class="page" id="upgradePage">
+            <div class="tier-container">
+                <h2 style="font-size: 1.75rem; font-weight: 700; text-align: center; margin-bottom: 2rem;">Choose Your Plan</h2>
+                
+                <!-- Freemium Tier -->
+                <div class="tier-card">
+                    <div class="tier-name">Freemium</div>
+                    <div class="tier-price">$0<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            5 scans per day
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Basic inventory tracking
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Power Score analysis
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%;" disabled>Current Plan</button>
+                </div>
+                
+                <!-- Pro Tier -->
+                <div class="tier-card recommended">
+                    <div class="tier-badge">RECOMMENDED</div>
+                    <div class="tier-name">Pro</div>
+                    <div class="tier-price">$6.99<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            2,000 scans per month
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Unlimited inventory & expenses
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Mileage tracking
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            CSV exports
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Add scan packs: 500 for $1.99
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPro()">Upgrade to Pro</button>
+                </div>
+                
+                <!-- Power Pro Tier -->
+                <div class="tier-card">
+                    <div class="tier-name">Power Pro</div>
+                    <div class="tier-price">$9.99<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            3,500 scans per month
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Everything in Pro
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Gold Mine BOLO lists
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Part-Out Calculator
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Advanced PDF reports
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Priority support
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()">Upgrade to Power Pro</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a class="nav-item active" onclick="showPage('mainPage')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            <span>Home</span>
+        </a>
+        <a class="nav-item" onclick="showPage('inventoryPage')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
+            </svg>
+            <span>Inventory</span>
+        </a>
+        <a class="nav-item" onclick="showPage('expensesPage')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <span>Expenses</span>
+        </a>
+        <a class="nav-item" onclick="showPage('morePage')">
+            <svg fill="currentColor" viewBox="0 0 24 24">
+                <circle cx="5" cy="12" r="2"/>
+                <circle cx="12" cy="12" r="2"/>
+                <circle cx="19" cy="12" r="2"/>
+            </svg>
+            <span>More</span>
+        </a>
+    </nav>
+
+    <!-- Scan Pack Purchase Modal -->
+    <div class="modal-overlay" id="scanPackModal">
+        <div class="modal-content scan-pack-modal">
+            <div class="modal-header">
+                <div class="modal-title">Out of Scans!</div>
+                <button class="modal-close" onclick="closeModal('scanPackModal')">×</button>
+            </div>
+            <svg class="scan-pack-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
+            </svg>
+            <div class="scan-pack-title">Add 500 Scans</div>
+            <div class="scan-pack-price">$1.99</div>
+            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">One-time purchase. Use anytime this month.</p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="purchaseScanPack()">Purchase Scan Pack</button>
+            <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="showPage('upgradePage')">View Upgrade Options</button>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // State Management
+        let state = {
+            user: {
+                tier: 'freemium', // freemium, pro, powerPro
+                dailyScansRemaining: 5,
+                monthlyScansRemaining: 150,
+                scanPacks: 0,
+                email: null
+            },
+            inventory: [],
+            expenses: [],
+            watchlist: [],
+            flopList: [],
+            currentScan: null
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadState();
+            updateUI();
+            setupEventListeners();
+        });
+
+        // Page Navigation
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Map pages to nav items
+            const navMap = {
+                'mainPage': 0,
+                'inventoryPage': 1,
+                'expensesPage': 2,
+                'morePage': 3
+            };
+            
+            if (navMap[pageId] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMap[pageId]].classList.add('active');
+            }
+        }
+
+        // Scan Functionality
+        function setupEventListeners() {
+            document.getElementById('scanButton').addEventListener('click', performScan);
+        }
+
+        // Camera and Barcode Scanning
+        async function performScan() {
+            const { user } = state;
+            
+            // Check scan limits
+            if (user.tier === 'freemium' && user.dailyScansRemaining <= 0) {
+                showToast('Daily scan limit reached. Upgrade to Pro for more scans!', 'error');
+                showPage('upgradePage');
+                return;
+            }
+            
+            if (user.tier !== 'freemium' && user.monthlyScansRemaining <= 0 && user.scanPacks <= 0) {
+                document.getElementById('scanPackModal').classList.add('active');
+                return;
+            }
+            
+            // Show scanning options
+            const scanChoice = await showScanOptions();
+            
+            if (scanChoice === 'camera') {
+                startCameraScanning();
+            } else if (scanChoice === 'barcode') {
+                startBarcodeScanning();
+            }
+        }
+        
+        async function showScanOptions() {
+            return new Promise((resolve) => {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay active';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <h3>Choose Scan Method</h3>
+                        <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                            <button class="btn btn-primary" style="flex: 1;" onclick="resolveScan('barcode')">
+                                <svg width="24" height="24" fill="currentColor" style="margin-bottom: 0.5rem;">
+                                    <path d="M2 6h2v12H2zm3 0h1v12H5zm2 0h1v12H7zm3 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2zm3 0h1v12h-1zm2 0h2v12h-2z"/>
+                                </svg>
+                                <div>Scan Barcode</div>
+                            </button>
+                            <button class="btn btn-secondary" style="flex: 1;" onclick="resolveScan('camera')">
+                                <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/>
+                                    <circle cx="12" cy="13" r="4"/>
+                                </svg>
+                                <div>Snap Photo</div>
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem;" onclick="resolveScan(null)">
+                            Cancel
+                        </button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                
+                window.resolveScan = (choice) => {
+                    document.body.removeChild(modal);
+                    resolve(choice);
+                };
+            });
+        }
+        
+        async function startBarcodeScanning() {
+            // Check if we can access camera
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                showToast('Camera not available on this device', 'error');
+                return;
+            }
+            
+            try {
+                // Create video element for camera
+                const video = document.createElement('video');
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                
+                // Create scanning UI
+                const scannerUI = document.createElement('div');
+                scannerUI.className = 'scanner-overlay';
+                scannerUI.innerHTML = `
+                    <div class="scanner-container">
+                        <video id="scanner-video" autoplay playsinline></video>
+                        <div class="scanner-frame">
+                            <div class="scanner-corner top-left"></div>
+                            <div class="scanner-corner top-right"></div>
+                            <div class="scanner-corner bottom-left"></div>
+                            <div class="scanner-corner bottom-right"></div>
+                            <div class="scanner-line"></div>
+                        </div>
+                        <div class="scanner-instructions">
+                            <p>Position barcode within frame</p>
+                            <button class="btn btn-danger" onclick="stopScanning()">Cancel</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(scannerUI);
+                
+                // Get camera stream
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' }
+                });
+                
+                const videoElement = document.getElementById('scanner-video');
+                videoElement.srcObject = stream;
+                
+                // Add styles for scanner
+                const style = document.createElement('style');
+                style.textContent = `
+                    .scanner-overlay {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        bottom: 0;
+                        background: rgba(0,0,0,0.9);
+                        z-index: 3000;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+                    .scanner-container {
+                        position: relative;
+                        width: 100%;
+                        max-width: 500px;
+                    }
+                    #scanner-video {
+                        width: 100%;
+                        border-radius: 20px;
+                    }
+                    .scanner-frame {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        width: 250px;
+                        height: 150px;
+                        border: 2px solid var(--accent-gold);
+                        border-radius: 10px;
+                    }
+                    .scanner-corner {
+                        position: absolute;
+                        width: 20px;
+                        height: 20px;
+                        border: 3px solid var(--accent-gold);
+                    }
+                    .scanner-corner.top-left {
+                        top: -2px;
+                        left: -2px;
+                        border-right: none;
+                        border-bottom: none;
+                    }
+                    .scanner-corner.top-right {
+                        top: -2px;
+                        right: -2px;
+                        border-left: none;
+                        border-bottom: none;
+                    }
+                    .scanner-corner.bottom-left {
+                        bottom: -2px;
+                        left: -2px;
+                        border-right: none;
+                        border-top: none;
+                    }
+                    .scanner-corner.bottom-right {
+                        bottom: -2px;
+                        right: -2px;
+                        border-left: none;
+                        border-top: none;
+                    }
+                    .scanner-line {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 2px;
+                        background: var(--accent-gold);
+                        animation: scan 2s linear infinite;
+                    }
+                    @keyframes scan {
+                        0% { top: 0; }
+                        50% { top: calc(100% - 2px); }
+                        100% { top: 0; }
+                    }
+                    .scanner-instructions {
+                        text-align: center;
+                        margin-top: 2rem;
+                        color: white;
+                    }
+                `;
+                document.head.appendChild(style);
+                
+                // Stop scanning function
+                window.stopScanning = () => {
+                    stream.getTracks().forEach(track => track.stop());
+                    document.body.removeChild(scannerUI);
+                    document.head.removeChild(style);
+                };
+                
+                // Simulate barcode detection (replace with real barcode library)
+                setTimeout(() => {
+                    stopScanning();
+                    // Mock barcode detected
+                    processBarcodeResult('096619119449'); // Mock UPC code
+                }, 3000);
+                
+            } catch (err) {
+                console.error('Camera error:', err);
+                showToast('Could not access camera', 'error');
+            }
+        }
+        
+        async function startCameraScanning() {
+            showToast('Camera photo scanning coming soon!', 'success');
+            // This will use Google Vision API
+        }
+        
+        async function processBarcodeResult(barcode) {
+            // Show loading
+            document.getElementById('scanButton').innerHTML = '<div class="loading-spinner"></div>';
+            
+            // In production, this calls your backend API
+            // For now, use mock data
+            const mockData = {
+                '096619119449': { 
+                    name: 'Nintendo Switch Pro Controller', 
+                    category: 'Gaming', 
+                    powerScore: 88, 
+                    avgPrice: 59.99, 
+                    sellThrough: 82, 
+                    worthPaying: 35, 
+                    daysToSell: 7 
+                },
+                'default': { 
+                    name: 'Unknown Item', 
+                    category: 'General', 
+                    powerScore: 50, 
+                    avgPrice: 20, 
+                    sellThrough: 50, 
+                    worthPaying: 10, 
+                    daysToSell: 14 
+                }
+            };
+            
+            const result = mockData[barcode] || mockData['default'];
+            
+            // Display result
+            setTimeout(() => {
+                displayScanResult(result);
+                
+                // Deduct scan
+                const { user } = state;
+                if (user.tier === 'freemium') {
+                    user.dailyScansRemaining--;
+                } else if (user.monthlyScansRemaining > 0) {
+                    user.monthlyScansRemaining--;
+                } else {
+                    user.scanPacks--;
+                }
+                
+                updateUI();
+                saveState();
+                
+                // Reset button
+                document.getElementById('scanButton').innerHTML = `
+                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
+                    </svg>
+                    <div class="scan-text">SCAN OR SNAP</div>
+                    <div class="scan-subtext">Tap to analyze item</div>
+                `;
+            }, 1500);
+        }
+
+        function displayScanResult(result) {
+            state.currentScan = result;
+            
+            // Update result page
+            document.getElementById('powerScore').textContent = result.powerScore;
+            document.getElementById('itemName').textContent = result.name;
+            document.getElementById('itemCategory').textContent = result.category;
+            document.getElementById('avgPrice').textContent = `${result.avgPrice}`;
+            document.getElementById('sellThrough').textContent = `${result.sellThrough}%`;
+            document.getElementById('worthPaying').textContent = `${result.worthPaying}`;
+            document.getElementById('daysToSell').textContent = result.daysToSell;
+            
+            // Update score circle and color based on score
+            const circle = document.getElementById('scoreCircle');
+            const circumference = 2 * Math.PI * 65;
+            const offset = circumference - (result.powerScore / 100) * circumference;
+            circle.style.strokeDashoffset = offset;
+            
+            // Dynamic badge styling based on Power Score
+            const scoreEl = document.getElementById('powerScore');
+            const scoreContainer = document.querySelector('.power-score-container');
+            
+            if (result.powerScore >= 80) {
+                // Green badge - Excellent (80+)
+                scoreEl.className = 'power-score-value score-excellent';
+                circle.style.stroke = '#4CAF50';
+                scoreContainer.style.backgroundColor = 'rgba(76, 175, 80, 0.1)';
+            } else if (result.powerScore >= 60) {
+                // Blue badge - Good (60-79)
+                scoreEl.className = 'power-score-value score-good';
+                circle.style.stroke = '#2196F3';
+                scoreContainer.style.backgroundColor = 'rgba(33, 150, 243, 0.1)';
+            } else if (result.powerScore >= 40) {
+                // Gold badge - Fair (40-59)
+                scoreEl.className = 'power-score-value score-fair';
+                circle.style.stroke = '#FFD700';
+                scoreContainer.style.backgroundColor = 'rgba(255, 215, 0, 0.1)';
+            } else {
+                // Red badge - Poor (below 40)
+                scoreEl.className = 'power-score-value score-poor';
+                circle.style.stroke = '#f44336';
+                scoreContainer.style.backgroundColor = 'rgba(244, 67, 54, 0.1)';
+            }
+            
+            showPage('resultsPage');
+        }
+
+        // Inventory Management
+        function addToInventory() {
+            if (!state.currentScan) return;
+            
+            const item = {
+                id: Date.now(),
+                ...state.currentScan,
+                status: 'unlisted',
+                dateAdded: new Date().toISOString(),
+                cost: null,
+                soldPrice: null,
+                soldDate: null
+            };
+            
+            state.inventory.push(item);
+            saveState();
+            showToast('Added to inventory!', 'success');
+            updateInventoryDisplay();
+            showPage('inventoryPage');
+        }
+
+        function addToWatchlist() {
+            if (!state.currentScan) return;
+            
+            state.watchlist.push({
+                id: Date.now(),
+                ...state.currentScan,
+                dateAdded: new Date().toISOString()
+            });
+            
+            saveState();
+            showToast('Added to watchlist!', 'success');
+        }
+
+        function addToFlopList() {
+            if (!state.currentScan) return;
+            
+            state.flopList.push({
+                id: Date.now(),
+                name: state.currentScan.name,
+                category: state.currentScan.category,
+                reason: 'Low profit margin',
+                dateAdded: new Date().toISOString()
+            });
+            
+            saveState();
+            showToast('Added to flop list', 'success');
+        }
+
+        function updateInventoryDisplay() {
+            const grid = document.getElementById('inventoryGrid');
+            
+            if (state.inventory.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
+                        </svg>
+                        <div class="empty-title">No Items Yet</div>
+                        <div class="empty-text">Start scanning items to build your inventory</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = state.inventory.map(item => `
+                <div class="inventory-item">
+                    <div class="inventory-item-info">
+                        <h3>${item.name}</h3>
+                        <p>Worth: $${item.worthPaying} | Sells for: $${item.avgPrice}</p>
+                    </div>
+                    <div class="inventory-item-status status-${item.status}">
+                        ${item.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Scan Pack Purchase
+        async function purchaseScanPack() {
+            // This would integrate with Stripe
+            showToast('Processing payment...', 'success');
+            
+            // Simulate payment
+            setTimeout(() => {
+                state.user.scanPacks++;
+                closeModal('scanPackModal');
+                updateUI();
+                saveState();
+                showToast('500 scans added to your account!', 'success');
+                
+                // Celebrate
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }, 2000);
+        }
+
+        // Upgrade Functions
+        async function upgradeToPro() {
+            // Stripe integration would go here
+            showToast('Redirecting to payment...', 'success');
+            
+            // For demo purposes
+            setTimeout(() => {
+                state.user.tier = 'pro';
+                state.user.monthlyScansRemaining = 2000;
+                updateUI();
+                saveState();
+                showToast('Welcome to Pro!', 'success');
+                showPage('mainPage');
+                
+                confetti({
+                    particleCount: 200,
+                    spread: 100,
+                    origin: { y: 0.6 }
+                });
+            }, 2000);
+        }
+
+        async function upgradeToPowerPro() {
+            // Stripe integration would go here
+            showToast('Redirecting to payment...', 'success');
+            
+            setTimeout(() => {
+                state.user.tier = 'powerPro';
+                state.user.monthlyScansRemaining = 3500;
+                updateUI();
+                saveState();
+                showToast('Welcome to Power Pro!', 'success');
+                showPage('mainPage');
+                
+                confetti({
+                    particleCount: 300,
+                    spread: 120,
+                    origin: { y: 0.6 },
+                    colors: ['#FFD700', '#FFA500', '#FF6347']
+                });
+            }, 2000);
+        }
+
+        // UI Updates
+        function updateUI() {
+            const { user } = state;
+            
+            // Update scan counter
+            const scanCountEl = document.getElementById('scanCount');
+            const scanCounter = document.getElementById('scanCounter');
+            
+            if (user.tier === 'freemium') {
+                scanCountEl.textContent = `${user.dailyScansRemaining}/5 Daily`;
+                if (user.dailyScansRemaining <= 1) {
+                    scanCounter.classList.add('low');
+                }
+            } else {
+                scanCountEl.textContent = `${user.monthlyScansRemaining} Scans`;
+                if (user.monthlyScansRemaining <= 50) {
+                    scanCounter.classList.add('low');
+                }
+            }
+            
+            // Update scan pack badge
+            const packBadge = document.getElementById('scanPackBadge');
+            const packCount = document.getElementById('packCount');
+            if (user.scanPacks > 0) {
+                packBadge.style.display = 'block';
+                packCount.textContent = user.scanPacks * 500;
+            } else {
+                packBadge.style.display = 'none';
+            }
+            
+            updateInventoryDisplay();
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function openExpenseModal() {
+            showToast('Expense tracking coming soon!', 'success');
+        }
+
+        function exportData() {
+            const dataStr = JSON.stringify(state, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `scan2flip_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showToast('Data exported successfully!', 'success');
+        }
+
+        function showSettings() {
+            showToast('Settings coming soon!', 'success');
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to sign out?')) {
+                localStorage.clear();
+                location.reload();
+            }
+        }
+
+        // State Persistence
+        function saveState() {
+            localStorage.setItem('scan2flip_state', JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = localStorage.getItem('scan2flip_state');
+            if (saved) {
+                state = JSON.parse(saved);
+            }
+            
+            // Reset daily scans if new day
+            const lastReset = localStorage.getItem('scan2flip_last_reset');
+            const today = new Date().toDateString();
+            if (lastReset !== today && state.user.tier === 'freemium') {
+                state.user.dailyScansRemaining = 5;
+                localStorage.setItem('scan2flip_last_reset', today);
+                saveState();
+            }
+        }
+
+        // Service Worker Registration (for PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').then(
+                    registration => console.log('ServiceWorker registered'),
+                    err => console.log('ServiceWorker registration failed')
+                );
+            });
+        }
+    </script>
+</body>
+</html>

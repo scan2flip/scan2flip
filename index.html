@@ -5,10 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <meta name="theme-color" content="#0d1f2d">
     <title>Scan2Flip - Scan It. Flip It. Profit.</title>
+    
+    <!-- Favicon using your main logo -->
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icons/icon-192.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Scan2Flip">
+    
+    <!-- Open Graph for social sharing -->
+    <meta property="og:title" content="Scan2Flip - Instant Profit Calculator for Resellers">
+    <meta property="og:description" content="Scan any item and instantly know if it's worth flipping. Power Score™ technology shows you exactly what to buy and what to skip.">
+    <meta property="og:image" content="https://scan2flip.vercel.app/icons/scan2flip-logo.png">
+    <meta property="og:url" content="https://scan2flip.vercel.app">
+    <meta property="og:type" content="website">
     
     <!-- Preconnect to external services -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -85,24 +96,6 @@
             gap: 0.75rem;
         }
         
-        .logo-shield {
-            width: 48px;
-            height: 48px;
-            background: linear-gradient(135deg, var(--accent-gold), #FFA500);
-            clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-        }
-        
-        .logo-shield::before {
-            content: "S2F";
-            font-size: 14px;
-            font-weight: 800;
-            color: var(--bg-primary);
-        }
-        
         .logo-text {
             font-size: 1.5rem;
             font-weight: 700;
@@ -170,7 +163,7 @@
             color: var(--accent-gold);
         }
         
-        .nav-item svg {
+        .nav-item img {
             width: 24px;
             height: 24px;
         }
@@ -693,6 +686,36 @@
             margin: 1rem 0;
         }
         
+        /* Filter Tabs */
+        .filter-tab {
+            padding: 0.5rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--bg-tertiary);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+        }
+        
+        .filter-tab.active {
+            background: var(--accent-gold);
+            color: var(--bg-primary);
+            border-color: var(--accent-gold);
+        }
+        
+        .filter-tab.gold {
+            border-color: #FFD700;
+        }
+        
+        .filter-tab:hover {
+            transform: translateY(-1px);
+        }
+        
         /* Loading State */
         .loading-spinner {
             width: 40px;
@@ -768,7 +791,7 @@
         <!-- Main Header -->
         <header class="app-header">
             <div class="logo-container">
-                <div class="logo-shield"></div>
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
                 <div class="logo-text">SCAN2FLIP</div>
             </div>
             <div class="header-stats">
@@ -901,14 +924,108 @@
             </div>
         </div>
 
-        <!-- Expenses Page -->
+        <!-- Expenses Page with Mileage Tracker -->
         <div class="page" id="expensesPage">
             <div style="padding: 1.5rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">Expense Tracking</h2>
-                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="openExpenseModal()">
-                    Add New Expense
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <img src="/icons/dollar.png" alt="Expenses" style="width: 32px; height: 32px;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Expense Tracking</h2>
+                </div>
+                
+                <!-- Mileage Tracker Section -->
+                <div class="mileage-section" style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; color: var(--accent-gold);">
+                        <img src="/icons/mileage.png" alt="Mileage" style="width: 28px; height: 28px;">
+                        Mileage Tracker
+                    </h3>
+                    
+                    <!-- Quick Add Mileage -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <button class="btn btn-primary" onclick="startMileageTracking()">
+                            📍 Start Trip
+                        </button>
+                        <button class="btn btn-success" onclick="quickAddMileage()">
+                            ➕ Quick Add
+                        </button>
+                    </div>
+                    
+                    <!-- Current Month Stats -->
+                    <div class="stats-grid" style="margin: 1rem 0;">
+                        <div class="stat-card">
+                            <div class="stat-value" id="monthlyMiles">0</div>
+                            <div class="stat-label">Miles This Month</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="mileageDeduction">$0</div>
+                            <div class="stat-label">Tax Deduction</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Active Trip Tracker -->
+                    <div id="activeTripTracker" style="display: none; background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="color: var(--accent-green); font-weight: 600;">🔴 TRACKING ACTIVE</div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.25rem;">
+                                    Started: <span id="tripStartTime"></span>
+                                </div>
+                                <div style="color: var(--text-secondary); font-size: 0.9rem;">
+                                    From: <span id="tripStartLocation"></span>
+                                </div>
+                            </div>
+                            <button class="btn btn-danger" onclick="endMileageTracking()">
+                                End Trip
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Trips -->
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Recent Trips</h3>
+                    <div id="recentTrips"></div>
+                </div>
+                
+                <!-- Other Expenses -->
+                <button class="btn btn-secondary" style="width: 100%;" onclick="openExpenseModal()">
+                    Add Other Expense
                 </button>
-                <div id="expensesList"></div>
+                <div id="expensesList" style="margin-top: 1.5rem;"></div>
+            </div>
+        </div>
+
+        <!-- Power Score History Page -->
+        <div class="page" id="powerScorePage">
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <img src="/icons/powerscore.png" alt="Power Score" style="width: 32px; height: 32px;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Power Score History</h2>
+                </div>
+                
+                <!-- Filter Tabs -->
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem; overflow-x: auto;">
+                    <button class="filter-tab active" onclick="filterScores('all')">All</button>
+                    <button class="filter-tab gold" onclick="filterScores('gold')">
+                        <img src="/icons/goldmine.png" style="width: 16px; height: 16px; margin-right: 4px;">
+                        Gold (90+)
+                    </button>
+                    <button class="filter-tab" onclick="filterScores('green')">Green (70-89)</button>
+                    <button class="filter-tab" onclick="filterScores('blue')">Blue (50-69)</button>
+                    <button class="filter-tab" onclick="filterScores('red')">Red (<50)</button>
+                </div>
+                
+                <!-- Gold Mine Alert for Power Pro -->
+                <div id="goldMineAlert" style="display: none; background: linear-gradient(135deg, #FFD700, #FFA500); border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <img src="/icons/goldmine.png" alt="Gold Mine" style="width: 24px; height: 24px;">
+                        <span style="font-weight: 700;">Gold Mine™ Database</span>
+                    </div>
+                    <p style="margin-top: 0.5rem; font-size: 0.9rem;">Access crowdsourced gold finds from all Power Pro users!</p>
+                    <button class="btn btn-secondary" style="margin-top: 0.5rem;" onclick="showGoldMineDatabase()">View Gold Mine</button>
+                </div>
+                
+                <!-- Scan History List -->
+                <div id="scanHistoryList"></div>
             </div>
         </div>
 
@@ -1032,7 +1149,7 @@
                             <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
                             </svg>
-                            Part-Out Calculator
+                            Part-Out Calculator™
                         </li>
                         <li>
                             <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
@@ -1056,29 +1173,23 @@
     <!-- Bottom Navigation -->
     <nav class="bottom-nav">
         <a class="nav-item active" onclick="showPage('mainPage')">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-            </svg>
-            <span>Home</span>
+            <img src="/icons/barcode-camera.png" alt="Scan" style="width: 24px; height: 24px;">
+            <span>Scan</span>
         </a>
         <a class="nav-item" onclick="showPage('inventoryPage')">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
-            </svg>
+            <img src="/icons/inventory.png" alt="Inventory" style="width: 24px; height: 24px;">
             <span>Inventory</span>
         </a>
         <a class="nav-item" onclick="showPage('expensesPage')">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
+            <img src="/icons/dollar.png" alt="Expenses" style="width: 24px; height: 24px;">
             <span>Expenses</span>
         </a>
+        <a class="nav-item" onclick="showPage('powerScorePage')">
+            <img src="/icons/powerscore.png" alt="History" style="width: 24px; height: 24px;">
+            <span>History</span>
+        </a>
         <a class="nav-item" onclick="showPage('morePage')">
-            <svg fill="currentColor" viewBox="0 0 24 24">
-                <circle cx="5" cy="12" r="2"/>
-                <circle cx="12" cy="12" r="2"/>
-                <circle cx="19" cy="12" r="2"/>
-            </svg>
+            <img src="/icons/coins.png" alt="More" style="width: 24px; height: 24px;">
             <span>More</span>
         </a>
     </nav>
@@ -1118,14 +1229,27 @@
             expenses: [],
             watchlist: [],
             flopList: [],
+            mileageTrips: [],
+            scanHistory: [],
             currentScan: null
         };
+
+        // Mileage Tracking Variables
+        let activeTrip = null;
+        const IRS_MILEAGE_RATE = 0.655; // 2024 IRS standard mileage rate
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             loadState();
             updateUI();
             setupEventListeners();
+            if (document.getElementById('monthlyMiles')) {
+                updateMileageStats();
+                displayRecentTrips();
+            }
+            if (document.getElementById('scanHistoryList')) {
+                displayScanHistory();
+            }
         });
 
         // Page Navigation
@@ -1145,7 +1269,8 @@
                 'mainPage': 0,
                 'inventoryPage': 1,
                 'expensesPage': 2,
-                'morePage': 3
+                'powerScorePage': 3,
+                'morePage': 4
             };
             
             if (navMap[pageId] !== undefined) {
@@ -1221,153 +1346,7 @@
         }
         
         async function startBarcodeScanning() {
-            // Check if we can access camera
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                // No camera available - show manual entry for testing
-                showManualBarcodeEntry();
-                return;
-            }
-            
-            try {
-                // Test camera availability
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: 'environment' }
-                }).catch(err => null);
-                
-                if (!stream) {
-                    // Camera denied or not available
-                    showManualBarcodeEntry();
-                    return;
-                }
-                
-                // Create scanning UI
-                const scannerUI = document.createElement('div');
-                scannerUI.className = 'scanner-overlay';
-                scannerUI.innerHTML = `
-                    <div class="scanner-container">
-                        <video id="scanner-video" autoplay playsinline></video>
-                        <div class="scanner-frame">
-                            <div class="scanner-corner top-left"></div>
-                            <div class="scanner-corner top-right"></div>
-                            <div class="scanner-corner bottom-left"></div>
-                            <div class="scanner-corner bottom-right"></div>
-                            <div class="scanner-line"></div>
-                        </div>
-                        <div class="scanner-instructions">
-                            <p>Position barcode within frame</p>
-                            <button class="btn btn-danger" onclick="stopScanning()">Cancel</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(scannerUI);
-                
-                const videoElement = document.getElementById('scanner-video');
-                videoElement.srcObject = stream;
-                
-                // Add styles for scanner
-                const style = document.createElement('style');
-                style.textContent = `
-                    .scanner-overlay {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        bottom: 0;
-                        background: rgba(0,0,0,0.9);
-                        z-index: 3000;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-                    .scanner-container {
-                        position: relative;
-                        width: 100%;
-                        max-width: 500px;
-                    }
-                    #scanner-video {
-                        width: 100%;
-                        border-radius: 20px;
-                    }
-                    .scanner-frame {
-                        position: absolute;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        width: 250px;
-                        height: 150px;
-                        border: 2px solid var(--accent-gold);
-                        border-radius: 10px;
-                    }
-                    .scanner-corner {
-                        position: absolute;
-                        width: 20px;
-                        height: 20px;
-                        border: 3px solid var(--accent-gold);
-                    }
-                    .scanner-corner.top-left {
-                        top: -2px;
-                        left: -2px;
-                        border-right: none;
-                        border-bottom: none;
-                    }
-                    .scanner-corner.top-right {
-                        top: -2px;
-                        right: -2px;
-                        border-left: none;
-                        border-bottom: none;
-                    }
-                    .scanner-corner.bottom-left {
-                        bottom: -2px;
-                        left: -2px;
-                        border-right: none;
-                        border-top: none;
-                    }
-                    .scanner-corner.bottom-right {
-                        bottom: -2px;
-                        right: -2px;
-                        border-left: none;
-                        border-top: none;
-                    }
-                    .scanner-line {
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        right: 0;
-                        height: 2px;
-                        background: var(--accent-gold);
-                        animation: scan 2s linear infinite;
-                    }
-                    @keyframes scan {
-                        0% { top: 0; }
-                        50% { top: calc(100% - 2px); }
-                        100% { top: 0; }
-                    }
-                    .scanner-instructions {
-                        text-align: center;
-                        margin-top: 2rem;
-                        color: white;
-                    }
-                `;
-                document.head.appendChild(style);
-                
-                // Stop scanning function
-                window.stopScanning = () => {
-                    stream.getTracks().forEach(track => track.stop());
-                    document.body.removeChild(scannerUI);
-                    document.head.removeChild(style);
-                };
-                
-                // Simulate barcode detection (replace with real barcode library)
-                setTimeout(() => {
-                    stopScanning();
-                    // Mock barcode detected
-                    processBarcodeResult('036000291452'); // VCR with valuable parts
-                }, 3000);
-                
-            } catch (err) {
-                console.error('Camera error:', err);
-                showManualBarcodeEntry();
-            }
+            showManualBarcodeEntry();
         }
         
         function showManualBarcodeEntry() {
@@ -1375,8 +1354,8 @@
             modal.className = 'modal-overlay active';
             modal.innerHTML = `
                 <div class="modal-content">
-                    <h3>Enter Barcode Manually</h3>
-                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Camera not available. Enter UPC/ISBN code:</p>
+                    <h3>Enter Barcode</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 1rem;">Enter UPC/ISBN code:</p>
                     <input type="text" id="manual-barcode" class="form-input" placeholder="e.g. 096619119449" value="036000291452">
                     <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
                         <button class="btn btn-secondary" style="flex: 1;" onclick="cancelManualEntry()">Cancel</button>
@@ -1386,7 +1365,6 @@
             `;
             document.body.appendChild(modal);
             
-            // Focus input
             setTimeout(() => {
                 document.getElementById('manual-barcode').focus();
             }, 100);
@@ -1406,15 +1384,13 @@
         
         async function startCameraScanning() {
             showToast('Camera photo scanning coming soon!', 'success');
-            // This will use Google Vision API
         }
         
         async function processBarcodeResult(barcode) {
             // Show loading
             document.getElementById('scanButton').innerHTML = '<div class="loading-spinner"></div>';
             
-            // In production, this calls your backend API
-            // For now, use mock data
+            // Mock data for testing
             const mockData = {
                 '096619119449': { 
                     name: 'Nintendo Switch Pro Controller', 
@@ -1498,6 +1474,14 @@
         function displayScanResult(result) {
             state.currentScan = result;
             
+            // Save to scan history
+            if (!state.scanHistory) state.scanHistory = [];
+            state.scanHistory.push({
+                ...result,
+                timestamp: Date.now()
+            });
+            saveState();
+            
             // Update result page
             document.getElementById('powerScore').textContent = result.powerScore;
             document.getElementById('itemName').textContent = result.name;
@@ -1509,73 +1493,105 @@
             
             // Check for part-out opportunities
             const partOutSection = document.getElementById('partOutSection');
+            
             if (result.partOut && result.partOut.length > 0) {
-                // Show part-out section
-                partOutSection.style.display = 'block';
-                
-                // Calculate total part-out value
-                let totalValue = 0;
-                let hasGoldPart = false;
-                
-                // Generate part HTML
-                const partOutList = document.getElementById('partOutList');
-                partOutList.innerHTML = result.partOut.map(part => {
-                    totalValue += part.value;
+                // Check if user has Power Pro access
+                if (state.user.tier === 'powerPro') {
+                    // POWER PRO USERS: Show full part-out analysis
+                    partOutSection.style.display = 'block';
                     
-                    // Determine badge color
-                    let badgeClass = 'poor';
-                    let badgeColor = '#f44336';
-                    if (part.powerScore >= 90) {
-                        badgeClass = 'gold-mine';
-                        badgeColor = '#FFD700';
-                        hasGoldPart = true;
-                    } else if (part.powerScore >= 70) {
-                        badgeClass = 'excellent';
-                        badgeColor = '#4CAF50';
-                    } else if (part.powerScore >= 50) {
-                        badgeClass = 'good';
-                        badgeColor = '#2196F3';
-                    }
+                    // Calculate total part-out value
+                    let totalValue = 0;
+                    let hasGoldPart = false;
                     
-                    return `
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-primary); border-radius: 8px;">
-                            <div style="flex: 1;">
-                                <div style="font-weight: 600; margin-bottom: 0.25rem;">${part.name}</div>
-                                <div style="font-size: 0.85rem; color: var(--text-secondary);">
-                                    Sells ${part.sellThrough}% of the time
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 1rem;">
-                                <div style="text-align: center;">
-                                    <div style="width: 50px; height: 50px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white;">
-                                        ${part.powerScore}
+                    // Generate part HTML
+                    const partOutList = document.getElementById('partOutList');
+                    partOutList.innerHTML = result.partOut.map(part => {
+                        totalValue += part.value;
+                        
+                        // Determine badge color
+                        let badgeClass = 'poor';
+                        let badgeColor = '#f44336';
+                        if (part.powerScore >= 90) {
+                            badgeClass = 'gold-mine';
+                            badgeColor = '#FFD700';
+                            hasGoldPart = true;
+                        } else if (part.powerScore >= 70) {
+                            badgeClass = 'excellent';
+                            badgeColor = '#4CAF50';
+                        } else if (part.powerScore >= 50) {
+                            badgeClass = 'good';
+                            badgeColor = '#2196F3';
+                        }
+                        
+                        return `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-primary); border-radius: 8px;">
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${part.name}</div>
+                                    <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                        Sells ${part.sellThrough}% of the time
                                     </div>
                                 </div>
-                                <div style="font-weight: 700; font-size: 1.1rem; color: ${badgeColor};">
-                                    ${part.value}
+                                <div style="display: flex; align-items: center; gap: 1rem;">
+                                    <div style="text-align: center;">
+                                        <div style="width: 50px; height: 50px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white;">
+                                            ${part.powerScore}
+                                        </div>
+                                    </div>
+                                    <div style="font-weight: 700; font-size: 1.1rem; color: ${badgeColor};">
+                                        ${part.value}
+                                    </div>
                                 </div>
+                            </div>
+                        `;
+                    }).join('');
+                    
+                    // Update total value
+                    document.getElementById('totalPartOutValue').textContent = `${totalValue}`;
+                    
+                    // If has gold part, show special notification
+                    if (hasGoldPart && result.powerScore < 50) {
+                        setTimeout(() => {
+                            showToast('🏆 HIDDEN GOLD FOUND! Check the part-out values!', 'success');
+                            // Mini confetti for finding hidden gold
+                            if (typeof confetti !== 'undefined') {
+                                confetti({
+                                    particleCount: 50,
+                                    spread: 45,
+                                    origin: { y: 0.3 },
+                                    colors: ['#FFD700', '#FFA500']
+                                });
+                            }
+                        }, 1000);
+                    }
+                    
+                } else {
+                    // FREE/PRO USERS: Show locked part-out teaser
+                    partOutSection.innerHTML = `
+                        <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)); padding: 2px; border-radius: 12px; margin-top: 1.5rem;">
+                            <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem; text-align: center;">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;">
+                                    <img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px; opacity: 0.5;">
+                                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary);">
+                                        Part-Out Calculator™
+                                    </h3>
+                                </div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">
+                                    This item has ${result.partOut.length} valuable parts that could be worth more when sold separately!
+                                </p>
+                                <div style="font-size: 2rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 1rem;">
+                                    💰 Hidden Value Detected
+                                </div>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">
+                                    Unlock the Part-Out Calculator with Power Pro to see exact values and maximize your profits
+                                </p>
+                                <button class="btn btn-primary" style="width: 100%;" onclick="showPartOutUpgrade()">
+                                    🔓 Upgrade to Power Pro
+                                </button>
                             </div>
                         </div>
                     `;
-                }).join('');
-                
-                // Update total value
-                document.getElementById('totalPartOutValue').textContent = `${totalValue}`;
-                
-                // If has gold part, show special notification
-                if (hasGoldPart && result.powerScore < 50) {
-                    setTimeout(() => {
-                        showToast('🏆 HIDDEN GOLD FOUND! Check the part-out values!', 'success');
-                        // Mini confetti for finding hidden gold
-                        if (typeof confetti !== 'undefined') {
-                            confetti({
-                                particleCount: 50,
-                                spread: 45,
-                                origin: { y: 0.3 },
-                                colors: ['#FFD700', '#FFA500']
-                            });
-                        }
-                    }, 1000);
+                    partOutSection.style.display = 'block';
                 }
             } else {
                 partOutSection.style.display = 'none';
@@ -1584,6 +1600,84 @@
             // Update score badge and color based on score
             const badge = document.getElementById('powerScoreBadge');
             const scoreContainer = document.querySelector('.power-score-container');
+            
+            // Add Parts Alert Indicator if parts detected
+            if (result.partOut && result.partOut.length > 0) {
+                // Find the highest part score to determine wrench color
+                const bestPartScore = Math.max(...result.partOut.map(p => p.powerScore));
+                let wrenchColor = '#f44336'; // red default
+                let pulseAnimation = '';
+                
+                if (bestPartScore >= 90) {
+                    wrenchColor = '#FFD700'; // gold
+                    pulseAnimation = 'goldPulse';
+                } else if (bestPartScore >= 70) {
+                    wrenchColor = '#4CAF50'; // green
+                    pulseAnimation = 'pulse';
+                } else if (bestPartScore >= 50) {
+                    wrenchColor = '#2196F3'; // blue
+                    pulseAnimation = 'pulse';
+                }
+                
+                // Add wrench indicator to power score container
+                const partsIndicator = document.getElementById('partsIndicator') || document.createElement('div');
+                partsIndicator.id = 'partsIndicator';
+                partsIndicator.style.cssText = `
+                    position: absolute;
+                    top: -10px;
+                    right: -10px;
+                    width: 40px;
+                    height: 40px;
+                    background: ${wrenchColor};
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    cursor: ${state.user.tier === 'powerPro' ? 'pointer' : 'not-allowed'};
+                    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+                    animation: ${pulseAnimation} 2s infinite;
+                    z-index: 10;
+                `;
+                
+                partsIndicator.innerHTML = `
+                    <svg width="24" height="24" fill="white" viewBox="0 0 24 24">
+                        <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
+                    </svg>
+                `;
+                
+                // Add click handler based on tier
+                partsIndicator.onclick = () => {
+                    if (state.user.tier === 'powerPro') {
+                        // Power Pro: Show detailed parts breakdown
+                        showPartsBreakdown(result.partOut);
+                    } else {
+                        // Free/Pro: Show upgrade prompt
+                        showPartOutUpgrade();
+                    }
+                };
+                
+                // Add tooltip
+                partsIndicator.title = state.user.tier === 'powerPro' 
+                    ? `Click to see ${result.partOut.length} valuable parts!` 
+                    : `${result.partOut.length} valuable parts detected - Upgrade to Power Pro to reveal!`;
+                
+                // Append to power score container
+                const circleContainer = document.querySelector('.power-score-circle');
+                circleContainer.style.position = 'relative';
+                circleContainer.appendChild(partsIndicator);
+                
+                // Show notification about parts
+                if (bestPartScore >= 90 && result.powerScore < 50) {
+                    // Hidden gold scenario - trash item with gold parts!
+                    setTimeout(() => {
+                        if (state.user.tier === 'powerPro') {
+                            showToast('🔧 HIDDEN GOLD IN PARTS! Click the wrench to see details!', 'success');
+                        } else {
+                            showToast('🔧 Valuable parts detected! Upgrade to see what they\'re worth!', 'success');
+                        }
+                    }, 1000);
+                }
+            }
             
             if (result.powerScore >= 90) {
                 // GOLD MINE! - 90+ scores
@@ -1659,6 +1753,161 @@
             saveState();
         }
 
+        // Part-Out Functions (Power Pro)
+        function showPartOutUpgrade() {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 500px;">
+                    <div class="modal-header">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px;">
+                            <div class="modal-title">Unlock Part-Out Calculator™</div>
+                        </div>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    
+                    <div style="text-align: center; padding: 1rem 0;">
+                        <div style="font-size: 3rem; margin-bottom: 1rem;">💎</div>
+                        <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem;">
+                            Turn Trash Into Treasure!
+                        </h3>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            The Part-Out Calculator reveals hidden gold in items others would skip. 
+                            One VCR remote can be worth more than the entire unit!
+                        </p>
+                    </div>
+                    
+                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                        <h4 style="font-weight: 600; margin-bottom: 1rem;">Power Pro Includes:</h4>
+                        <ul style="list-style: none; padding: 0;">
+                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="color: var(--accent-green);">✓</span>
+                                Part-Out Calculator with exact values
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="color: var(--accent-green);">✓</span>
+                                Gold Mine™ crowdsourced database
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="color: var(--accent-green);">✓</span>
+                                3,500 scans per month
+                            </li>
+                            <li style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.75rem;">
+                                <span style="color: var(--accent-green);">✓</span>
+                                Advanced PDF reports
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div style="text-align: center; margin-bottom: 1rem;">
+                        <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent-gold);">
+                            $9.99<span style="font-size: 1rem; font-weight: 400; color: var(--text-secondary);">/month</span>
+                        </div>
+                        <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                            Pays for itself with one part-out find!
+                        </p>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()">
+                        Upgrade to Power Pro Now
+                    </button>
+                    <button class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem;" onclick="this.closest('.modal-overlay').remove()">
+                        Maybe Later
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        // Function to show detailed parts breakdown (Power Pro only)
+        function showPartsBreakdown(parts) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            
+            // Calculate total value
+            const totalValue = parts.reduce((sum, part) => sum + part.value, 0);
+            
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="32" height="32" fill="#FFD700" viewBox="0 0 24 24">
+                                <path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/>
+                            </svg>
+                            <div class="modal-title">Part-Out Analysis</div>
+                        </div>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)); border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 0.9rem; color: var(--text-secondary);">Total Part-Out Value</div>
+                            <div style="font-size: 2.5rem; font-weight: 800; color: #FFD700;">${totalValue}</div>
+                        </div>
+                    </div>
+                    
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${parts.map(part => {
+                            let badgeColor = '#f44336';
+                            if (part.powerScore >= 90) {
+                                badgeColor = '#FFD700';
+                            } else if (part.powerScore >= 70) {
+                                badgeColor = '#4CAF50';
+                            } else if (part.powerScore >= 50) {
+                                badgeColor = '#2196F3';
+                            }
+                            
+                            return `
+                                <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${badgeColor};">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="flex: 1;">
+                                            <div style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;">${part.name}</div>
+                                            <div style="display: flex; gap: 1rem; font-size: 0.85rem; color: var(--text-secondary);">
+                                                <span>Sells ${part.sellThrough}% of the time</span>
+                                                <span>• Avg ${Math.round(30 / (part.sellThrough / 100))} days to sell</span>
+                                            </div>
+                                        </div>
+                                        <div style="display: flex; align-items: center; gap: 1rem;">
+                                            <div style="text-align: center;">
+                                                <div style="width: 60px; height: 60px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.5rem; color: white;">
+                                                    ${part.powerScore}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div style="font-weight: 700; font-size: 1.25rem; color: ${badgeColor};">
+                                                    ${part.value}
+                                                </div>
+                                                <div style="font-size: 0.75rem; color: var(--text-secondary);">
+                                                    per unit
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                    
+                    <div style="background: var(--bg-primary); border-radius: 12px; padding: 1rem; margin-top: 1rem;">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #FFD700;">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"/>
+                            </svg>
+                            <span style="font-size: 0.9rem; font-weight: 600;">
+                                Pro Tip: List parts separately on eBay for maximum profit!
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn btn-success" style="width: 100%; margin-top: 1rem;" onclick="this.closest('.modal-overlay').remove()">
+                        Got It! Time to Buy This Item!
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
         // Inventory Management
         function addToInventory() {
             if (!state.currentScan) return;
@@ -1732,6 +1981,407 @@
                     </div>
                     <div class="inventory-item-status status-${item.status}">
                         ${item.status}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mileage Tracking Functions
+        function startMileageTracking() {
+            if (state.user.tier === 'freemium') {
+                showToast('Mileage tracking is a Pro feature. Upgrade to unlock!', 'error');
+                showPage('upgradePage');
+                return;
+            }
+            
+            if (activeTrip) {
+                showToast('Trip already in progress!', 'error');
+                return;
+            }
+            
+            // Get current location if available
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        activeTrip = {
+                            startTime: new Date(),
+                            startLat: position.coords.latitude,
+                            startLng: position.coords.longitude,
+                            startLocation: 'Current Location'
+                        };
+                        updateActiveTripUI();
+                    },
+                    (error) => {
+                        // Fallback if location denied
+                        activeTrip = {
+                            startTime: new Date(),
+                            startLocation: 'Manual Entry'
+                        };
+                        updateActiveTripUI();
+                    }
+                );
+            } else {
+                activeTrip = {
+                    startTime: new Date(),
+                    startLocation: 'Manual Entry'
+                };
+                updateActiveTripUI();
+            }
+            
+            showToast('Trip tracking started!', 'success');
+        }
+
+        function endMileageTracking() {
+            if (!activeTrip) return;
+            
+            // Get end location and calculate distance
+            if (navigator.geolocation && activeTrip.startLat) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const distance = calculateDistance(
+                            activeTrip.startLat,
+                            activeTrip.startLng,
+                            position.coords.latitude,
+                            position.coords.longitude
+                        );
+                        
+                        saveMileageTrip(distance, 'GPS Tracked');
+                    },
+                    (error) => {
+                        // Manual entry if GPS fails
+                        promptForMileage();
+                    }
+                );
+            } else {
+                promptForMileage();
+            }
+        }
+
+        function promptForMileage() {
+            const miles = prompt('Enter miles driven for this trip:');
+            if (miles && !isNaN(miles)) {
+                saveMileageTrip(parseFloat(miles), 'Manual Entry');
+            }
+        }
+
+        function saveMileageTrip(miles, method) {
+            if (!state.mileageTrips) state.mileageTrips = [];
+            
+            const trip = {
+                id: Date.now(),
+                date: activeTrip.startTime.toISOString(),
+                miles: miles,
+                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
+                method: method,
+                notes: ''
+            };
+            
+            state.mileageTrips.push(trip);
+            activeTrip = null;
+            
+            updateActiveTripUI();
+            updateMileageStats();
+            displayRecentTrips();
+            saveState();
+            
+            showToast(`Trip saved: ${miles} miles (${trip.deduction} deduction)`, 'success');
+        }
+
+        function quickAddMileage() {
+            if (state.user.tier === 'freemium') {
+                showToast('Mileage tracking is a Pro feature. Upgrade to unlock!', 'error');
+                showPage('upgradePage');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">Quick Add Mileage</div>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" id="quick-miles-date" class="form-input" value="${new Date().toISOString().split('T')[0]}">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Miles Driven</label>
+                        <input type="number" id="quick-miles-amount" class="form-input" placeholder="e.g. 25.5" step="0.1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trip Purpose (Optional)</label>
+                        <input type="text" id="quick-miles-notes" class="form-input" placeholder="e.g. Goodwill + estate sales">
+                    </div>
+                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span>Tax Deduction:</span>
+                            <span id="quick-deduction" style="color: var(--accent-green); font-weight: 600;">$0.00</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="saveQuickMileage()">Save Trip</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            // Calculate deduction as user types
+            document.getElementById('quick-miles-amount').addEventListener('input', (e) => {
+                const miles = parseFloat(e.target.value) || 0;
+                document.getElementById('quick-deduction').textContent = `${(miles * IRS_MILEAGE_RATE).toFixed(2)}`;
+            });
+        }
+
+        function saveQuickMileage() {
+            const date = document.getElementById('quick-miles-date').value;
+            const miles = parseFloat(document.getElementById('quick-miles-amount').value);
+            const notes = document.getElementById('quick-miles-notes').value;
+            
+            if (!miles || miles <= 0) {
+                showToast('Please enter valid mileage', 'error');
+                return;
+            }
+            
+            if (!state.mileageTrips) state.mileageTrips = [];
+            
+            const trip = {
+                id: Date.now(),
+                date: new Date(date).toISOString(),
+                miles: miles,
+                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
+                method: 'Manual Entry',
+                notes: notes
+            };
+            
+            state.mileageTrips.push(trip);
+            saveState();
+            
+            document.querySelector('.modal-overlay').remove();
+            updateMileageStats();
+            displayRecentTrips();
+            showToast(`Added ${miles} miles (${trip.deduction} deduction)`, 'success');
+        }
+
+        function updateActiveTripUI() {
+            const tracker = document.getElementById('activeTripTracker');
+            if (activeTrip) {
+                tracker.style.display = 'block';
+                document.getElementById('tripStartTime').textContent = activeTrip.startTime.toLocaleTimeString();
+                document.getElementById('tripStartLocation').textContent = activeTrip.startLocation;
+            } else {
+                tracker.style.display = 'none';
+            }
+        }
+
+        function updateMileageStats() {
+            if (!state.mileageTrips) state.mileageTrips = [];
+            
+            // Calculate current month stats
+            const now = new Date();
+            const currentMonth = now.getMonth();
+            const currentYear = now.getFullYear();
+            
+            const monthTrips = state.mileageTrips.filter(trip => {
+                const tripDate = new Date(trip.date);
+                return tripDate.getMonth() === currentMonth && tripDate.getFullYear() === currentYear;
+            });
+            
+            const totalMiles = monthTrips.reduce((sum, trip) => sum + trip.miles, 0);
+            const totalDeduction = totalMiles * IRS_MILEAGE_RATE;
+            
+            document.getElementById('monthlyMiles').textContent = totalMiles.toFixed(1);
+            document.getElementById('mileageDeduction').textContent = `${totalDeduction.toFixed(2)}`;
+        }
+
+        function displayRecentTrips() {
+            const container = document.getElementById('recentTrips');
+            if (!state.mileageTrips || state.mileageTrips.length === 0) {
+                container.innerHTML = '<p style="color: var(--text-secondary);">No trips recorded yet</p>';
+                return;
+            }
+            
+            // Show last 5 trips
+            const recentTrips = state.mileageTrips.slice(-5).reverse();
+            container.innerHTML = recentTrips.map(trip => `
+                <div style="background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">${trip.miles} miles</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                ${new Date(trip.date).toLocaleDateString()}
+                                ${trip.notes ? ` - ${trip.notes}` : ''}
+                            </div>
+                        </div>
+                        <div style="color: var(--accent-green); font-weight: 600;">
+                            ${trip.deduction}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function calculateDistance(lat1, lng1, lat2, lng2) {
+            // Haversine formula for distance between two points
+            const R = 3959; // Radius of Earth in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLng = (lng2 - lng1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Power Score History Functions
+        function displayScanHistory() {
+            if (!state.scanHistory) state.scanHistory = [];
+            
+            const container = document.getElementById('scanHistoryList');
+            
+            // Show Gold Mine alert for Power Pro users
+            if (state.user.tier === 'powerPro') {
+                document.getElementById('goldMineAlert').style.display = 'block';
+            }
+            
+            if (state.scanHistory.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/icons/powerscore.png" alt="No scans" style="width: 60px; height: 60px; opacity: 0.3;">
+                        <div class="empty-title">No Scans Yet</div>
+                        <div class="empty-text">Your Power Score history will appear here</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Group scans by date
+            const grouped = {};
+            state.scanHistory.forEach(scan => {
+                const date = new Date(scan.timestamp).toDateString();
+                if (!grouped[date]) grouped[date] = [];
+                grouped[date].push(scan);
+            });
+            
+            // Display grouped scans
+            container.innerHTML = Object.entries(grouped).map(([date, scans]) => `
+                <div style="margin-bottom: 1.5rem;">
+                    <h4 style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem;">${date}</h4>
+                    ${scans.map(scan => {
+                        let scoreColor = '#f44336'; // red
+                        let scoreIcon = '';
+                        if (scan.powerScore >= 90) {
+                            scoreColor = '#FFD700';
+                            scoreIcon = '<img src="/icons/goldmine.png" style="width: 20px; height: 20px; margin-left: 0.5rem;">';
+                        } else if (scan.powerScore >= 70) {
+                            scoreColor = '#4CAF50';
+                        } else if (scan.powerScore >= 50) {
+                            scoreColor = '#2196F3';
+                        }
+                        
+                        return `
+                            <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1rem; margin-bottom: 0.75rem; border-left: 4px solid ${scoreColor};">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <div style="font-weight: 600; margin-bottom: 0.25rem;">${scan.name}</div>
+                                        <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                            ${scan.category} • Worth ${scan.worthPaying}
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; align-items: center;">
+                                        <div style="font-size: 1.5rem; font-weight: 800; color: ${scoreColor};">
+                                            ${scan.powerScore}
+                                        </div>
+                                        ${scoreIcon}
+                                    </div>
+                                </div>
+                                ${scan.partOut && state.user.tier === 'powerPro' ? `
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--bg-tertiary);">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; color: #FFD700;">
+                                            <img src="/icons/goldmine.png" style="width: 16px; height: 16px;">
+                                            <span style="font-size: 0.85rem; font-weight: 600;">
+                                                Part-Out Value: ${scan.partOut.reduce((sum, part) => sum + part.value, 0)}
+                                            </span>
+                                        </div>
+                                    </div>
+                                ` : scan.partOut && state.user.tier !== 'powerPro' ? `
+                                    <div style="margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid var(--bg-tertiary);">
+                                        <div style="display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); opacity: 0.7;">
+                                            <span style="font-size: 0.85rem;">
+                                                🔒 Part-Out Calculator (Power Pro Only)
+                                            </span>
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `).join('');
+        }
+
+        function filterScores(type) {
+            // Update active tab
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter and redisplay
+            displayScanHistory(); // For now, just redisplay all
+        }
+
+        function showGoldMineDatabase() {
+            if (state.user.tier !== 'powerPro') {
+                showToast('Gold Mine™ is a Power Pro exclusive feature!', 'error');
+                showPage('upgradePage');
+                return;
+            }
+            
+            // Show Gold Mine modal with crowdsourced finds
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay active';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 600px;">
+                    <div class="modal-header">
+                        <div style="display: flex; align-items: center; gap: 0.5rem;">
+                            <img src="/icons/goldmine.png" alt="Gold Mine" style="width: 32px; height: 32px;">
+                            <div class="modal-title">Gold Mine™ Database</div>
+                        </div>
+                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+                    </div>
+                    <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                        Crowdsourced gold finds from the Power Pro community
+                    </p>
+                    <div style="max-height: 400px; overflow-y: auto;">
+                        ${getGoldMineItems()}
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function getGoldMineItems() {
+            // Mock data for Gold Mine items
+            const goldItems = [
+                { name: 'Vintage Pyrex Bowls', powerScore: 94, category: 'Kitchenware', foundBy: 'Sarah K.', location: 'Estate Sales' },
+                { name: 'Ti-84 Calculator', powerScore: 91, category: 'Electronics', foundBy: 'Mike R.', location: 'Garage Sales' },
+                { name: 'Patagonia Fleece', powerScore: 92, category: 'Clothing', foundBy: 'Jessica L.', location: 'Goodwill' },
+                { name: 'Cast Iron Skillet (Griswold)', powerScore: 96, category: 'Cookware', foundBy: 'Tom B.', location: 'Thrift Stores' }
+            ];
+            
+            return goldItems.map(item => `
+                <div style="background: var(--bg-primary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border: 2px solid #FFD700;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: #FFD700;">${item.name}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                ${item.category} • Found at ${item.location}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                Discovered by ${item.foundBy}
+                            </div>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #FFD700;">
+                            ${item.powerScore}
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -1835,21 +2485,7 @@
             updateInventoryDisplay();
         }
 
-        // Utility Functions
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = `toast ${type} show`;
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-        function closeModal(modalId) {
-            document.getElementById(modalId).classList.remove('active');
-        }
-
+        // Other Functions
         function openExpenseModal() {
             showToast('Expense tracking coming soon!', 'success');
         }
@@ -1875,6 +2511,21 @@
                 localStorage.clear();
                 location.reload();
             }
+        }
+
+        // Utility Functions
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
         // State Persistence

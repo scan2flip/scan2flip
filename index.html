@@ -789,79 +789,52 @@
         .empty-text {
             font-size: 0.95rem;
         }
-        /* Responsive sizing for desktop */
-@media (min-width: 768px) {
-    /* Bigger navigation icons on desktop */
-    .nav-item img {
-        width: 32px !important;
-        height: 32px !important;
-    }
-    
-    .nav-item span {
-        font-size: 0.85rem !important;
-    }
-    
-    /* Bigger header logo on desktop */
-    .app-header img {
-        width: 64px !important;
-        height: 64px !important;
-    }
-    
-    .logo-text {
-        font-size: 1.75rem !important;
-    }
-    
-    /* Bigger main scan button on desktop */
-    .scan-button {
-        width: min(450px, 90vw) !important;
-    }
-    
-    .scan-icon {
-        width: 100px !important;
-        height: 100px !important;
-    }
-    
-    .scan-text {
-        font-size: 1.75rem !important;
-    }
-    
-    /* Better desktop layout */
-    .bottom-nav {
-        padding: 0.75rem 0;
-    }
-    
-    .nav-item {
-        padding: 0.75rem;
-    }
-}
-/* Make nav icons bigger on ALL screens */
-.nav-item img {
-    width: 28px !important;
-    height: 28px !important;
-}
 
-/* Make header logo bigger */
-.app-header img {
-    width: 56px !important;
-    height: 56px !important;
-}
+        /* Make nav icons bigger on ALL screens */
+        .nav-item img {
+            width: 28px !important;
+            height: 28px !important;
+        }
 
-/* Desktop - even BIGGER */
-@media (min-width: 768px) {
-    .nav-item img {
-        width: 36px !important;
-        height: 36px !important;
-    }
-    
-    .app-header img {
-        width: 72px !important;
-        height: 72px !important;
-    }
-    
-    .logo-text {
-        font-size: 2rem !important;
-    }
-}
+        /* Make header logo bigger */
+        .app-header img {
+            width: 56px !important;
+            height: 56px !important;
+        }
+
+        /* Desktop - even BIGGER */
+        @media (min-width: 768px) {
+            .nav-item img {
+                width: 36px !important;
+                height: 36px !important;
+            }
+            .nav-item span {
+                font-size: 0.85rem !important;
+            }
+            .app-header img {
+                width: 72px !important;
+                height: 72px !important;
+            }
+            .logo-text {
+                font-size: 2rem !important;
+            }
+            .scan-button {
+                width: min(450px, 90vw) !important;
+            }
+            .scan-icon {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            .scan-text {
+                font-size: 1.75rem !important;
+            }
+            .bottom-nav {
+                padding: 0.75rem 0;
+            }
+            .nav-item {
+                padding: 0.75rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1004,7 +977,7 @@
         <div class="page" id="mileagePage">
             <div style="padding: 1.5rem;">
                  <div class="result-header">
-                    <button class="back-button" onclick="showPage('expensesPage')">
+                    <button class="back-button" onclick="showPage('mainPage')">
                         <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
                     </button>
                     <h2 style="font-size: 1.25rem; font-weight: 600;">Mileage Tracker</h2>
@@ -1020,16 +993,24 @@
                         <div class="stat-label">Tax Deduction</div>
                     </div>
                 </div>
-                <button class="btn btn-primary" style="width: 100%; margin: 2rem 0;" onclick="quickAddMileage()">
-                    Add New Trip
-                </button>
-                <div id="tripList">
-                    <div class="empty-state">
-                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM19 17.5a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0zM5 15V8.5A3.5 3.5 0 018.5 5h7A3.5 3.5 0 0119 8.5V15M5 15H3.5a1.5 1.5 0 00-1.5 1.5v1A1.5 1.5 0 003.5 19H5m14 0h1.5a1.5 1.5 0 00-1.5-1.5v-1a1.5 1.5 0 00-1.5-1.5H19"></path></svg>
-                        <div class="empty-title">No Trips Logged</div>
-                        <div class="empty-text">Track your drives for sourcing and shipping.</div>
+                
+                <div id="activeTripTracker" style="display: none; background: var(--bg-tertiary); border-radius: 12px; padding: 1.5rem; margin: 2rem 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: var(--accent-green); font-weight: 700;">🔴 TRACKING ACTIVE</div>
+                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Started: <span id="tripStartTime"></span></div>
+                        </div>
+                        <button class="btn btn-danger" onclick="endMileageTracking()">End Trip</button>
                     </div>
                 </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0;">
+                    <button id="gpsTripBtn" class="btn btn-success" onclick="startMileageTracking()">📍 Start GPS Trip</button>
+                    <button class="btn btn-primary" onclick="quickAddMileage()">➕ Add Manual Trip</button>
+                </div>
+                
+                <div id="tripList">
+                    </div>
             </div>
         </div>
 
@@ -1240,6 +1221,10 @@
     </div>
 
     <nav class="bottom-nav">
+        <a class="nav-item active" onclick="showPage('mainPage')">
+            <img src="/icons/home.png" alt="Home">
+            <span>Home</span>
+        </a>
         <a class="nav-item" onclick="showPage('inventoryPage')">
             <img src="/icons/inventory.png" alt="Inventory">
             <span>Inventory</span>
@@ -1299,7 +1284,8 @@
             scanHistory: [],
             currentScan: null
         };
-
+        
+        let activeTrip = null;
         const IRS_MILEAGE_RATE = 0.67; // 2024 IRS standard mileage rate
 
         // Initialize app
@@ -1307,32 +1293,31 @@
             loadState();
             updateUI();
             setupEventListeners();
-            showPage('mainPage'); // Start on the main scan page
+            showPage('mainPage');
             updateMileageStats();
+            displayRecentTrips();
             displayScanHistory();
+            updateActiveTripUI();
         });
 
         // Page Navigation
         function showPage(pageId) {
-            document.querySelectorAll('.page').forEach(page => {
-                page.classList.remove('active');
-            });
+            document.querySelectorAll('.page').forEach(page => page.classList.remove('active'));
             document.getElementById(pageId).classList.add('active');
             
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.remove('active');
-            });
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             
             const navMap = {
-                'inventoryPage': 0,
-                'expensesPage': 1,
-                'mileagePage': 2,
-                'powerScorePage': 3,
-                'morePage': 4,
-                'upgradePage': 4, // Belongs to 'more' section
-                'goldMinePage': 4, // Belongs to 'more' section
-                'flipping101Page': 4, // Belongs to 'more' section
-                'irs101Page': 4 // Belongs to 'more' section
+                'mainPage': 0,
+                'inventoryPage': 1,
+                'expensesPage': 2,
+                'mileagePage': 3,
+                'powerScorePage': 4,
+                'morePage': 5,
+                'upgradePage': 5,
+                'goldMinePage': 5,
+                'flipping101Page': 5,
+                'irs101Page': 5
             };
              
             let navIndex = navMap[pageId];
@@ -1476,12 +1461,7 @@
             document.getElementById('daysToSell').textContent = result.daysToSell;
             
             const partOutSection = document.getElementById('partOutSection');
-            const powerScoreCircle = document.querySelector('.power-score-circle');
             
-            // Clear previous indicators
-            const existingIndicator = document.getElementById('partsIndicator');
-            if(existingIndicator) existingIndicator.remove();
-
             if (result.partOut && result.partOut.length > 0) {
                 if (state.user.tier === 'powerPro') {
                     let totalValue = 0;
@@ -1602,6 +1582,110 @@
             }
             grid.innerHTML = state.inventory.map(item => `<div class="inventory-item"><div class="inventory-item-info"><h3>${item.name}</h3><p>Worth: $${item.worthPaying} | Sells for: $${item.avgPrice}</p></div><div class="inventory-item-status status-${item.status}">${item.status}</div></div>`).join('');
         }
+        
+        // --- MILEAGE TRACKING LOGIC ---
+        function startMileageTracking() {
+            if (state.user.tier === 'freemium') {
+                showToast('Mileage tracking is a Pro feature. Upgrade to unlock!', 'error');
+                showPage('upgradePage');
+                return;
+            }
+            if (activeTrip) {
+                showToast('Trip already in progress!', 'error');
+                return;
+            }
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        activeTrip = {
+                            startTime: new Date(),
+                            startLat: position.coords.latitude,
+                            startLng: position.coords.longitude,
+                        };
+                        updateActiveTripUI();
+                        showToast('GPS trip tracking started!', 'success');
+                    },
+                    (error) => {
+                        showToast('Could not get location. Please enable GPS.', 'error');
+                    }
+                );
+            } else {
+                showToast('Geolocation is not supported by this browser.', 'error');
+            }
+        }
+
+        function endMileageTracking() {
+            if (!activeTrip) return;
+            if (navigator.geolocation && activeTrip.startLat) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const distance = calculateDistance(
+                            activeTrip.startLat, activeTrip.startLng,
+                            position.coords.latitude, position.coords.longitude
+                        );
+                        saveMileageTrip(distance, 'GPS Tracked');
+                    },
+                    () => {
+                        promptForManualMileage();
+                    }
+                );
+            } else {
+                promptForManualMileage();
+            }
+        }
+        
+        function promptForManualMileage() {
+            const miles = prompt('Could not calculate distance. Please enter miles driven for this trip:');
+            if (miles && !isNaN(miles)) {
+                saveMileageTrip(parseFloat(miles), 'Manual Entry');
+            } else {
+                 activeTrip = null; // Cancel trip
+                 updateActiveTripUI();
+            }
+        }
+
+        function saveMileageTrip(miles, method) {
+            if (!state.mileageTrips) state.mileageTrips = [];
+            const trip = {
+                id: Date.now(),
+                date: activeTrip.startTime.toISOString(),
+                miles: parseFloat(miles.toFixed(2)),
+                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
+                method: method,
+                notes: ''
+            };
+            state.mileageTrips.push(trip);
+            activeTrip = null;
+            updateActiveTripUI();
+            updateMileageStats();
+            displayRecentTrips();
+            saveState();
+            showToast(`Trip saved: ${trip.miles} miles ($${trip.deduction} deduction)`, 'success');
+        }
+        
+        function updateActiveTripUI() {
+            const tracker = document.getElementById('activeTripTracker');
+            const gpsBtn = document.getElementById('gpsTripBtn');
+            if (activeTrip) {
+                tracker.style.display = 'block';
+                document.getElementById('tripStartTime').textContent = activeTrip.startTime.toLocaleTimeString();
+                gpsBtn.style.display = 'none';
+            } else {
+                tracker.style.display = 'none';
+                gpsBtn.style.display = 'block';
+            }
+        }
+
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3959; // Radius of the Earth in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
 
         function quickAddMileage() {
             if (state.user.tier === 'freemium') {
@@ -1613,7 +1697,7 @@
             modal.className = 'modal-overlay active';
             modal.innerHTML = `
                 <div class="modal-content">
-                    <div class="modal-header"><div class="modal-title">Quick Add Mileage</div><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button></div>
+                    <div class="modal-header"><div class="modal-title">Add Manual Trip</div><button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button></div>
                     <div class="form-group"><label class="form-label">Date</label><input type="date" id="quick-miles-date" class="form-input" value="${new Date().toISOString().split('T')[0]}"></div>
                     <div class="form-group"><label class="form-label">Miles Driven</label><input type="number" id="quick-miles-amount" class="form-input" placeholder="e.g. 25.5" step="0.1"></div>
                     <div class="form-group"><label class="form-label">Trip Purpose (Optional)</label><input type="text" id="quick-miles-notes" class="form-input" placeholder="e.g. Goodwill + estate sales"></div>
@@ -1636,11 +1720,12 @@
                 return;
             }
             if (!state.mileageTrips) state.mileageTrips = [];
-            const trip = { id: Date.now(), date: new Date(date).toISOString(), miles: miles, deduction: (miles * IRS_MILEAGE_RATE).toFixed(2), notes: notes };
+            const trip = { id: Date.now(), date: new Date(date).toISOString(), miles: miles, deduction: (miles * IRS_MILEAGE_RATE).toFixed(2), notes: notes, method: 'Manual' };
             state.mileageTrips.push(trip);
             saveState();
             document.querySelector('.modal-overlay').remove();
             updateMileageStats();
+            displayRecentTrips();
             showToast(`Added ${miles} miles ($${trip.deduction} deduction)`, 'success');
         }
 
@@ -1657,6 +1742,27 @@
             document.getElementById('monthlyMiles').textContent = totalMiles.toFixed(1);
             document.getElementById('mileageDeduction').textContent = `$${totalDeduction.toFixed(2)}`;
         }
+        
+        function displayRecentTrips() {
+            const container = document.getElementById('tripList');
+            if (!state.mileageTrips || state.mileageTrips.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-title">No Trips Logged</div><div class="empty-text">Track your drives for sourcing and shipping.</div></div>';
+                return;
+            }
+            const recentTrips = [...state.mileageTrips].reverse();
+            container.innerHTML = recentTrips.map(trip => `
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">${trip.miles} miles <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400;">(${trip.method})</span></div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${new Date(trip.date).toLocaleDateString()} ${trip.notes ? ` - ${trip.notes}` : ''}</div>
+                        </div>
+                        <div style="color: var(--accent-green); font-weight: 600;">$${trip.deduction}</div>
+                    </div>
+                </div>`).join('');
+        }
+
+        // --- END MILEAGE LOGIC ---
 
         function displayScanHistory() {
             if (!document.getElementById('scanHistoryList')) return;

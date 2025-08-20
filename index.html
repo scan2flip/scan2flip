@@ -2,125 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1f2d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Scan2Flip - Scan It. Flip It. Profit.</title>
-    
-    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
-    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
-    <link rel="manifest" href="/manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Scan2Flip">
-    
-    <meta property="og:title" content="Scan2Flip - Instant Profit Calculator for Resellers">
-    <meta property="og:description" content="Scan any item and instantly know if it's worth flipping. Power Score™ technology shows you exactly what to buy and what to skip.">
-    <meta property="og:image" content="https://scan2flip.vercel.app/icons/scan2flip-logo.png">
-    <meta property="og:url" content="https://scan2flip.vercel.app">
-    <meta property="og:type" content="website">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+            color: #cbd5e1; /* text-slate-300 */
+        }
+        .scan-button {
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            background-color: #1e293b; /* bg-slate-800 */
+            border: 10px solid #334155; /* border-slate-700 */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease-in-out;
+        }
+        .scan-button:hover {
+            border-color: #facc15; /* yellow-400 */
+            transform: scale(1.05);
+        }
+        .scan-icon {
+            color: #facc15; /* yellow-400 */
+            width: 64px;
+            height: 64px;
+        }
+        .scan-text {
+            color: white;
+            font-weight: 800;
+            font-size: 1.5rem;
+            margin-top: 0.5rem;
+        }
+        .scan-subtext {
+            color: #94a3b8; /* text-slate-400 */
+            font-size: 0.9rem;
+        }
+        .btn-primary {
+            background-color: #facc15; /* yellow-400 */
+            color: #1e293b; /* slate-800 */
+            font-weight: 700;
+        }
+        .btn-secondary {
+            background-color: #334155; /* slate-700 */
+            color: #f1f5f9; /* slate-100 */
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo-container">
-                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
-                <div class="logo-text">SCAN2FLIP</div>
+<body class="bg-slate-900 text-slate-300">
+    <div class="flex flex-col h-screen">
+        <!-- Header -->
+        <header class="p-4 flex justify-between items-center border-b border-slate-700">
+            <div class="flex items-center gap-2">
+                <img src="icons/scan2flip-logo.png" alt="Scan2Flip" class="w-10 h-10">
+                <div class="font-bold text-lg text-white">SCAN2FLIP</div>
             </div>
-            <div class="header-stats">
-                <div class="scan-counter" id="scanCounter">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
-                    </svg>
-                    <span id="scanCount">5/5 Daily</span>
-                </div>
-                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
-                    +<span id="packCount">0</span> packs
+            <div class="flex items-center gap-2 text-sm">
+                <div class="flex items-center gap-1 bg-slate-700 px-2 py-1 rounded-md">
+                    <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/></svg>
+                    <span>5/5 Daily</span>
                 </div>
             </div>
         </header>
 
-        <div class="page-content">
-            <div class="scan-button-container">
+        <!-- Main Content -->
+        <main class="flex-grow flex flex-col items-center justify-center p-4">
+            <div class="flex flex-col items-center gap-8">
                 <button class="scan-button" id="scanButton">
-                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/>
-                    </svg>
+                    <svg class="scan-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"/></svg>
                     <div class="scan-text">SCAN OR SNAP</div>
                     <div class="scan-subtext">Tap to analyze item</div>
                 </button>
                 
-                <div class="stats-grid" style="width: 100%; max-width: 400px;">
-                    <div class="stat-card">
-                        <div class="stat-value">$1,247</div>
-                        <div class="stat-label">Month Profit</div>
+                <div class="grid grid-cols-2 gap-4 w-full max-w-xs">
+                    <div class="bg-slate-800 p-3 rounded-lg text-center border border-slate-700">
+                        <div class="text-2xl font-bold text-white">$1,247</div>
+                        <div class="text-sm text-slate-400">Month Profit</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-value">68%</div>
-                        <div class="stat-label">Win Rate</div>
+                    <div class="bg-slate-800 p-3 rounded-lg text-center border border-slate-700">
+                        <div class="text-2xl font-bold text-white">68%</div>
+                        <div class="text-sm text-slate-400">Win Rate</div>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
 
+        <!-- Bottom Navigation -->
         <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
+            <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs">Home</span></a>
+            <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs font-medium">Inventory</span></a>
+            <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs font-medium">Expenses</span></a>
+            <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs font-medium">Mileage</span></a>
+            <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
+        </nav>
     </div>
 
-    <!-- Scan Pack Modal -->
-    <div class="modal-overlay" id="scanPackModal">
-        <div class="modal-content scan-pack-modal">
-            <div class="modal-header">
-                <div class="modal-title">Out of Scans!</div>
-                <button class="modal-close" onclick="closeModal('scanPackModal')">×</button>
+    <!-- Scan Options Modal -->
+    <div id="scanOptionsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-xs m-4 p-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-white mb-4 text-center">Start Scanning</h3>
+            <div class="space-y-4">
+                <button id="scanBarcodeBtn" class="w-full text-left py-4 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path d="M2 4a1 1 0 011-1h2a1 1 0 011 1v1a1 1 0 01-1 1H3a1 1 0 01-1-1V4zM8 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zM2 9a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm6 0a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zm-6 5a1 1 0 011-1h2a1 1 0 110 2H3a1 1 0 01-1-1zm6 0a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1zM14 4a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1zm0 5a1 1 0 011-1h2a1 1 0 110 2h-2a1 1 0 01-1-1z" /></svg>
+                    <span>Scan Barcode</span>
+                </button>
+                <button id="snapPhotoBtn" class="w-full text-left py-4 px-4 rounded-lg bg-slate-700 hover:bg-slate-600 font-semibold flex items-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" /></svg>
+                    <span>Snap Photo</span>
+                </button>
             </div>
-            <svg class="scan-pack-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"/>
-            </svg>
-            <div class="scan-pack-title">Add 500 Scans</div>
-            <div class="scan-pack-price">$1.99</div>
-            <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">One-time purchase. Use anytime this month.</p>
-            <button class="btn btn-primary" style="width: 100%;" onclick="purchaseScanPack()">Purchase Scan Pack</button>
-            <a href="upgrade.html" class="btn btn-secondary" style="width: 100%; margin-top: 0.75rem; display: block; text-decoration: none;">View Upgrade Options</a>
+            <div class="mt-6 text-center">
+                <button id="cancelScanBtn" class="text-slate-400 hover:text-white font-semibold">Cancel</button>
+            </div>
         </div>
     </div>
+    
+    <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden">
 
-    <div class="toast" id="toast"></div>
-
-    <script src="app.js"></script>
-    <script src="scanner.js"></script>
     <script>
-        // Page-specific initialization
         document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            document.getElementById('scanButton').addEventListener('click', performScan);
+            const scanButton = document.getElementById('scanButton');
+            const scanOptionsModal = document.getElementById('scanOptionsModal');
+            const cancelScanBtn = document.getElementById('cancelScanBtn');
+            const scanBarcodeBtn = document.getElementById('scanBarcodeBtn');
+            const snapPhotoBtn = document.getElementById('snapPhotoBtn');
+            const cameraInput = document.getElementById('cameraInput');
+
+            scanButton.addEventListener('click', () => {
+                scanOptionsModal.classList.remove('hidden');
+            });
+
+            cancelScanBtn.addEventListener('click', () => {
+                scanOptionsModal.classList.add('hidden');
+            });
+            
+            scanOptionsModal.addEventListener('click', (e) => {
+                if(e.target === scanOptionsModal) {
+                    scanOptionsModal.classList.add('hidden');
+                }
+            });
+
+            const startScan = () => {
+                // This triggers the file input. On mobile, the 'capture' attribute
+                // will prompt the user to open their camera.
+                cameraInput.click();
+            };
+
+            scanBarcodeBtn.addEventListener('click', startScan);
+            snapPhotoBtn.addEventListener('click', startScan);
+
+            cameraInput.addEventListener('change', (event) => {
+                if (event.target.files && event.target.files[0]) {
+                    // Here you would typically process the image (e.g., send to a barcode
+                    // scanning library or image recognition API).
+                    // For this demo, we'll just simulate success and redirect.
+                    console.log("Image captured/selected:", event.target.files[0]);
+                    window.location.href = 'scan-results.html';
+                }
+            });
         });
     </script>
 </body>

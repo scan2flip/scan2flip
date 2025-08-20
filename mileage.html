@@ -2,125 +2,146 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1f2d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Mileage Tracker - Scan2Flip</title>
-    
-    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
-    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+            color: #cbd5e1; /* text-slate-300 */
+        }
+        .btn-primary {
+            background-color: #facc15; /* yellow-400 */
+            color: #1e293b; /* slate-800 */
+            font-weight: 700;
+        }
+        .btn-secondary {
+            background-color: #334155; /* slate-700 */
+            color: #f1f5f9; /* slate-100 */
+        }
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+        .btn-success {
+            background-color: #22c55e;
+            color: white;
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo-container">
-                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
-                <div class="logo-text">SCAN2FLIP</div>
-            </div>
-            <div class="header-stats">
-                <div class="scan-counter" id="scanCounter">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
-                    </svg>
-                    <span id="scanCount">5/5 Daily</span>
-                </div>
-                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
-                    +<span id="packCount">0</span> packs
-                </div>
-            </div>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Main App Container -->
+    <div class="container mx-auto max-w-4xl pb-28">
+
+        <!-- Header -->
+        <header class="text-center py-6 px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">🚗 Mileage Tracker</h1>
+            <p class="text-lg text-slate-400">Track your drives for tax deductions.</p>
         </header>
 
-        <div class="page-content">
-            <div style="padding: 1.5rem;">
-                <div class="result-header">
-                    <a href="index.html" class="back-button">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </a>
-                    <h2 style="font-size: 1.25rem; font-weight: 600;">Mileage Tracker</h2>
-                    <div style="width: 24px;"></div>
+        <!-- Main Content -->
+        <main class="px-4">
+            <!-- Mileage Summary -->
+            <div class="grid grid-cols-2 gap-4 mb-6 text-center">
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Miles This Month</h2>
+                    <p id="monthlyMiles" class="text-3xl font-bold text-white mt-1">0.0</p>
                 </div>
-                
-                <div class="stats-grid" style="margin-top: 2rem;">
-                    <div class="stat-card">
-                        <div class="stat-value" id="monthlyMiles">0</div>
-                        <div class="stat-label">Miles This Month</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" id="mileageDeduction">$0.00</div>
-                        <div class="stat-label">Tax Deduction</div>
-                    </div>
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Tax Deduction</h2>
+                    <p id="mileageDeduction" class="text-3xl font-bold text-green-400 mt-1">$0.00</p>
                 </div>
-                
-                <div id="activeTripTracker" style="display: none; background: var(--bg-tertiary); border-radius: 12px; padding: 1.5rem; margin: 2rem 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="color: var(--accent-green); font-weight: 700;">🔴 TRACKING ACTIVE</div>
-                            <div style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.25rem;">Started: <span id="tripStartTime"></span></div>
+            </div>
+
+            <!-- Active Trip Tracker -->
+            <div id="activeTripTracker" class="hidden bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="relative flex h-3 w-3">
+                              <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                              <span class="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
+                            </span>
+                            <p class="font-bold text-red-400">TRACKING ACTIVE</p>
                         </div>
-                        <button class="btn btn-danger" onclick="endMileageTracking()">End Trip</button>
+                        <p class="text-sm text-slate-400 mt-1">Started: <span id="tripStartTime"></span></p>
                     </div>
+                    <button class="btn-danger py-2 px-4 rounded-lg font-semibold" onclick="endMileageTracking()">End Trip</button>
                 </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 2rem 0;">
-                    <button id="gpsTripBtn" class="btn btn-success" onclick="startMileageTracking()">📍 Start GPS Trip</button>
-                    <button class="btn btn-primary" onclick="quickAddMileage()">➕ Add Manual Trip</button>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button id="gpsTripBtn" class="py-3 px-4 rounded-lg font-semibold btn-success flex items-center justify-center gap-2" onclick="startMileageTracking()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd" /></svg>
+                    <span>Start GPS Trip</span>
+                </button>
+                <button class="py-3 px-4 rounded-lg font-semibold btn-primary flex items-center justify-center gap-2" onclick="quickAddMileage()">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    <span>Add Manual Trip</span>
+                </button>
+            </div>
+            
+            <!-- Trip List -->
+            <div id="tripList" class="space-y-3">
+                <!-- Empty state and trips will be injected here -->
+            </div>
+        </main>
+    </div>
+    
+    <!-- Manual Add Modal -->
+    <div id="manualTripModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-sm m-4 p-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-white mb-4">Add Manual Trip</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400">Date</label>
+                    <input type="date" id="quick-miles-date" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white">
                 </div>
-                
-                <div id="tripList"></div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400">Miles Driven</label>
+                    <input type="number" id="quick-miles-amount" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" placeholder="e.g. 25.5" step="0.1">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-400">Trip Purpose (Optional)</label>
+                    <input type="text" id="quick-miles-notes" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md p-2 text-white" placeholder="e.g. Goodwill + estate sales">
+                </div>
+                <div class="bg-slate-700 p-3 rounded-md flex justify-between items-center">
+                    <span class="font-semibold">Tax Deduction:</span>
+                    <span id="quick-deduction" class="font-bold text-green-400 text-lg">$0.00</span>
+                </div>
+            </div>
+            <div class="mt-6 flex justify-end gap-4">
+                <button class="btn-secondary py-2 px-4 rounded-lg" onclick="closeManualModal()">Cancel</button>
+                <button class="btn-primary py-2 px-4 rounded-lg" onclick="saveQuickMileage()">Save Trip</button>
             </div>
         </div>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs font-medium">Home</span></a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs font-medium">Inventory</span></a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs font-medium">Expenses</span></a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs">Mileage</span></a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
+    </nav>
 
-    <script src="app.js"></script>
     <script>
         let activeTrip = null;
+        const IRS_MILEAGE_RATE = 0.67; // 2024/2025 Rate
 
         document.addEventListener('DOMContentLoaded', () => {
-            initApp();
             updateMileageStats();
             displayRecentTrips();
             updateActiveTripUI();
         });
 
         function startMileageTracking() {
-            if (!requireTier('pro', 'Mileage tracking')) return;
-            
-            if (activeTrip) {
-                showToast('Trip already in progress!', 'error');
-                return;
-            }
+            if (activeTrip) return alert('Trip already in progress!');
             
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
@@ -131,14 +152,12 @@
                             startLng: position.coords.longitude,
                         };
                         updateActiveTripUI();
-                        showToast('GPS trip tracking started!', 'success');
+                        alert('GPS trip tracking started!');
                     },
-                    (error) => {
-                        showToast('Could not get location. Please enable GPS.', 'error');
-                    }
+                    (error) => alert('Could not get location. Please enable GPS.')
                 );
             } else {
-                showToast('Geolocation is not supported by this browser.', 'error');
+                alert('Geolocation is not supported by this browser.');
             }
         }
 
@@ -148,25 +167,20 @@
             if (navigator.geolocation && activeTrip.startLat) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        const distance = calculateDistance(
-                            activeTrip.startLat, activeTrip.startLng,
-                            position.coords.latitude, position.coords.longitude
-                        );
+                        const distance = calculateDistance(activeTrip.startLat, activeTrip.startLng, position.coords.latitude, position.coords.longitude);
                         saveMileageTrip(distance, 'GPS Tracked');
                     },
-                    () => {
-                        promptForManualMileage();
-                    }
+                    () => promptForManualMileage('GPS failed. Please enter miles manually:')
                 );
             } else {
-                promptForManualMileage();
+                promptForManualMileage('Could not calculate distance automatically. Please enter miles:');
             }
         }
         
-        function promptForManualMileage() {
-            const miles = prompt('Could not calculate distance. Please enter miles driven for this trip:');
+        function promptForManualMileage(message) {
+            const miles = prompt(message);
             if (miles && !isNaN(miles)) {
-                saveMileageTrip(parseFloat(miles), 'Manual Entry');
+                saveMileageTrip(parseFloat(miles), 'Manual Entry after GPS fail');
             } else {
                 activeTrip = null;
                 updateActiveTripUI();
@@ -174,74 +188,53 @@
         }
 
         function saveMileageTrip(miles, method) {
-            if (!state.mileageTrips) state.mileageTrips = [];
+            let trips = JSON.parse(localStorage.getItem('scan2flip-mileage')) || [];
             const trip = {
                 id: Date.now(),
                 date: activeTrip.startTime.toISOString(),
                 miles: parseFloat(miles.toFixed(2)),
-                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2),
+                deduction: (miles * IRS_MILEAGE_RATE),
                 method: method,
                 notes: ''
             };
-            state.mileageTrips.push(trip);
+            trips.push(trip);
+            localStorage.setItem('scan2flip-mileage', JSON.stringify(trips));
             activeTrip = null;
             updateActiveTripUI();
             updateMileageStats();
             displayRecentTrips();
-            saveState();
-            showToast(`Trip saved: ${trip.miles} miles ($${trip.deduction} deduction)`, 'success');
+            alert(`Trip saved: ${trip.miles} miles ($${trip.deduction.toFixed(2)} deduction)`);
         }
         
         function updateActiveTripUI() {
             const tracker = document.getElementById('activeTripTracker');
             const gpsBtn = document.getElementById('gpsTripBtn');
             if (activeTrip) {
-                tracker.style.display = 'block';
+                tracker.classList.remove('hidden');
                 document.getElementById('tripStartTime').textContent = activeTrip.startTime.toLocaleTimeString();
-                gpsBtn.style.display = 'none';
+                gpsBtn.classList.add('hidden');
             } else {
-                tracker.style.display = 'none';
-                gpsBtn.style.display = 'block';
+                tracker.classList.add('hidden');
+                gpsBtn.classList.remove('hidden');
             }
         }
 
         function quickAddMileage() {
-            if (!requireTier('pro', 'Mileage tracking')) return;
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay active';
-            modal.innerHTML = `
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div class="modal-title">Add Manual Trip</div>
-                        <button class="modal-close" onclick="this.closest('.modal-overlay').remove()">×</button>
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Date</label>
-                        <input type="date" id="quick-miles-date" class="form-input" value="${new Date().toISOString().split('T')[0]}">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Miles Driven</label>
-                        <input type="number" id="quick-miles-amount" class="form-input" placeholder="e.g. 25.5" step="0.1">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Trip Purpose (Optional)</label>
-                        <input type="text" id="quick-miles-notes" class="form-input" placeholder="e.g. Goodwill + estate sales">
-                    </div>
-                    <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between;">
-                            <span>Tax Deduction:</span>
-                            <span id="quick-deduction" style="color: var(--accent-green); font-weight: 600;">$0.00</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary" style="width: 100%;" onclick="saveQuickMileage()">Save Trip</button>
-                </div>`;
-            document.body.appendChild(modal);
+            const modal = document.getElementById('manualTripModal');
+            document.getElementById('quick-miles-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('quick-miles-amount').value = '';
+            document.getElementById('quick-miles-notes').value = '';
+            document.getElementById('quick-deduction').textContent = '$0.00';
+            modal.classList.remove('hidden');
             
             document.getElementById('quick-miles-amount').addEventListener('input', (e) => {
                 const miles = parseFloat(e.target.value) || 0;
                 document.getElementById('quick-deduction').textContent = `$${(miles * IRS_MILEAGE_RATE).toFixed(2)}`;
             });
+        }
+        
+        function closeManualModal() {
+            document.getElementById('manualTripModal').classList.add('hidden');
         }
 
         function saveQuickMileage() {
@@ -249,32 +242,29 @@
             const miles = parseFloat(document.getElementById('quick-miles-amount').value);
             const notes = document.getElementById('quick-miles-notes').value;
             
-            if (!miles || miles <= 0) {
-                showToast('Please enter valid mileage', 'error');
-                return;
-            }
+            if (!miles || miles <= 0) return alert('Please enter valid mileage');
             
-            if (!state.mileageTrips) state.mileageTrips = [];
+            let trips = JSON.parse(localStorage.getItem('scan2flip-mileage')) || [];
             const trip = { 
                 id: Date.now(), 
                 date: new Date(date).toISOString(), 
                 miles: miles, 
-                deduction: (miles * IRS_MILEAGE_RATE).toFixed(2), 
+                deduction: (miles * IRS_MILEAGE_RATE), 
                 notes: notes, 
                 method: 'Manual' 
             };
-            state.mileageTrips.push(trip);
-            saveState();
-            document.querySelector('.modal-overlay').remove();
+            trips.push(trip);
+            localStorage.setItem('scan2flip-mileage', JSON.stringify(trips));
+            closeManualModal();
             updateMileageStats();
             displayRecentTrips();
-            showToast(`Added ${miles} miles ($${trip.deduction} deduction)`, 'success');
+            alert(`Added ${miles} miles ($${trip.deduction.toFixed(2)} deduction)`);
         }
 
         function updateMileageStats() {
-            if (!state.mileageTrips) state.mileageTrips = [];
+            const trips = JSON.parse(localStorage.getItem('scan2flip-mileage')) || [];
             const now = new Date();
-            const monthTrips = state.mileageTrips.filter(trip => {
+            const monthTrips = trips.filter(trip => {
                 const tripDate = new Date(trip.date);
                 return tripDate.getMonth() === now.getMonth() && tripDate.getFullYear() === now.getFullYear();
             });
@@ -286,21 +276,33 @@
         
         function displayRecentTrips() {
             const container = document.getElementById('tripList');
-            if (!state.mileageTrips || state.mileageTrips.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-title">No Trips Logged</div><div class="empty-text">Track your drives for sourcing and shipping.</div></div>';
+            const trips = JSON.parse(localStorage.getItem('scan2flip-mileage')) || [];
+            if (trips.length === 0) {
+                container.innerHTML = '<div class="text-center py-10 text-slate-500"><h3 class="font-semibold text-slate-300">No Trips Logged</h3><p class="text-sm">Track your drives for sourcing and shipping.</p></div>';
                 return;
             }
-            const recentTrips = [...state.mileageTrips].reverse();
+            const recentTrips = [...trips].reverse();
             container.innerHTML = recentTrips.map(trip => `
-                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+                    <div class="flex justify-between items-center">
                         <div>
-                            <div style="font-weight: 600;">${trip.miles} miles <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 400;">(${trip.method})</span></div>
-                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${new Date(trip.date).toLocaleDateString()} ${trip.notes ? ` - ${trip.notes}` : ''}</div>
+                            <p class="font-bold text-white">${trip.miles} miles <span class="text-xs font-normal text-slate-400">(${trip.method})</span></p>
+                            <p class="text-sm text-slate-400">${new Date(trip.date).toLocaleDateString()} ${trip.notes ? `- ${trip.notes}` : ''}</p>
                         </div>
-                        <div style="color: var(--accent-green); font-weight: 600;">$${trip.deduction}</div>
+                        <p class="font-bold text-green-400 text-lg">$${trip.deduction.toFixed(2)}</p>
                     </div>
                 </div>`).join('');
+        }
+        
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 3958.8; // Radius of the Earth in miles
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
         }
     </script>
 </body>

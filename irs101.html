@@ -2,162 +2,623 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1f2d">
-    <title>IRS 101 - Scan2Flip</title>
-    
-    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
-    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>IRS 101 - Tax Guide - Scan2Flip</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo-container">
-                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
-                <div class="logo-text">SCAN2FLIP</div>
-            </div>
-            <div class="header-stats">
-                <div class="scan-counter" id="scanCounter">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
-                    </svg>
-                    <span id="scanCount">5/5 Daily</span>
-                </div>
-                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
-                    +<span id="packCount">0</span> packs
-                </div>
-            </div>
+    <div class="container">
+        <header>
+            <h1>📋 IRS 101</h1>
+            <p class="subtitle">Master Your Taxes & Maximize Deductions</p>
         </header>
 
-        <div class="page-content">
-            <div style="padding: 1.5rem;">
-                <div class="result-header">
-                    <a href="more.html" class="back-button">
-                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                        </svg>
-                    </a>
-                    <h2 style="font-size: 1.25rem; font-weight: 600;">IRS 101</h2>
-                    <div style="width: 24px;"></div>
-                </div>
-                
-                <div style="background: #442B32; border: 1px solid var(--accent-red); color: white; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
-                    <h3>⚠️ IMPORTANT DISCLAIMER ⚠️</h3>
-                    <p style="opacity: 0.9; font-size: 0.9rem;">This information is for educational purposes only and is not a substitute for professional tax advice. These are common deductions, but may not apply to your specific situation. Always consult with a qualified tax professional.</p>
-                </div>
-                
-                <h2 style="font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem;">Common Tax Deductions for Resellers</h2>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Cost of Goods Sold (COGS)</h3>
-                    <p>This is the #1 deduction. It's the original price you paid for the items you sold. If you bought a video game for $5 and sold it for $40, your COGS is $5.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Shipping Costs</h3>
-                    <p>You can deduct the full cost of postage and shipping fees you pay to send items to buyers.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Business Mileage</h3>
-                    <p>Track the miles you drive for your business, such as trips to the post office or to source inventory. Use the Mileage Tracker in this app! The IRS sets a standard rate per mile each year (currently $0.67/mile for 2024).</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Supplies</h3>
-                    <p>Boxes, bubble wrap, packing tape, printer ink, and labels are all deductible business expenses.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Platform Fees</h3>
-                    <p>eBay fees, PayPal fees, Mercari fees, and any other selling platform fees are deductible.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Home Office</h3>
-                    <p>If you use part of your home exclusively for your reselling business, you may be able to deduct a portion of your rent/mortgage, utilities, and internet.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Storage Units</h3>
-                    <p>If you rent a storage unit for inventory, the monthly rental cost is deductible.</p>
-                </div>
-                
-                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
-                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Software & Apps</h3>
-                    <p>Subscription costs for listing tools, inventory management software, and apps like Scan2Flip Pro are deductible business expenses.</p>
-                </div>
+        <div class="warning-card">
+            <p>⚠️ <strong>Disclaimer:</strong> This is educational information based on 2025 IRS guidelines. Consult a CPA or Enrolled Agent for advice specific to your situation. Tax laws change frequently.</p>
+        </div>
 
-                <h2 style="font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem;">Record Keeping Tips</h2>
-                
-                <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 1.5rem;">
-                    <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 1rem;">
-                            <strong style="color: var(--accent-green);">📱 Keep Digital Records:</strong>
-                            <span style="color: var(--text-secondary);"> Photograph all receipts immediately. Store them in cloud storage organized by month.</span>
-                        </li>
-                        <li style="margin-bottom: 1rem;">
-                            <strong style="color: var(--accent-green);">📊 Track Everything:</strong>
-                            <span style="color: var(--text-secondary);"> Use a spreadsheet or app to track every purchase and sale. Include date, item, cost, sale price, and fees.</span>
-                        </li>
-                        <li style="margin-bottom: 1rem;">
-                            <strong style="color: var(--accent-green);">🚗 Log Miles Daily:</strong>
-                            <span style="color: var(--text-secondary);"> Use the mileage tracker feature to log business miles. The IRS requires contemporaneous records.</span>
-                        </li>
-                        <li>
-                            <strong style="color: var(--accent-green);">💳 Separate Accounts:</strong>
-                            <span style="color: var(--text-secondary);"> Consider a separate bank account and credit card for business expenses. Makes tracking much easier.</span>
-                        </li>
-                    </ul>
-                </div>
+        <nav class="tab-nav">
+            <button class="tab-button active" onclick="showTab('basics')">Setup</button>
+            <button class="tab-button" onclick="showTab('deductions')">Deductions</button>
+            <button class="tab-button" onclick="showTab('tracking')">Records</button>
+            <button class="tab-button" onclick="showTab('quarterly')">Quarterly</button>
+            <button class="tab-button" onclick="showTab('advanced')">Advanced</button>
+        </nav>
 
-                <div style="background: var(--accent-blue); color: white; padding: 1rem; border-radius: 12px; margin-top: 2rem;">
-                    <p style="font-weight: 600;">🎯 Pro Tip: The IRS requires you to keep records for at least 3 years from the date you file your return. Keep everything organized!</p>
-                </div>
+        <div id="basics" class="tab-content active">
+            <h2>📊 Your Tax Setup in One Page</h2>
+
+            <div class="info-card highlight">
+                <h3>🚨 Critical 1099-K Thresholds</h3>
+                <ul>
+                    <li><strong>2024 (filing 2025):</strong> $5,000 in sales</li>
+                    <li><strong>2025 (filing 2026):</strong> $2,500 in sales</li>
+                    <li><strong>2026+ (filing 2027+):</strong> $600 in sales</li>
+                </ul>
+                <p class="highlight-text">⚠️ You must report ALL income regardless of receiving a 1099-K!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Business Entity Setup</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Structure</th>
+                        <th>Tax Form</th>
+                        <th>Best For</th>
+                        <th>Key Notes</th>
+                    </tr>
+                    <tr>
+                        <td>Sole Proprietor</td>
+                        <td>Schedule C</td>
+                        <td>Starting out</td>
+                        <td>Simplest, no separate filing</td>
+                    </tr>
+                    <tr>
+                        <td>Single-Member LLC</td>
+                        <td>Schedule C</td>
+                        <td>Asset protection</td>
+                        <td>Disregarded for taxes</td>
+                    </tr>
+                    <tr>
+                        <td>Partnership</td>
+                        <td>Form 1065</td>
+                        <td>Multiple owners</td>
+                        <td>Pass-through taxation</td>
+                    </tr>
+                    <tr>
+                        <td>S-Corp</td>
+                        <td>Form 1120S</td>
+                        <td>$60K+ profit</td>
+                        <td>Saves SE tax on distributions</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-card">
+                <h3>Business vs Hobby: The Nine-Factor Test</h3>
+                <p>The IRS uses these factors to determine if you're a business:</p>
+                <ol>
+                    <li>✓ Carry on activity in businesslike manner</li>
+                    <li>✓ Time and effort indicates profit intent</li>
+                    <li>✓ Depend on income for livelihood</li>
+                    <li>✓ Losses are due to startup or beyond control</li>
+                    <li>✓ Change methods to improve profitability</li>
+                    <li>✓ You have knowledge to make it profitable</li>
+                    <li>✓ Made profit in similar activities before</li>
+                    <li>✓ Activity makes profit in some years</li>
+                    <li>✓ Expect assets to appreciate</li>
+                </ol>
+                <p class="highlight-text">Key: Show profit in 3 of 5 years = presumed business</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Accounting Method Choice</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Method</th>
+                        <th>How It Works</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Cash</strong></td>
+                        <td>Income when received, expenses when paid</td>
+                        <td>Most resellers under $30M revenue</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Accrual</strong></td>
+                        <td>Income when earned, expenses when incurred</td>
+                        <td>Larger operations</td>
+                    </tr>
+                </table>
+                <p class="small">Small business inventory relief under §471(c) if under $30M average gross receipts</p>
             </div>
         </div>
 
-        <nav class="bottom-nav">
-            <a class="nav-item" href="index.html">
-                <img src="/icons/home.png" alt="Home">
-                <span>Home</span>
-            </a>
-            <a class="nav-item" href="inventory.html">
-                <img src="/icons/inventory.png" alt="Inventory">
-                <span>Inventory</span>
-            </a>
-            <a class="nav-item" href="expenses.html">
-                <img src="/icons/dollar.png" alt="Expenses">
-                <span>Expenses</span>
-            </a>
-            <a class="nav-item" href="mileage.html">
-                <img src="/icons/mileage.png" alt="Mileage">
-                <span>Mileage</span>
-            </a>
-            <a class="nav-item" href="scores.html">
-                <img src="/icons/powerscore.png" alt="History">
-                <span>Scores</span>
-            </a>
-            <a class="nav-item active" href="more.html">
-                <img src="/icons/coins.png" alt="More">
-                <span>More</span>
-            </a>
-        </nav>
+        <div id="deductions" class="tab-content">
+            <h2>💰 Master List of Reseller Deductions</h2>
+
+            <div class="info-card highlight">
+                <h3>💡 Scan2Flip Pro Saves You Money</h3>
+                <p>Track expenses automatically! Snap receipt photos, categorize purchases, log COGS. <strong>Pro members ($6.99/mo)</strong> get unlimited expense tracking. The mileage tracker alone can save you $4,000+ in deductions annually!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>A) Cost of Goods Sold (COGS) - Your #1 Adjustment</h3>
+                <div class="formula-box">
+                    <p><strong>COGS = Beginning Inventory + Purchases - Ending Inventory</strong></p>
+                </div>
+                <ul>
+                    <li>✓ Purchase price of inventory</li>
+                    <li>✓ Shipping-in costs to acquire goods</li>
+                    <li>✓ Auction buyer premiums</li>
+                    <li>✓ Sales tax on inventory purchases</li>
+                </ul>
+                <p class="highlight-text">⚠️ Only deduct COGS for items SOLD, not sitting in inventory!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>B) Vehicle & Mileage Deductions</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Year</th>
+                        <th>Standard Rate</th>
+                        <th>5,000 Miles</th>
+                        <th>10,000 Miles</th>
+                    </tr>
+                    <tr>
+                        <td>2025</td>
+                        <td>$0.67/mile</td>
+                        <td>$3,350</td>
+                        <td>$6,700</td>
+                    </tr>
+                </table>
+                <p><strong>Deductible trips:</strong></p>
+                <ul>
+                    <li>✓ Sourcing (thrift, garage sales, retail stores)</li>
+                    <li>✓ Post office/shipping runs</li>
+                    <li>✓ Bank deposits</li>
+                    <li>✓ Supply purchases</li>
+                    <li>✓ Meeting buyers/sellers</li>
+                </ul>
+                <p class="highlight-text">❌ NOT deductible: Commuting to regular job</p>
+            </div>
+
+            <div class="info-card">
+                <h3>C) Home Office Deduction</h3>
+                <div class="formula-box">
+                    <p><strong>Simplified:</strong> $5/sq ft × up to 300 sq ft = Max $1,500</p>
+                    <p><strong>Actual:</strong> (Office sq ft ÷ Home sq ft) × Home expenses</p>
+                </div>
+                <p><strong>Requirements:</strong> Exclusive & regular business use</p>
+                <p><strong>Tip:</strong> Storage space for inventory qualifies even without exclusive use!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>D) Complete Deduction Categories</h3>
+                <table class="deduction-table">
+                    <tr>
+                        <th>Category</th>
+                        <th>Examples</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td><strong>Platform Fees</strong></td>
+                        <td>eBay FVF (13.25%), Mercari (10%+3.6%), PayPal (2.9%+$0.30)</td>
+                        <td>100% deductible</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Shipping/Fulfillment</strong></td>
+                        <td>Postage, labels, boxes, tape, bubble wrap, FBA fees</td>
+                        <td>Track separately from COGS</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Software/Apps</strong></td>
+                        <td>Scan2Flip Pro, QuickBooks, List Perfectly, Keepa</td>
+                        <td>Monthly or annual</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Equipment</strong></td>
+                        <td>Scale, printer, camera, shelving, computer %</td>
+                        <td>§179 or depreciate</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Phone/Internet</strong></td>
+                        <td>Business % of monthly bills</td>
+                        <td>Document % calculation</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Advertising</strong></td>
+                        <td>Promoted listings, Google/FB ads, business cards</td>
+                        <td>Track ROI</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Professional</strong></td>
+                        <td>CPA, bookkeeper, legal advice</td>
+                        <td>Tax prep deductible</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Education</strong></td>
+                        <td>Courses, conferences, books (current skills only)</td>
+                        <td>Not for new careers</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Insurance</strong></td>
+                        <td>Business liability, marketplace add-ons</td>
+                        <td>Prorate if mixed</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Storage</strong></td>
+                        <td>Storage unit, warehouse, Amazon FBA storage</td>
+                        <td>Compare vs home</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-card">
+                <h3>E) De Minimis Safe Harbor Election</h3>
+                <ul>
+                    <li>Expense items ≤$2,500 per invoice/item immediately</li>
+                    <li>No depreciation required</li>
+                    <li>Attach annual election statement to return</li>
+                    <li>Keep all invoices showing unit prices</li>
+                </ul>
+                <p class="highlight-text">Perfect for equipment like printers, scales, shelving!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>F) Travel & Meals</h3>
+                <ul>
+                    <li><strong>Lodging/Transport:</strong> 100% deductible for business trips</li>
+                    <li><strong>Meals:</strong> 50% deductible when business-related</li>
+                    <li><strong>Conferences:</strong> Registration, travel, hotel all deductible</li>
+                    <li><strong>Per Diem:</strong> Use IRS rates instead of tracking meals</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="tracking" class="tab-content">
+            <h2>📱 Audit-Proof Record Keeping</h2>
+
+            <div class="info-card highlight">
+                <h3>🎯 Never Miss a Deduction</h3>
+                <p>Scan2Flip Pro auto-categorizes expenses, stores receipt photos, and exports everything for your CPA. <strong>Power Pro members</strong> get advanced P&L reports and inventory COGS tracking!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>The Five Buckets of Proof</h3>
+                <ol>
+                    <li><strong>Income Trail:</strong> Platform payouts, 1099-Ks, bank deposits, sales log</li>
+                    <li><strong>COGS Evidence:</strong> Receipts, invoices, auction sheets, inventory spreadsheet</li>
+                    <li><strong>Expense Receipts:</strong> Who, what, when, where, why, amount</li>
+                    <li><strong>Mixed-Use Allocations:</strong> Business % calculations saved annually</li>
+                    <li><strong>Retention:</strong> 3 years standard (7 for bad debt/major assets)</li>
+                </ol>
+            </div>
+
+            <div class="info-card">
+                <h3>Mileage Log Requirements</h3>
+                <p>IRS requires contemporaneous logs with:</p>
+                <ul>
+                    <li>✓ Date of trip</li>
+                    <li>✓ Starting location</li>
+                    <li>✓ Destination</li>
+                    <li>✓ Business purpose</li>
+                    <li>✓ Miles driven</li>
+                </ul>
+                <div class="formula-box">
+                    <p>Example: "1/15/25 | Home → Goodwill → Home | Source inventory | 12 miles"</p>
+                </div>
+                <p class="highlight-text">Use Scan2Flip's GPS mileage tracker for automatic logging!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Digital Organization System</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Folder</th>
+                        <th>Contents</th>
+                        <th>Retention</th>
+                    </tr>
+                    <tr>
+                        <td>📁 2025 Income</td>
+                        <td>1099-Ks, platform reports</td>
+                        <td>7 years</td>
+                    </tr>
+                    <tr>
+                        <td>📁 2025 COGS</td>
+                        <td>Purchase receipts, inventory counts</td>
+                        <td>3 years</td>
+                    </tr>
+                    <tr>
+                        <td>📁 2025 Expenses</td>
+                        <td>Monthly subfolders by category</td>
+                        <td>3 years</td>
+                    </tr>
+                    <tr>
+                        <td>📁 2025 Mileage</td>
+                        <td>Monthly logs, GPS exports</td>
+                        <td>3 years</td>
+                    </tr>
+                    <tr>
+                        <td>📁 2025 Home Office</td>
+                        <td>Photos, measurements, utilities</td>
+                        <td>3 years</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="info-card">
+                <h3>Monthly Bookkeeping Checklist</h3>
+                <ol>
+                    <li>☐ Download platform sales reports (eBay, Mercari, etc.)</li>
+                    <li>☐ Update inventory spreadsheet (items sold, new purchases)</li>
+                    <li>☐ Calculate COGS for the month</li>
+                    <li>☐ Export/save mileage logs</li>
+                    <li>☐ Scan/photograph all receipts</li>
+                    <li>☐ Categorize expenses in tracking app</li>
+                    <li>☐ Reconcile business bank account</li>
+                    <li>☐ Calculate profit/loss</li>
+                    <li>☐ Set aside tax money (25-35%)</li>
+                    <li>☐ Back up all data to cloud</li>
+                </ol>
+            </div>
+
+            <div class="info-card">
+                <h3>Red Flags That Trigger Audits</h3>
+                <ul>
+                    <li>❌ 100% vehicle business use (unrealistic)</li>
+                    <li>❌ Losses multiple years (hobby classification)</li>
+                    <li>❌ Round numbers ($500, $1,000 expenses)</li>
+                    <li>❌ Home office for non-exclusive space</li>
+                    <li>❌ Excessive meals/entertainment</li>
+                    <li>❌ No receipts or documentation</li>
+                    <li>❌ Income doesn't match 1099-Ks</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="quarterly" class="tab-content">
+            <h2>📅 Quarterly Tax Planning</h2>
+
+            <div class="info-card">
+                <h3>2025 Quarterly Due Dates</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Quarter</th>
+                        <th>Period</th>
+                        <th>Due Date</th>
+                        <th>Notes</th>
+                    </tr>
+                    <tr>
+                        <td>Q1</td>
+                        <td>Jan 1 - Mar 31</td>
+                        <td>April 15, 2025</td>
+                        <td>With annual return</td>
+                    </tr>
+                    <tr>
+                        <td>Q2</td>
+                        <td>Apr 1 - May 31</td>
+                        <td>June 16, 2025</td>
+                        <td>Monday (15th is Sunday)</td>
+                    </tr>
+                    <tr>
+                        <td>Q3</td>
+                        <td>Jun 1 - Aug 31</td>
+                        <td>Sept 15, 2025</td>
+                        <td>Biggest quarter</td>
+                    </tr>
+                    <tr>
+                        <td>Q4</td>
+                        <td>Sep 1 - Dec 31</td>
+                        <td>Jan 15, 2026</td>
+                        <td>Skip if filing by Jan 31</td>
+                    </tr>
+                </table>
+                <p class="small">Pay if expecting to owe $1,000+ for the year</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Quarterly Payment Calculation</h3>
+                <div class="formula-box">
+                    <p><strong>Step 1:</strong> Quarterly Profit = Revenue - COGS - Expenses</p>
+                    <p><strong>Step 2:</strong> SE Tax = Profit × 15.3% × 92.35%</p>
+                    <p><strong>Step 3:</strong> Income Tax = Profit × Your Rate (10-37%)</p>
+                    <p><strong>Step 4:</strong> Total = SE Tax + Income Tax</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Tax Savings by Profit Level</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Annual Profit</th>
+                        <th>SE Tax</th>
+                        <th>Income Tax*</th>
+                        <th>Total Tax</th>
+                        <th>Set Aside</th>
+                    </tr>
+                    <tr>
+                        <td>$10,000</td>
+                        <td>$1,413</td>
+                        <td>$1,200</td>
+                        <td>$2,613</td>
+                        <td>26%</td>
+                    </tr>
+                    <tr>
+                        <td>$25,000</td>
+                        <td>$3,532</td>
+                        <td>$3,000</td>
+                        <td>$6,532</td>
+                        <td>26%</td>
+                    </tr>
+                    <tr>
+                        <td>$50,000</td>
+                        <td>$7,065</td>
+                        <td>$8,500</td>
+                        <td>$15,565</td>
+                        <td>31%</td>
+                    </tr>
+                    <tr>
+                        <td>$75,000</td>
+                        <td>$10,597</td>
+                        <td>$14,500</td>
+                        <td>$25,097</td>
+                        <td>33%</td>
+                    </tr>
+                    <tr>
+                        <td>$100,000</td>
+                        <td>$14,130</td>
+                        <td>$22,000</td>
+                        <td>$36,130</td>
+                        <td>36%</td>
+                    </tr>
+                </table>
+                <p class="small">*Assumes single filer, standard deduction, varies by situation</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Safe Harbor Rule</h3>
+                <p>Avoid penalties by paying the lesser of:</p>
+                <ul>
+                    <li>90% of current year's tax liability, OR</li>
+                    <li>100% of prior year's tax (110% if AGI >$150K)</li>
+                </ul>
+                <p class="highlight-text">💡 Pro tip: Pay 100% of last year = no penalties guaranteed!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Year-End Tax Strategies</h3>
+                <ul>
+                    <li><strong>December purchases:</strong> Stock up on supplies for immediate deduction</li>
+                    <li><strong>Equipment:</strong> Buy before Dec 31 for Section 179 write-off</li>
+                    <li><strong>Prepay expenses:</strong> January rent, insurance, software</li>
+                    <li><strong>Inventory timing:</strong> Delay purchases if high profit year</li>
+                    <li><strong>Accelerate sales:</strong> Clear old inventory if low profit year</li>
+                </ul>
+            </div>
+        </div>
+
+        <div id="advanced" class="tab-content">
+            <h2>🎯 Advanced Tax Strategies</h2>
+
+            <div class="info-card highlight">
+                <h3>📊 QBI Deduction (Section 199A)</h3>
+                <p>Deduct up to 20% of qualified business income!</p>
+                <ul>
+                    <li>Available for sole proprietors, partnerships, S-Corps</li>
+                    <li>Phases out at higher incomes ($182,950 single, $365,900 married for 2025)</li>
+                    <li>Use Form 8995 (simple) or 8995-A (complex)</li>
+                </ul>
+                <div class="formula-box">
+                    <p>$50,000 profit × 20% = $10,000 potential deduction!</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Retirement Contributions</h3>
+                <table class="fee-table">
+                    <tr>
+                        <th>Plan Type</th>
+                        <th>2025 Limits</th>
+                        <th>Best For</th>
+                    </tr>
+                    <tr>
+                        <td>SEP-IRA</td>
+                        <td>25% of income or $70,000</td>
+                        <td>High profit, simple</td>
+                    </tr>
+                    <tr>
+                        <td>Solo 401(k)</td>
+                        <td>$23,500 + 25% profit share</td>
+                        <td>Max contributions</td>
+                    </tr>
+                    <tr>
+                        <td>Traditional IRA</td>
+                        <td>$7,000 ($8,000 if 50+)</td>
+                        <td>Starting out</td>
+                    </tr>
+                </table>
+                <p class="highlight-text">Contributions are above-the-line deductions!</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Section 179 vs Depreciation</h3>
+                <ul>
+                    <li><strong>Section 179:</strong> Deduct full cost in year 1 (up to $1,220,000 for 2025)</li>
+                    <li><strong>Bonus Depreciation:</strong> 60% in 2025 (phasing out)</li>
+                    <li><strong>Regular MACRS:</strong> Spread over 5-7 years</li>
+                </ul>
+                <p><strong>Qualifying equipment:</strong> Computers, printers, cameras, shelving, vehicles (limits apply)</p>
+            </div>
+
+            <div class="info-card">
+                <h3>Self-Employed Health Insurance</h3>
+                <ul>
+                    <li>Deduct 100% of health insurance premiums</li>
+                    <li>Includes spouse and dependents</li>
+                    <li>Above-the-line deduction (reduces AGI)</li>
+                    <li>Can't exceed business profit</li>
+                </ul>
+                <p class="highlight-text">Use Form 7206 to calculate</p>
+            </div>
+
+            <div class="info-card">
+                <h3>When to Consider S-Corp</h3>
+                <p>S-Corp election can save thousands in SE tax when:</p>
+                <ul>
+                    <li>Net profit consistently >$60,000</li>
+                    <li>You can pay yourself reasonable W-2 salary</li>
+                    <li>Additional compliance costs are worth tax savings</li>
+                </ul>
+                <div class="formula-box">
+                    <p><strong>Example:</strong> $100K profit as sole prop = $14,130 SE tax</p>
+                    <p><strong>S-Corp:</strong> $50K salary + $50K distribution = $7,650 payroll tax</p>
+                    <p><strong>Savings:</strong> $6,480/year!</p>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <h3>Audit Defense Preparation</h3>
+                <ul>
+                    <li>✓ Keep detailed mileage logs (GPS backup)</li>
+                    <li>✓ Photograph home office quarterly</li>
+                    <li>✓ Save all email confirmations</li>
+                    <li>✓ Document business purpose on receipts</li>
+                    <li>✓ Maintain separate business bank account</li>
+                    <li>✓ Track time spent on business activities</li>
+                    <li>✓ Keep profit/loss statements monthly</li>
+                </ul>
+            </div>
+
+            <div class="info-card">
+                <h3>Quick Reference Checklist</h3>
+                <p><strong>Print this for tax time:</strong></p>
+                <ul>
+                    <li>☐ Separate business bank account active</li>
+                    <li>☐ Inventory spreadsheet with SKUs maintained</li>
+                    <li>☐ All receipts scanned/saved digitally</li>
+                    <li>☐ Mileage log current and detailed</li>
+                    <li>☐ Home office measurements documented</li>
+                    <li>☐ De minimis election prepared if using</li>
+                    <li>☐ Quarterly payments made on time</li>
+                    <li>☐ Platform reports downloaded</li>
+                    <li>☐ QBI deduction calculated</li>
+                    <li>☐ Records backed up (3+ years)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button onclick="location.href='expenses.html'" class="secondary-button">Track Expenses</button>
+            <button onclick="location.href='mileage.html'" class="primary-button">Log Mileage →</button>
+        </div>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <nav class="bottom-nav">
+        <a href="index.html"><img src="icons/home.png" alt="Home"><span>Home</span></a>
+        <a href="inventory.html"><img src="icons/inventory.png" alt="Inventory"><span>Inventory</span></a>
+        <a href="expenses.html"><img src="icons/dollar.png" alt="Expenses"><span>Expenses</span></a>
+        <a href="more.html"><img src="icons/more.png" alt="More"><span>More</span></a>
+    </nav>
 
-    <script src="app.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-        });
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
     </script>
 </body>
 </html>

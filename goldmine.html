@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Gold Mine™ - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div style="padding: 1.5rem;">
+                <div class="result-header">
+                    <a href="more.html" class="back-button">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Gold Mine™ Database</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin: 1rem 0; text-align: center;">
+                    Crowdsourced gold finds from the Power Pro community
+                </p>
+                
+                <div id="goldMineList" style="max-height: 70vh; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item active" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            
+            // Check if user has access
+            if (!requireTier('powerPro', 'Gold Mine™')) {
+                return;
+            }
+            
+            displayGoldMineItems();
+        });
+
+        function displayGoldMineItems() {
+            const goldItems = [
+                { name: 'Vintage Pyrex Bowls', powerScore: 94, category: 'Kitchenware', foundBy: 'Sarah K.', location: 'Estate Sales' },
+                { name: 'Ti-84 Calculator', powerScore: 91, category: 'Electronics', foundBy: 'Mike R.', location: 'Garage Sales' },
+                { name: 'Patagonia Fleece', powerScore: 92, category: 'Clothing', foundBy: 'Jessica L.', location: 'Goodwill' },
+                { name: 'Cast Iron Skillet (Griswold)', powerScore: 96, category: 'Cookware', foundBy: 'Tom B.', location: 'Thrift Stores' }
+            ];
+            
+            // Add any user-found gold items
+            if (state.goldMineFinds && state.goldMineFinds.length > 0) {
+                goldItems.push(...state.goldMineFinds);
+            }
+            
+            const container = document.getElementById('goldMineList');
+            
+            if (goldItems.length === 0) {
+                container.innerHTML = `<div class="empty-state">No Gold Found Yet</div>`;
+                return;
+            }
+            
+            container.innerHTML = goldItems.map(item => `
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem; border: 2px solid #FFD700;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 700; color: #FFD700;">${item.name}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">
+                                ${item.category} • Found at ${item.location || 'Various'}
+                            </div>
+                            <div style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 0.25rem;">
+                                Discovered by ${item.foundBy}
+                            </div>
+                        </div>
+                        <div style="font-size: 2rem; font-weight: 800; color: #FFD700;">
+                            ${item.powerScore}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>IRS 101 - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div style="padding: 1.5rem;">
+                <div class="result-header">
+                    <a href="more.html" class="back-button">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">IRS 101</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <div style="background: #442B32; border: 1px solid var(--accent-red); color: white; padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+                    <h3>⚠️ IMPORTANT DISCLAIMER ⚠️</h3>
+                    <p style="opacity: 0.9; font-size: 0.9rem;">This information is for educational purposes only and is not a substitute for professional tax advice. These are common deductions, but may not apply to your specific situation. Always consult with a qualified tax professional.</p>
+                </div>
+                
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem;">Common Tax Deductions for Resellers</h2>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Cost of Goods Sold (COGS)</h3>
+                    <p>This is the #1 deduction. It's the original price you paid for the items you sold. If you bought a video game for $5 and sold it for $40, your COGS is $5.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Shipping Costs</h3>
+                    <p>You can deduct the full cost of postage and shipping fees you pay to send items to buyers.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Business Mileage</h3>
+                    <p>Track the miles you drive for your business, such as trips to the post office or to source inventory. Use the Mileage Tracker in this app! The IRS sets a standard rate per mile each year (currently $0.67/mile for 2024).</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Supplies</h3>
+                    <p>Boxes, bubble wrap, packing tape, printer ink, and labels are all deductible business expenses.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Platform Fees</h3>
+                    <p>eBay fees, PayPal fees, Mercari fees, and any other selling platform fees are deductible.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Home Office</h3>
+                    <p>If you use part of your home exclusively for your reselling business, you may be able to deduct a portion of your rent/mortgage, utilities, and internet.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Storage Units</h3>
+                    <p>If you rent a storage unit for inventory, the monthly rental cost is deductible.</p>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 0.5rem;">Software & Apps</h3>
+                    <p>Subscription costs for listing tools, inventory management software, and apps like Scan2Flip Pro are deductible business expenses.</p>
+                </div>
+
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem;">Record Keeping Tips</h2>
+                
+                <div style="background: var(--bg-tertiary); border-radius: 12px; padding: 1.5rem;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-green);">📱 Keep Digital Records:</strong>
+                            <span style="color: var(--text-secondary);"> Photograph all receipts immediately. Store them in cloud storage organized by month.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-green);">📊 Track Everything:</strong>
+                            <span style="color: var(--text-secondary);"> Use a spreadsheet or app to track every purchase and sale. Include date, item, cost, sale price, and fees.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-green);">🚗 Log Miles Daily:</strong>
+                            <span style="color: var(--text-secondary);"> Use the mileage tracker feature to log business miles. The IRS requires contemporaneous records.</span>
+                        </li>
+                        <li>
+                            <strong style="color: var(--accent-green);">💳 Separate Accounts:</strong>
+                            <span style="color: var(--text-secondary);"> Consider a separate bank account and credit card for business expenses. Makes tracking much easier.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div style="background: var(--accent-blue); color: white; padding: 1rem; border-radius: 12px; margin-top: 2rem;">
+                    <p style="font-weight: 600;">🎯 Pro Tip: The IRS requires you to keep records for at least 3 years from the date you file your return. Keep everything organized!</p>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item active" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+    </script>
+</body>
+</html>

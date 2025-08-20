@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Upgrade - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="tier-container">
+                <div class="result-header">
+                    <a href="more.html" class="back-button">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Choose Your Plan</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <div class="tier-card" id="freemiumTier">
+                    <div class="tier-name">Freemium</div>
+                    <div class="tier-price">$0<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            5 scans per day
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Basic inventory tracking
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Power Score analysis
+                        </li>
+                    </ul>
+                    <button class="btn btn-secondary" style="width: 100%;" disabled id="freemiumBtn">Current Plan</button>
+                </div>
+                
+                <div class="tier-card recommended">
+                    <div class="tier-badge">RECOMMENDED</div>
+                    <div class="tier-name">Pro</div>
+                    <div class="tier-price">$6.99<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            2,000 scans per month
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Unlimited inventory & expenses
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Mileage tracking
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            CSV exports
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Add scan packs: 500 for $1.99
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPro()" id="proBtn">Upgrade to Pro</button>
+                </div>
+                
+                <div class="tier-card">
+                    <div class="tier-name">Power Pro</div>
+                    <div class="tier-price">$9.99<span>/month</span></div>
+                    <ul class="tier-features">
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            3,500 scans per month
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Everything in Pro
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Gold Mine BOLO lists
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Part-Out Calculator™
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Advanced PDF reports
+                        </li>
+                        <li>
+                            <svg class="check-icon" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
+                            </svg>
+                            Priority support
+                        </li>
+                    </ul>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="upgradeToPowerPro()" id="powerProBtn">Upgrade to Power Pro</button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item active" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            updateTierButtons();
+        });
+
+        function updateTierButtons() {
+            const currentTier = state.user.tier;
+            
+            // Update buttons based on current tier
+            if (currentTier === 'pro') {
+                document.getElementById('freemiumBtn').textContent = 'Downgrade';
+                document.getElementById('freemiumBtn').disabled = false;
+                document.getElementById('proBtn').textContent = 'Current Plan';
+                document.getElementById('proBtn').disabled = true;
+            } else if (currentTier === 'powerPro') {
+                document.getElementById('freemiumBtn').textContent = 'Downgrade';
+                document.getElementById('freemiumBtn').disabled = false;
+                document.getElementById('proBtn').textContent = 'Downgrade';
+                document.getElementById('proBtn').onclick = () => upgradeToTier('pro', 2000);
+                document.getElementById('powerProBtn').textContent = 'Current Plan';
+                document.getElementById('powerProBtn').disabled = true;
+            }
+        }
+    </script>
+</body>
+</html>

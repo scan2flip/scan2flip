@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Expenses - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div style="padding: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.5rem;">
+                    <img src="/icons/dollar.png" alt="Expenses" style="width: 32px; height: 32px;">
+                    <h2 style="font-size: 1.5rem; font-weight: 700;">Expense Tracking</h2>
+                </div>
+                
+                <button class="btn btn-primary" style="width: 100%; margin-bottom: 1.5rem;" onclick="openExpenseModal()">
+                    Add Other Expense
+                </button>
+                
+                <div id="expensesList" style="margin-top: 1.5rem;">
+                    <div class="empty-state">
+                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <div class="empty-title">No Expenses Logged</div>
+                        <div class="empty-text">Track your costs to calculate real profit.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item active" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            displayExpenses();
+        });
+
+        function openExpenseModal() {
+            showToast('Expense tracking coming soon!', 'success');
+        }
+
+        function displayExpenses() {
+            const container = document.getElementById('expensesList');
+            if (!state.expenses || state.expenses.length === 0) {
+                // Empty state is already shown in HTML
+                return;
+            }
+            
+            // Display expenses when implemented
+            container.innerHTML = state.expenses.map(expense => `
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="font-weight: 600;">${expense.description}</div>
+                            <div style="font-size: 0.85rem; color: var(--text-secondary);">${new Date(expense.date).toLocaleDateString()}</div>
+                        </div>
+                        <div style="color: var(--accent-red); font-weight: 600;">-$${expense.amount}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

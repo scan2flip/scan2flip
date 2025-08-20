@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>More - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div style="padding: 1.5rem;">
+                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">More</h2>
+                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                    <a href="upgrade.html" class="btn btn-secondary" style="text-decoration: none;">
+                        Upgrade Plan
+                    </a>
+                    <button class="btn btn-secondary" id="goldMineBtn" onclick="showGoldMineDatabase()">
+                        View Gold Mine™
+                    </button>
+                    <a href="flipping101.html" class="btn btn-secondary" style="text-decoration: none;">
+                        Flipping 101
+                    </a>
+                    <a href="irs101.html" class="btn btn-secondary" style="text-decoration: none;">
+                        IRS 101
+                    </a>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        Export Data
+                    </button>
+                    <button class="btn btn-secondary" onclick="showSettings()">
+                        Settings
+                    </button>
+                    <button class="btn btn-secondary" onclick="logout()">
+                        Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item active" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            updateGoldMineButton();
+        });
+
+        function updateGoldMineButton() {
+            const goldMineBtn = document.getElementById('goldMineBtn');
+            if (state.user.tier !== 'powerPro') {
+                goldMineBtn.style.display = 'none';
+            }
+        }
+
+        function showGoldMineDatabase() {
+            if (!requireTier('powerPro', 'Gold Mine™')) return;
+            window.location.href = 'goldmine.html';
+        }
+    </script>
+</body>
+</html>

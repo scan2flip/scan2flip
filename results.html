@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Scan Results - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div class="results-container">
+                <div class="result-header">
+                    <a href="index.html" class="back-button">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <h2 style="font-size: 1.25rem; font-weight: 600;">Scan Results</h2>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <div class="power-score-container">
+                    <div class="power-score-circle">
+                        <div id="powerScoreBadge" class="power-score-badge excellent">
+                            <span id="powerScore">85</span>
+                        </div>
+                    </div>
+                    <div class="power-score-label">POWER SCORE™</div>
+                </div>
+                
+                <div id="itemInfo" style="text-align: center; padding: 1rem;">
+                    <h2 id="itemName" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Nintendo Switch Game</h2>
+                    <p id="itemCategory" style="color: var(--text-secondary);">Video Games</p>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="avgPrice">$45</div>
+                        <div class="stat-label">Avg. Sale Price</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="sellThrough">78%</div>
+                        <div class="stat-label">Sell-Through Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="worthPaying">$28</div>
+                        <div class="stat-label">Worth Paying</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="daysToSell">12</div>
+                        <div class="stat-label">Days to Sell</div>
+                    </div>
+                </div>
+                
+                <div id="partOutSection" style="display: none;"></div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-success" onclick="addToInventory()">
+                        Add to Inventory
+                    </button>
+                    <button class="btn btn-secondary" onclick="addToWatchlist()">
+                        Save to Watchlist
+                    </button>
+                    <button class="btn btn-danger" onclick="addToFlopList()">
+                        Add to Flop List
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        // Page initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+            displayScanResult();
+        });
+
+        function displayScanResult() {
+            if (!state.currentScan) {
+                // No scan data, redirect to home
+                window.location.href = 'index.html';
+                return;
+            }
+
+            const result = state.currentScan;
+            
+            document.getElementById('powerScore').textContent = result.powerScore;
+            document.getElementById('itemName').textContent = result.name;
+            document.getElementById('itemCategory').textContent = result.category;
+            document.getElementById('avgPrice').textContent = `$${result.avgPrice}`;
+            document.getElementById('sellThrough').textContent = `${result.sellThrough}%`;
+            document.getElementById('worthPaying').textContent = `$${result.worthPaying}`;
+            document.getElementById('daysToSell').textContent = result.daysToSell;
+            
+            const badge = document.getElementById('powerScoreBadge');
+            if (result.powerScore >= 90) {
+                badge.className = 'power-score-badge gold-mine';
+                setTimeout(showGoldStrike, 500);
+                if (state.user.tier === 'powerPro') {
+                    addToGoldMine(result);
+                }
+            } else if (result.powerScore >= 70) {
+                badge.className = 'power-score-badge excellent';
+            } else if (result.powerScore >= 50) {
+                badge.className = 'power-score-badge good';
+            } else {
+                badge.className = 'power-score-badge poor';
+            }
+
+            // Handle Part-Out section
+            const partOutSection = document.getElementById('partOutSection');
+            if (result.partOut && result.partOut.length > 0) {
+                if (state.user.tier === 'powerPro') {
+                    let totalValue = 0;
+                    partOutSection.innerHTML = `
+                        <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 2px; border-radius: 12px; margin-top: 1.5rem;">
+                            <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem;">
+                                <h3 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; color: #FFD700;">💎 HIDDEN GOLD FOUND!</h3>
+                                <div id="partOutList" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    ${result.partOut.map(part => {
+                                        totalValue += part.value;
+                                        let badgeColor = '#f44336';
+                                        if (part.powerScore >= 90) badgeColor = '#FFD700';
+                                        else if (part.powerScore >= 70) badgeColor = '#4CAF50';
+                                        else if (part.powerScore >= 50) badgeColor = '#2196F3';
+                                        return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem; background: var(--bg-primary); border-radius: 8px;">
+                                                    <div><div style="font-weight: 600;">${part.name}</div><div style="font-size: 0.85rem; color: var(--text-secondary);">Sells ${part.sellThrough}% of the time</div></div>
+                                                    <div style="display: flex; align-items: center; gap: 1rem;"><div style="width: 50px; height: 50px; background: ${badgeColor}; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.25rem; color: white;">${part.powerScore}</div><div style="font-weight: 700; font-size: 1.1rem; color: ${badgeColor};">$${part.value}</div></div>
+                                                </div>`;
+                                    }).join('')}
+                                </div>
+                                <div style="border-top: 1px solid var(--bg-tertiary); margin-top: 1rem; padding-top: 1rem;"><div style="display: flex; justify-content: space-between; align-items: center;"><span style="font-weight: 600;">Total Part-Out Value:</span><span style="font-size: 1.5rem; font-weight: 800; color: #FFD700;">$${totalValue}</span></div></div>
+                            </div>
+                        </div>`;
+                    partOutSection.style.display = 'block';
+                } else {
+                    partOutSection.innerHTML = `
+                        <div style="background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,165,0,0.1)); padding: 2px; border-radius: 12px; margin-top: 1.5rem;">
+                            <div style="background: var(--bg-secondary); border-radius: 10px; padding: 1.5rem; text-align: center;">
+                                <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; margin-bottom: 1rem;"><img src="/icons/goldmine.png" alt="Part-Out" style="width: 32px; height: 32px; opacity: 0.5;"><h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-secondary);">Part-Out Calculator™</h3></div>
+                                <p style="color: var(--text-secondary); margin-bottom: 1rem;">This item has ${result.partOut.length} valuable parts that could be worth more when sold separately!</p>
+                                <div style="font-size: 2rem; font-weight: 800; color: var(--text-secondary); margin-bottom: 1rem;">💰 Hidden Value Detected</div>
+                                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1.5rem;">Unlock the Part-Out Calculator with Power Pro to see exact values and maximize your profits</p>
+                                <a href="upgrade.html" class="btn btn-primary" style="width: 100%; display: block; text-decoration: none;">🔓 Upgrade to Power Pro</a>
+                            </div>
+                        </div>`;
+                    partOutSection.style.display = 'block';
+                }
+            } else {
+                partOutSection.style.display = 'none';
+            }
+        }
+
+        function addToInventory() {
+            if (!state.currentScan) return;
+            const item = { 
+                id: Date.now(), 
+                ...state.currentScan, 
+                status: 'unlisted', 
+                dateAdded: new Date().toISOString() 
+            };
+            state.inventory.push(item);
+            saveState();
+            showToast('Added to inventory!', 'success');
+            setTimeout(() => {
+                window.location.href = 'inventory.html';
+            }, 1500);
+        }
+
+        function addToWatchlist() {
+            if (!state.currentScan) return;
+            state.watchlist.push({ 
+                id: Date.now(), 
+                ...state.currentScan, 
+                dateAdded: new Date().toISOString() 
+            });
+            saveState();
+            showToast('Added to watchlist!', 'success');
+        }
+
+        function addToFlopList() {
+            if (!state.currentScan) return;
+            state.flopList.push({ 
+                id: Date.now(), 
+                name: state.currentScan.name, 
+                category: state.currentScan.category, 
+                dateAdded: new Date().toISOString() 
+            });
+            saveState();
+            showToast('Added to flop list', 'success');
+        }
+    </script>
+</body>
+</html>

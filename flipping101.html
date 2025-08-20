@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0d1f2d">
+    <title>Flipping 101 - Scan2Flip</title>
+    
+    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
+    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <div class="logo-container">
+                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
+                <div class="logo-text">SCAN2FLIP</div>
+            </div>
+            <div class="header-stats">
+                <div class="scan-counter" id="scanCounter">
+                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
+                    </svg>
+                    <span id="scanCount">5/5 Daily</span>
+                </div>
+                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
+                    +<span id="packCount">0</span> packs
+                </div>
+            </div>
+        </header>
+
+        <div class="page-content">
+            <div style="padding: 1.5rem;">
+                <div class="result-header">
+                    <a href="more.html" class="back-button">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                        </svg>
+                    </a>
+                    <div></div>
+                    <div style="width: 24px;"></div>
+                </div>
+                
+                <h1 style="text-align: center; font-size: 1.5rem; font-weight: 700;">Flipping 101</h1>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">A Complete Beginner-to-Pro Playbook</p>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <p>Welcome to Flipping 101! If you're looking to turn everyday items into extra cash—or even a full-time income—this guide is your roadmap. Flipping, also known as reselling, involves buying undervalued items and selling them at a higher price for profit. It's a flexible side hustle that anyone can start with minimal investment, but success requires research, strategy, and persistence.</p>
+                </div>
+
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;">Quick Start: Your First 30 Days</h2>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Week 1 – Setup & Skill Reps</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Create seller accounts: eBay, Facebook Marketplace, OfferUp, Mercari, Poshmark (choose 2–3 to start).</li>
+                        <li>Tools: phone camera + daylight, tape measure, small scale (to 10 lb), printer + 30-up labels (Avery 5160 or thermal).</li>
+                        <li>Learn comps: spend 60 minutes a day pulling 20 "sold" comps in your target niche (shoes, small electronics, tools, toys, vintage).</li>
+                        <li>Sourcing reps: hit 2 thrift stores + 1 garage sale; buy 5 items with expected ROI ≥ 60% and gross profit ≥ $15.</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Week 2 – List & Ship</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Photo booth: neutral backdrop, 8–12 photos per item (all angles + flaws + tags/labels + measurements). Short 10–20s video when allowed.</li>
+                        <li>Titles: Brand + Model + Size/Spec + Keywords (max signal, no fluff). Fill item specifics.</li>
+                        <li>Pricing: price at or just below last 90-day sold comp; enable offers.</li>
+                        <li>Shipping: under 1 lb → poly mailer; fragile → box + void fill; oversize → weigh & measure before listing.</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Week 3 – Routines + Cash Flow</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Daily: 10 new listings or 10 relists. Respond to offers fast. Pack same day.</li>
+                        <li>Track: SKU, buy price (COGS), list price, sale price, fees, ship cost, net, ROI, days to sell. (Spreadsheet or Airtable.)</li>
+                        <li>Reinvest 100% of profits into faster-moving inventory.</li>
+                    </ul>
+                </div>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--accent-gold); margin-bottom: 1rem;">Week 4 – Niches & Scale</h3>
+                    <ul style="list-style: disc; padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Pick 1–2 winning niches (e.g., sneakers, small kitchen appliances, vintage hats, tools, sealed LEGO, video games).</li>
+                        <li>Add a sourcing route: estate/moving sales, bin stores, local auctions, gov surplus.</li>
+                        <li>Start a simple SKU/bin system and cross-list with a tool (Vendoo/List Perfectly) once your workflow is smooth.</li>
+                    </ul>
+                </div>
+
+                <h2 style="font-size: 1.25rem; font-weight: 600; margin: 2rem 0 1rem;">Pro Tips</h2>
+                
+                <div style="background: var(--bg-secondary); border-radius: 12px; padding: 1.5rem;">
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-gold);">🎯 Focus on Sell-Through Rate:</strong>
+                            <span style="color: var(--text-secondary);"> A $20 item that sells in 3 days beats a $100 item that sits for 6 months.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-gold);">📸 Photos Sell:</strong>
+                            <span style="color: var(--text-secondary);"> Clear, bright photos with all angles shown. Natural light is free and best.</span>
+                        </li>
+                        <li style="margin-bottom: 1rem;">
+                            <strong style="color: var(--accent-gold);">💰 Know Your Numbers:</strong>
+                            <span style="color: var(--text-secondary);"> Track everything. Cost, fees, shipping, time. Data drives decisions.</span>
+                        </li>
+                        <li>
+                            <strong style="color: var(--accent-gold);">⚡ Speed Matters:</strong>
+                            <span style="color: var(--text-secondary);"> List fast, ship fast, respond fast. Velocity creates volume.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <nav class="bottom-nav">
+            <a class="nav-item" href="index.html">
+                <img src="/icons/home.png" alt="Home">
+                <span>Home</span>
+            </a>
+            <a class="nav-item" href="inventory.html">
+                <img src="/icons/inventory.png" alt="Inventory">
+                <span>Inventory</span>
+            </a>
+            <a class="nav-item" href="expenses.html">
+                <img src="/icons/dollar.png" alt="Expenses">
+                <span>Expenses</span>
+            </a>
+            <a class="nav-item" href="mileage.html">
+                <img src="/icons/mileage.png" alt="Mileage">
+                <span>Mileage</span>
+            </a>
+            <a class="nav-item" href="scores.html">
+                <img src="/icons/powerscore.png" alt="History">
+                <span>Scores</span>
+            </a>
+            <a class="nav-item active" href="more.html">
+                <img src="/icons/coins.png" alt="More">
+                <span>More</span>
+            </a>
+        </nav>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            initApp();
+        });
+    </script>
+</body>
+</html>

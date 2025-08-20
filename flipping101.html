@@ -3,622 +3,489 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>IRS 101 - Tax Guide - Scan2Flip</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Flipping 101 - Reseller Guide - Scan2Flip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent; /* Removes blue tap highlight on mobile */
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        /* Style for the sticky tab navigation */
+        .sticky-nav {
+            position: -webkit-sticky; /* For Safari */
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background-color: #0f172a; /* bg-slate-900 */
+            transition: box-shadow 0.3s ease-in-out;
+        }
+        .sticky-nav.scrolled {
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+        /* Custom scrollbar for tab nav */
+        .tab-nav::-webkit-scrollbar {
+            height: 3px;
+        }
+        .tab-nav::-webkit-scrollbar-track {
+            background: #1e293b;
+        }
+        .tab-nav::-webkit-scrollbar-thumb {
+            background-color: #facc15; /* yellow-400 */
+            border-radius: 3px;
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>📋 IRS 101</h1>
-            <p class="subtitle">Master Your Taxes & Maximize Deductions</p>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Main Container -->
+    <div class="container mx-auto max-w-4xl px-4 pb-28"> <!-- Added padding-bottom for bottom-nav -->
+
+        <!-- Header -->
+        <header class="text-center py-8 md:py-12">
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">🛍️ Flipping 101</h1>
+            <p class="text-lg text-slate-400">A Complete Beginner-to-Pro Playbook</p>
         </header>
 
-        <div class="warning-card">
-            <p>⚠️ <strong>Disclaimer:</strong> This is educational information based on 2025 IRS guidelines. Consult a CPA or Enrolled Agent for advice specific to your situation. Tax laws change frequently.</p>
+        <!-- Tab Navigation -->
+        <div id="sticky-nav-wrapper" class="sticky-nav">
+             <nav class="tab-nav flex space-x-2 overflow-x-auto whitespace-nowrap border-b border-slate-700 px-1 py-3">
+                <button class="tab-button active flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-900 bg-yellow-400" onclick="showTab('quickstart', this)">Quick Start</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('concepts', this)">Core Concepts</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('sourcing', this)">Sourcing</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('platforms', this)">Platforms</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('listing', this)">Listing & Shipping</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('workflow', this)">Workflow & Safety</button>
+                <button class="tab-button flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-300 hover:bg-slate-700" onclick="showTab('growth', this)">Growth Plan</button>
+            </nav>
         </div>
 
-        <nav class="tab-nav">
-            <button class="tab-button active" onclick="showTab('basics')">Setup</button>
-            <button class="tab-button" onclick="showTab('deductions')">Deductions</button>
-            <button class="tab-button" onclick="showTab('tracking')">Records</button>
-            <button class="tab-button" onclick="showTab('quarterly')">Quarterly</button>
-            <button class="tab-button" onclick="showTab('advanced')">Advanced</button>
-        </nav>
-
-        <div id="basics" class="tab-content active">
-            <h2>📊 Your Tax Setup in One Page</h2>
-
-            <div class="info-card highlight">
-                <h3>🚨 Critical 1099-K Thresholds</h3>
-                <ul>
-                    <li><strong>2024 (filing 2025):</strong> $5,000 in sales</li>
-                    <li><strong>2025 (filing 2026):</strong> $2,500 in sales</li>
-                    <li><strong>2026+ (filing 2027+):</strong> $600 in sales</li>
-                </ul>
-                <p class="highlight-text">⚠️ You must report ALL income regardless of receiving a 1099-K!</p>
-            </div>
-
-            <div class="info-card">
-                <h3>Business Entity Setup</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Structure</th>
-                        <th>Tax Form</th>
-                        <th>Best For</th>
-                        <th>Key Notes</th>
-                    </tr>
-                    <tr>
-                        <td>Sole Proprietor</td>
-                        <td>Schedule C</td>
-                        <td>Starting out</td>
-                        <td>Simplest, no separate filing</td>
-                    </tr>
-                    <tr>
-                        <td>Single-Member LLC</td>
-                        <td>Schedule C</td>
-                        <td>Asset protection</td>
-                        <td>Disregarded for taxes</td>
-                    </tr>
-                    <tr>
-                        <td>Partnership</td>
-                        <td>Form 1065</td>
-                        <td>Multiple owners</td>
-                        <td>Pass-through taxation</td>
-                    </tr>
-                    <tr>
-                        <td>S-Corp</td>
-                        <td>Form 1120S</td>
-                        <td>$60K+ profit</td>
-                        <td>Saves SE tax on distributions</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="info-card">
-                <h3>Business vs Hobby: The Nine-Factor Test</h3>
-                <p>The IRS uses these factors to determine if you're a business:</p>
-                <ol>
-                    <li>✓ Carry on activity in businesslike manner</li>
-                    <li>✓ Time and effort indicates profit intent</li>
-                    <li>✓ Depend on income for livelihood</li>
-                    <li>✓ Losses are due to startup or beyond control</li>
-                    <li>✓ Change methods to improve profitability</li>
-                    <li>✓ You have knowledge to make it profitable</li>
-                    <li>✓ Made profit in similar activities before</li>
-                    <li>✓ Activity makes profit in some years</li>
-                    <li>✓ Expect assets to appreciate</li>
-                </ol>
-                <p class="highlight-text">Key: Show profit in 3 of 5 years = presumed business</p>
-            </div>
-
-            <div class="info-card">
-                <h3>Accounting Method Choice</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Method</th>
-                        <th>How It Works</th>
-                        <th>Best For</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Cash</strong></td>
-                        <td>Income when received, expenses when paid</td>
-                        <td>Most resellers under $30M revenue</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Accrual</strong></td>
-                        <td>Income when earned, expenses when incurred</td>
-                        <td>Larger operations</td>
-                    </tr>
-                </table>
-                <p class="small">Small business inventory relief under §471(c) if under $30M average gross receipts</p>
-            </div>
-        </div>
-
-        <div id="deductions" class="tab-content">
-            <h2>💰 Master List of Reseller Deductions</h2>
-
-            <div class="info-card highlight">
-                <h3>💡 Scan2Flip Pro Saves You Money</h3>
-                <p>Track expenses automatically! Snap receipt photos, categorize purchases, log COGS. <strong>Pro members ($6.99/mo)</strong> get unlimited expense tracking. The mileage tracker alone can save you $4,000+ in deductions annually!</p>
-            </div>
-
-            <div class="info-card">
-                <h3>A) Cost of Goods Sold (COGS) - Your #1 Adjustment</h3>
-                <div class="formula-box">
-                    <p><strong>COGS = Beginning Inventory + Purchases - Ending Inventory</strong></p>
+        <!-- Tab Content Area -->
+        <main class="pt-8">
+            <!-- Quick Start Tab -->
+            <div id="quickstart" class="tab-content active space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🚀 Your First 30 Days</h2>
+                
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Week 1 – Setup & Skill Reps</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Create seller accounts:</strong> eBay, Facebook Marketplace, OfferUp, Mercari, Poshmark (choose 2–3 to start).</li>
+                        <li><strong>Tools:</strong> Phone camera + daylight, tape measure, small scale (to 10 lb), printer.</li>
+                        <li><strong>Learn comps:</strong> Spend 60 minutes a day pulling 20 “sold” comps in your target niche (shoes, electronics, tools, toys, vintage).</li>
+                        <li><strong>Sourcing reps:</strong> Hit 2 thrift stores + 1 garage sale; buy 5 items with expected ROI ≥ 60% and gross profit ≥ $15.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Week 1 Tips for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Account Optimization:</strong> Verify your seller accounts with two-factor authentication and link a business bank account to separate personal finances early on.</li>
+                        <li><strong>Digital Tools:</strong> Download free apps like eBay Seller Hub or Mercari's mobile app for quick comp checks; use Google Lens to identify items instantly while sourcing.</li>
+                        <li><strong>Niche Research:</strong> Focus on trending 2025 niches like sustainable fashion or retro tech—check sites like SaleHoo for current hot items with low competition.</li>
+                        <li><strong>Sourcing Safety:</strong> When visiting thrift stores or garage sales, use apps like Yard Sale Treasure Map to plan routes efficiently and avoid high-risk areas.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Week 1 – Extra Steps (15–30 min each)</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Default marketplace settings (eBay):</strong> handling time 1 business day, buyer-paid returns (30 days) to start, immediate payment on Buy It Now, require payment for accepted offers. Fill out your seller profile and store banner for trust.</li>
+                        <li><strong>Photo reps:</strong> Shoot one practice item 3 times: natural light near a window, then with a desk lamp, then with phone flash off + exposure slider up. Pick the cleanest and copy that setup for every item.</li>
+                        <li><strong>Comp reps:</strong> In eBay search, toggle Sold filter and sort by Most recent. Note last 5 sold prices and condition. If uncertain, check Terapeak Product Research inside Seller Hub’s Research tab.</li>
+                    </ul>
                 </div>
-                <ul>
-                    <li>✓ Purchase price of inventory</li>
-                    <li>✓ Shipping-in costs to acquire goods</li>
-                    <li>✓ Auction buyer premiums</li>
-                    <li>✓ Sales tax on inventory purchases</li>
-                </ul>
-                <p class="highlight-text">⚠️ Only deduct COGS for items SOLD, not sitting in inventory!</p>
-            </div>
 
-            <div class="info-card">
-                <h3>B) Vehicle & Mileage Deductions</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Year</th>
-                        <th>Standard Rate</th>
-                        <th>5,000 Miles</th>
-                        <th>10,000 Miles</th>
-                    </tr>
-                    <tr>
-                        <td>2025</td>
-                        <td>$0.67/mile</td>
-                        <td>$3,350</td>
-                        <td>$6,700</td>
-                    </tr>
-                </table>
-                <p><strong>Deductible trips:</strong></p>
-                <ul>
-                    <li>✓ Sourcing (thrift, garage sales, retail stores)</li>
-                    <li>✓ Post office/shipping runs</li>
-                    <li>✓ Bank deposits</li>
-                    <li>✓ Supply purchases</li>
-                    <li>✓ Meeting buyers/sellers</li>
-                </ul>
-                <p class="highlight-text">❌ NOT deductible: Commuting to regular job</p>
-            </div>
-
-            <div class="info-card">
-                <h3>C) Home Office Deduction</h3>
-                <div class="formula-box">
-                    <p><strong>Simplified:</strong> $5/sq ft × up to 300 sq ft = Max $1,500</p>
-                    <p><strong>Actual:</strong> (Office sq ft ÷ Home sq ft) × Home expenses</p>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Week 2 – List & Ship</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Photo booth:</strong> Neutral backdrop, 8–12 photos per item (all angles + flaws + tags/labels + measurements).</li>
+                        <li><strong>Titles:</strong> Brand + Model + Size/Spec + Keywords (max signal, no fluff). Fill all item specifics.</li>
+                        <li><strong>Pricing:</strong> Price at or just below last 90-day sold comp; enable offers.</li>
+                        <li><strong>Shipping:</strong> Under 1 lb → poly mailer; fragile → box + void fill; oversize → weigh & measure before listing.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Week 2 Tips for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Photo Enhancement:</strong> Use free tools like Canva or Lightroom mobile to edit photos for better lighting and clarity, increasing click-through rates by up to 20%.</li>
+                        <li><strong>SEO in Titles:</strong> Incorporate 2025 trending keywords like "eco-friendly" or "vintage Y2K" based on eBay's search data to boost visibility.</li>
+                        <li><strong>Pricing Tools:</strong> Leverage AI-powered apps like PriceSpy or Keepa to analyze comps dynamically and set automated price drops for stagnant listings.</li>
+                        <li><strong>Shipping Hacks:</strong> For items under 1 lb, consider eco-friendly biodegradable mailers to appeal to sustainability-focused buyers and potentially charge a premium.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Week 2 – Templates to Paste Into Listings</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Condition note (Clothing):</strong> “Pre-owned. Light wash wear. No rips/tears. See photos for measurements & any noted flaws.”</li>
+                        <li><strong>Condition note (Shoes):</strong> “Pre-owned. Uppers cleaned, insoles disinfected, tread pictured. No separation. All stitching intact.”</li>
+                        <li><strong>Condition note (Electronics):</strong> “Tested for power and basic functions (see photos). Factory reset. Includes: [list]. Cosmetic wear from normal use.”</li>
+                        <li><strong>Shipping line:</strong> “Ships next business day, packed carefully in a box. Tracking uploaded.”</li>
+                        <li><strong>Offer auto-reply (local or in-app):</strong> “Thanks! I can do $X if purchased today. Ships tomorrow.”</li>
+                    </ul>
                 </div>
-                <p><strong>Requirements:</strong> Exclusive & regular business use</p>
-                <p><strong>Tip:</strong> Storage space for inventory qualifies even without exclusive use!</p>
-            </div>
 
-            <div class="info-card">
-                <h3>D) Complete Deduction Categories</h3>
-                <table class="deduction-table">
-                    <tr>
-                        <th>Category</th>
-                        <th>Examples</th>
-                        <th>Notes</th>
-                    </tr>
-                    <tr>
-                        <td><strong>Platform Fees</strong></td>
-                        <td>eBay FVF (13.25%), Mercari (10%+3.6%), PayPal (2.9%+$0.30)</td>
-                        <td>100% deductible</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Shipping/Fulfillment</strong></td>
-                        <td>Postage, labels, boxes, tape, bubble wrap, FBA fees</td>
-                        <td>Track separately from COGS</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Software/Apps</strong></td>
-                        <td>Scan2Flip Pro, QuickBooks, List Perfectly, Keepa</td>
-                        <td>Monthly or annual</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Equipment</strong></td>
-                        <td>Scale, printer, camera, shelving, computer %</td>
-                        <td>§179 or depreciate</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Phone/Internet</strong></td>
-                        <td>Business % of monthly bills</td>
-                        <td>Document % calculation</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Advertising</strong></td>
-                        <td>Promoted listings, Google/FB ads, business cards</td>
-                        <td>Track ROI</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Professional</strong></td>
-                        <td>CPA, bookkeeper, legal advice</td>
-                        <td>Tax prep deductible</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Education</strong></td>
-                        <td>Courses, conferences, books (current skills only)</td>
-                        <td>Not for new careers</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Insurance</strong></td>
-                        <td>Business liability, marketplace add-ons</td>
-                        <td>Prorate if mixed</td>
-                    </tr>
-                    <tr>
-                        <td><strong>Storage</strong></td>
-                        <td>Storage unit, warehouse, Amazon FBA storage</td>
-                        <td>Compare vs home</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="info-card">
-                <h3>E) De Minimis Safe Harbor Election</h3>
-                <ul>
-                    <li>Expense items ≤$2,500 per invoice/item immediately</li>
-                    <li>No depreciation required</li>
-                    <li>Attach annual election statement to return</li>
-                    <li>Keep all invoices showing unit prices</li>
-                </ul>
-                <p class="highlight-text">Perfect for equipment like printers, scales, shelving!</p>
-            </div>
-
-            <div class="info-card">
-                <h3>F) Travel & Meals</h3>
-                <ul>
-                    <li><strong>Lodging/Transport:</strong> 100% deductible for business trips</li>
-                    <li><strong>Meals:</strong> 50% deductible when business-related</li>
-                    <li><strong>Conferences:</strong> Registration, travel, hotel all deductible</li>
-                    <li><strong>Per Diem:</strong> Use IRS rates instead of tracking meals</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="tracking" class="tab-content">
-            <h2>📱 Audit-Proof Record Keeping</h2>
-
-            <div class="info-card highlight">
-                <h3>🎯 Never Miss a Deduction</h3>
-                <p>Scan2Flip Pro auto-categorizes expenses, stores receipt photos, and exports everything for your CPA. <strong>Power Pro members</strong> get advanced P&L reports and inventory COGS tracking!</p>
-            </div>
-
-            <div class="info-card">
-                <h3>The Five Buckets of Proof</h3>
-                <ol>
-                    <li><strong>Income Trail:</strong> Platform payouts, 1099-Ks, bank deposits, sales log</li>
-                    <li><strong>COGS Evidence:</strong> Receipts, invoices, auction sheets, inventory spreadsheet</li>
-                    <li><strong>Expense Receipts:</strong> Who, what, when, where, why, amount</li>
-                    <li><strong>Mixed-Use Allocations:</strong> Business % calculations saved annually</li>
-                    <li><strong>Retention:</strong> 3 years standard (7 for bad debt/major assets)</li>
-                </ol>
-            </div>
-
-            <div class="info-card">
-                <h3>Mileage Log Requirements</h3>
-                <p>IRS requires contemporaneous logs with:</p>
-                <ul>
-                    <li>✓ Date of trip</li>
-                    <li>✓ Starting location</li>
-                    <li>✓ Destination</li>
-                    <li>✓ Business purpose</li>
-                    <li>✓ Miles driven</li>
-                </ul>
-                <div class="formula-box">
-                    <p>Example: "1/15/25 | Home → Goodwill → Home | Source inventory | 12 miles"</p>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Week 3 – Routines + Cash Flow</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Daily:</strong> 10 new listings or 10 relists. Respond to offers fast. Pack same day.</li>
+                        <li><strong>Track:</strong> SKU, buy price (COGS), list price, sale price, fees, ship cost, net, ROI, days to sell.</li>
+                        <li><strong>Reinvest 100%</strong> of profits into faster-moving inventory.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Week 3 Tips for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Daily Automation:</strong> Set up email notifications for offers and use chatbots on platforms like Facebook Marketplace for faster responses.</li>
+                        <li><strong>Tracking Software:</strong> Use free tools like Google Sheets templates or apps like MyResellerGenie to log metrics; aim for a 40%+ ROI threshold in high-velocity niches.</li>
+                        <li><strong>Reinvestment Strategy:</strong> Prioritize sourcing in evergreen categories like books or car parts, which have steady demand and low storage costs.</li>
+                        <li><strong>Cash Flow Monitoring:</strong> Track payout schedules across platforms (e.g., eBay's weekly vs. Mercari's instant) to avoid liquidity gaps.</li>
+                    </ul>
+                     <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Week 3 – Simple Daily Loop (45–60 min)</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Revive 3 stale listings:</strong> new main photo + first 150 characters rewritten; adjust price to the last 90-day median sold comp.</li>
+                        <li><strong>Promote strategically (eBay):</strong> try a low Promoted Listings Standard ad rate on slower items; keep unpromoted on fast movers to save fees.</li>
+                    </ul>
                 </div>
-                <p class="highlight-text">Use Scan2Flip's GPS mileage tracker for automatic logging!</p>
-            </div>
 
-            <div class="info-card">
-                <h3>Digital Organization System</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Folder</th>
-                        <th>Contents</th>
-                        <th>Retention</th>
-                    </tr>
-                    <tr>
-                        <td>📁 2025 Income</td>
-                        <td>1099-Ks, platform reports</td>
-                        <td>7 years</td>
-                    </tr>
-                    <tr>
-                        <td>📁 2025 COGS</td>
-                        <td>Purchase receipts, inventory counts</td>
-                        <td>3 years</td>
-                    </tr>
-                    <tr>
-                        <td>📁 2025 Expenses</td>
-                        <td>Monthly subfolders by category</td>
-                        <td>3 years</td>
-                    </tr>
-                    <tr>
-                        <td>📁 2025 Mileage</td>
-                        <td>Monthly logs, GPS exports</td>
-                        <td>3 years</td>
-                    </tr>
-                    <tr>
-                        <td>📁 2025 Home Office</td>
-                        <td>Photos, measurements, utilities</td>
-                        <td>3 years</td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="info-card">
-                <h3>Monthly Bookkeeping Checklist</h3>
-                <ol>
-                    <li>☐ Download platform sales reports (eBay, Mercari, etc.)</li>
-                    <li>☐ Update inventory spreadsheet (items sold, new purchases)</li>
-                    <li>☐ Calculate COGS for the month</li>
-                    <li>☐ Export/save mileage logs</li>
-                    <li>☐ Scan/photograph all receipts</li>
-                    <li>☐ Categorize expenses in tracking app</li>
-                    <li>☐ Reconcile business bank account</li>
-                    <li>☐ Calculate profit/loss</li>
-                    <li>☐ Set aside tax money (25-35%)</li>
-                    <li>☐ Back up all data to cloud</li>
-                </ol>
-            </div>
-
-            <div class="info-card">
-                <h3>Red Flags That Trigger Audits</h3>
-                <ul>
-                    <li>❌ 100% vehicle business use (unrealistic)</li>
-                    <li>❌ Losses multiple years (hobby classification)</li>
-                    <li>❌ Round numbers ($500, $1,000 expenses)</li>
-                    <li>❌ Home office for non-exclusive space</li>
-                    <li>❌ Excessive meals/entertainment</li>
-                    <li>❌ No receipts or documentation</li>
-                    <li>❌ Income doesn't match 1099-Ks</li>
-                </ul>
-            </div>
-        </div>
-
-        <div id="quarterly" class="tab-content">
-            <h2>📅 Quarterly Tax Planning</h2>
-
-            <div class="info-card">
-                <h3>2025 Quarterly Due Dates</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Quarter</th>
-                        <th>Period</th>
-                        <th>Due Date</th>
-                        <th>Notes</th>
-                    </tr>
-                    <tr>
-                        <td>Q1</td>
-                        <td>Jan 1 - Mar 31</td>
-                        <td>April 15, 2025</td>
-                        <td>With annual return</td>
-                    </tr>
-                    <tr>
-                        <td>Q2</td>
-                        <td>Apr 1 - May 31</td>
-                        <td>June 16, 2025</td>
-                        <td>Monday (15th is Sunday)</td>
-                    </tr>
-                    <tr>
-                        <td>Q3</td>
-                        <td>Jun 1 - Aug 31</td>
-                        <td>Sept 15, 2025</td>
-                        <td>Biggest quarter</td>
-                    </tr>
-                    <tr>
-                        <td>Q4</td>
-                        <td>Sep 1 - Dec 31</td>
-                        <td>Jan 15, 2026</td>
-                        <td>Skip if filing by Jan 31</td>
-                    </tr>
-                </table>
-                <p class="small">Pay if expecting to owe $1,000+ for the year</p>
-            </div>
-
-            <div class="info-card">
-                <h3>Quarterly Payment Calculation</h3>
-                <div class="formula-box">
-                    <p><strong>Step 1:</strong> Quarterly Profit = Revenue - COGS - Expenses</p>
-                    <p><strong>Step 2:</strong> SE Tax = Profit × 15.3% × 92.35%</p>
-                    <p><strong>Step 3:</strong> Income Tax = Profit × Your Rate (10-37%)</p>
-                    <p><strong>Step 4:</strong> Total = SE Tax + Income Tax</p>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Week 4 – Niches & Scale</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Pick 1–2 winning niches</strong> (e.g., sneakers, small kitchen appliances, vintage hats, tools, sealed LEGO, video games).</li>
+                        <li><strong>Add a sourcing route:</strong> Estate/moving sales, bin stores, local auctions, gov surplus.</li>
+                        <li><strong>Start a simple SKU/bin system</strong> and consider a cross-listing tool (Vendoo/List Perfectly) once your workflow is smooth.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Week 4 Tips for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Niche Expansion:</strong> Add emerging 2025 niches like STEM toys or pet wellness gadgets, which show high growth per AMZScout data.</li>
+                        <li><strong>Advanced Sourcing:</strong> Explore online liquidation sites like B-Stock for bulk deals; inspect items virtually via photos to minimize risks.</li>
+                        <li><strong>Cross-Listing Efficiency:</strong> Once at 50+ listings, trial free tiers of tools like Vendoo to post across eBay, Mercari, and Poshmark simultaneously.</li>
+                        <li><strong>Inventory Scaling:</strong> Use RFID tags or simple apps like Sortly for bin organization to handle growing stock without chaos.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Week 4 – Niches & Scale (quick diagnostics)</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Pick a lane test:</strong> 20 items listed in the niche → 6 sales in 14 days = “Green light.” < 3 sales = niche needs better sourcing or photos.</li>
+                        <li><strong>Metrics to watch:</strong> STR (90-day), ASP (avg sale price), Net margin %, Days to cash (buy → payout). Track weekly.</li>
+                    </ul>
                 </div>
             </div>
 
-            <div class="info-card">
-                <h3>Tax Savings by Profit Level</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Annual Profit</th>
-                        <th>SE Tax</th>
-                        <th>Income Tax*</th>
-                        <th>Total Tax</th>
-                        <th>Set Aside</th>
-                    </tr>
-                    <tr>
-                        <td>$10,000</td>
-                        <td>$1,413</td>
-                        <td>$1,200</td>
-                        <td>$2,613</td>
-                        <td>26%</td>
-                    </tr>
-                    <tr>
-                        <td>$25,000</td>
-                        <td>$3,532</td>
-                        <td>$3,000</td>
-                        <td>$6,532</td>
-                        <td>26%</td>
-                    </tr>
-                    <tr>
-                        <td>$50,000</td>
-                        <td>$7,065</td>
-                        <td>$8,500</td>
-                        <td>$15,565</td>
-                        <td>31%</td>
-                    </tr>
-                    <tr>
-                        <td>$75,000</td>
-                        <td>$10,597</td>
-                        <td>$14,500</td>
-                        <td>$25,097</td>
-                        <td>33%</td>
-                    </tr>
-                    <tr>
-                        <td>$100,000</td>
-                        <td>$14,130</td>
-                        <td>$22,000</td>
-                        <td>$36,130</td>
-                        <td>36%</td>
-                    </tr>
-                </table>
-                <p class="small">*Assumes single filer, standard deduction, varies by situation</p>
-            </div>
+            <!-- Core Concepts Tab -->
+            <div id="concepts" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🧠 Core Concepts You’ll Use Every Day</h2>
 
-            <div class="info-card">
-                <h3>Safe Harbor Rule</h3>
-                <p>Avoid penalties by paying the lesser of:</p>
-                <ul>
-                    <li>90% of current year's tax liability, OR</li>
-                    <li>100% of prior year's tax (110% if AGI >$150K)</li>
-                </ul>
-                <p class="highlight-text">💡 Pro tip: Pay 100% of last year = no penalties guaranteed!</p>
-            </div>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">A. The Reselling Math</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Gross Profit</strong> = Sale Price − Marketplace Fees − Payment Fees − Shipping − COGS − Packing Materials.</li>
+                        <li><strong>ROI (Return on Investment)</strong> = (Gross Profit ÷ COGS) × 100.</li>
+                        <li><strong>Sell-through Rate (STR)</strong> = Items Sold ÷ Items Listed (in a 90-day period). Aim for ≥ 30% for fast cash flow.</li>
+                        <li><strong>Cash Conversion Cycle:</strong> The number of days from spending cash (buying an item) to getting cash back (payout). Shorter is always safer.</li>
+                    </ul>
+                     <p class="mt-4 bg-yellow-900/50 text-yellow-300 font-semibold p-3 rounded-md">Rule of thumb: On eBay/Mercari a healthy flip often nets 25–45% of the sale price after all costs. Buy items with 2–4× markup potential or clear velocity.</p>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Math Metrics for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Break-Even Point:</strong> Calculate as (Fixed Costs + Variable Costs) ÷ (Sale Price - COGS); factor in rising shipping rates from carriers like USPS.</li>
+                        <li><strong>Velocity Score:</strong> Track average days to sell per category; target under 45 days for niches like electronics to maintain cash flow in volatile markets.</li>
+                        <li><strong>Fee Calculator:</strong> Use online tools to simulate fees across platforms; e.g., eBay's 13-15% vs. Mercari's flat 10% can sway platform choice.</li>
+                        <li><strong>2025 Tip:</strong> With inflation, aim for 3× markup on sustainable items like eco-clothing, which often yield 30-50% net after fees per Spocket insights.</li>
+                    </ul>
+                </div>
 
-            <div class="info-card">
-                <h3>Year-End Tax Strategies</h3>
-                <ul>
-                    <li><strong>December purchases:</strong> Stock up on supplies for immediate deduction</li>
-                    <li><strong>Equipment:</strong> Buy before Dec 31 for Section 179 write-off</li>
-                    <li><strong>Prepay expenses:</strong> January rent, insurance, software</li>
-                    <li><strong>Inventory timing:</strong> Delay purchases if high profit year</li>
-                    <li><strong>Accelerate sales:</strong> Clear old inventory if low profit year</li>
-                </ul>
-            </div>
-        </div>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">B. Picking a Lane (Niches That Work)</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Shoes & Boots:</strong> Nike, HOKA, Red Wing, work boots – cleanable, consistent demand.</li>
+                        <li><strong>Small Kitchen Appliances:</strong> Vitamix pitchers, Breville parts, espresso accessories – part-out potential.</li>
+                        <li><strong>Tools:</strong> Makita/Milwaukee/DeWalt batteries/chargers/skins – test them and sell as tested.</li>
+                        <li><strong>Games & Media:</strong> Nintendo/PlayStation consoles, out-of-print DVD/Blu-ray box sets.</li>
+                        <li><strong>Vintage Apparel & Hats:</strong> Sports, band tees, Y2K fashion, sports goods (gloves, bats).</li>
+                        <li><strong>Toys & Collectibles:</strong> Sealed LEGO sets, plush toys with good comps, 90s/00s nostalgia items.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">More 2025 Niches to Explore</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Books & Media:</strong> Rare editions, textbooks, or audiobooks—easy to ship and high margins on out-of-print items.</li>
+                        <li><strong>Car Parts & Accessories:</strong> Headlights, seat covers, or EV chargers; source from junkyards for 2-3× flips.</li>
+                        <li><strong>Sustainable Goods:</strong> Eco-friendly apparel, reusable kitchen items, or upcycled furniture—trending with 20%+ growth per SaleHoo.</li>
+                        <li><strong>Sports Memorabilia:</strong> Signed jerseys, trading cards, or vintage gear; authenticate via PSA for premium pricing.</li>
+                        <li><strong>STEM & Educational Toys:</strong> Robotics kits or science sets; high demand from online learning trends.</li>
+                    </ul>
+                </div>
 
-        <div id="advanced" class="tab-content">
-            <h2>🎯 Advanced Tax Strategies</h2>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">C. Condition & Prep</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Be picky.</strong> Skip items with heavy flaws unless they are extremely rare.</li>
+                        <li><strong>Clean everything:</strong> Use 91% isopropyl for grime, Magic Eraser for scuffs on soles, Goo-Gone for sticker residue (test first), and a fabric shaver for pilling.</li>
+                        <li><strong>Test & reset electronics:</strong> Check power, buttons, and ports. Factory reset devices and remove any personal accounts or locks.</li>
+                        <li><strong>Accurately grade condition:</strong> New, Like-New, Used (Excellent→Good→Fair). Always disclose any and all defects.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Advanced Prep Techniques for 2025</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Authentication:</strong> For luxury items, use apps like Entrupy to verify authenticity and include certificates in listings.</li>
+                        <li><strong>Eco-Cleaning:</strong> Opt for natural cleaners like vinegar solutions to appeal to green buyers and reduce chemical risks.</li>
+                        <li><strong>Tech Testing:</strong> For gadgets, run diagnostic apps or software updates; document with videos for buyer trust.</li>
+                        <li><strong>Grading Standards:</strong> Follow platform-specific guidelines (e.g., eBay's condition chart) to minimize returns, which average 10-15% in reselling.</li>
+                    </ul>
+                </div>
+                
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">D. Pricing Math (Worked Example)</h3>
+                    <p>Bought for $8. Listed $39.95, accepted $36.</p>
+                    <p>Marketplace fees + payment fees + shipping label = $11.40 (illustrative; check current fee pages by platform).</p>
+                    <p>Gross profit = $36 − $11.40 − $8 COGS − ~$0.50 supplies = $16.10. ROI = 16.10 ÷ 8 = 201%.</p>
+                    <p class="mt-3 text-slate-400">Always sanity-check against each platform’s current fee schedules because they change.</p>
+                </div>
 
-            <div class="info-card highlight">
-                <h3>📊 QBI Deduction (Section 199A)</h3>
-                <p>Deduct up to 20% of qualified business income!</p>
-                <ul>
-                    <li>Available for sole proprietors, partnerships, S-Corps</li>
-                    <li>Phases out at higher incomes ($182,950 single, $365,900 married for 2025)</li>
-                    <li>Use Form 8995 (simple) or 8995-A (complex)</li>
-                </ul>
-                <div class="formula-box">
-                    <p>$50,000 profit × 20% = $10,000 potential deduction!</p>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">E. Velocity vs. Margin (When to Take the Money)</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Fast/low margin:</strong> replenishables, everyday brands, parts lots → price at comp median and take reasonable offers quickly.</li>
+                        <li><strong>Slow/high margin:</strong> rare/collector items → price at top comp, wait, refresh photos/titles monthly.</li>
+                    </ul>
+                    <p class="mt-3 text-slate-400"><strong>Rule:</strong> Protect cash conversion first; profit on the next buy with your released capital.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">F. Item Specifics & Photos = Visibility</h3>
+                    <p>Fill all item specifics (brand, model, size, material, pattern, UPC). eBay’s search favors structured data completeness. Use up to 24 photos when useful.</p>
                 </div>
             </div>
 
-            <div class="info-card">
-                <h3>Retirement Contributions</h3>
-                <table class="fee-table">
-                    <tr>
-                        <th>Plan Type</th>
-                        <th>2025 Limits</th>
-                        <th>Best For</th>
-                    </tr>
-                    <tr>
-                        <td>SEP-IRA</td>
-                        <td>25% of income or $70,000</td>
-                        <td>High profit, simple</td>
-                    </tr>
-                    <tr>
-                        <td>Solo 401(k)</td>
-                        <td>$23,500 + 25% profit share</td>
-                        <td>Max contributions</td>
-                    </tr>
-                    <tr>
-                        <td>Traditional IRA</td>
-                        <td>$7,000 ($8,000 if 50+)</td>
-                        <td>Starting out</td>
-                    </tr>
-                </table>
-                <p class="highlight-text">Contributions are above-the-line deductions!</p>
-            </div>
+            <!-- Sourcing Tab -->
+            <div id="sourcing" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🔍 Sourcing Playbooks (Where & How to Find Inventory)</h2>
+                
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">A. Thrift & Charity Shops</h3>
+                    <p>Go early on restock days and build a rapport with staff. Speed-scan sections you know well. Look for better brands, sealed items, remotes, replacement parts (lids, carafes), and vintage team gear. Use your seller app to check sold comps from the last 90 days.</p>
+                    <p class="mt-3 text-slate-400"><strong>In 2025,</strong> leverage thrift apps like ThredUp for virtual sourcing or join store loyalty programs for early access to restocks. Focus on seasonal items like winter gear in summer for off-peak buys. Avoid overpaying by setting a max 20% of comp price rule.</p>
+                </div>
 
-            <div class="info-card">
-                <h3>Section 179 vs Depreciation</h3>
-                <ul>
-                    <li><strong>Section 179:</strong> Deduct full cost in year 1 (up to $1,220,000 for 2025)</li>
-                    <li><strong>Bonus Depreciation:</strong> 60% in 2025 (phasing out)</li>
-                    <li><strong>Regular MACRS:</strong> Spread over 5-7 years</li>
-                </ul>
-                <p><strong>Qualifying equipment:</strong> Computers, printers, cameras, shelving, vehicles (limits apply)</p>
-            </div>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">B. Garage & Yard Sales</h3>
+                    <p>Use Yard Sale Treasure Map or local Facebook groups. Go in the first hour and be ready to bundle items. Bring small bills, a tote bag, and batteries to test electronics. A friendly attitude often leads to better deals.</p>
+                    <p class="mt-3 font-mono text-sm bg-slate-700 p-2 rounded">Script: “If I take these 5 items, could you do $40?”</p>
+                    <p class="mt-3 text-slate-400"><strong>For 2025,</strong> use Facebook Events for sale alerts and bring a portable charger for on-site comp checks. Negotiate bundles with phrases like 'What's your best price for all?' Target neighborhoods with high turnover for better finds. Watch for scams like counterfeit goods.</p>
+                </div>
 
-            <div class="info-card">
-                <h3>Self-Employed Health Insurance</h3>
-                <ul>
-                    <li>Deduct 100% of health insurance premiums</li>
-                    <li>Includes spouse and dependents</li>
-                    <li>Above-the-line deduction (reduces AGI)</li>
-                    <li>Can't exceed business profit</li>
-                </ul>
-                <p class="highlight-text">Use Form 7206 to calculate</p>
-            </div>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">C. Facebook Marketplace / Craigslist / OfferUp</h3>
+                    <p>Search for misspellings and generic terms (e.g., “Playstation” vs “PlayStation 4”). Set alerts for target keywords. Offer fair, fast cash and suggest a safe meetup spot like a police station parking lot. Profit by cleaning items and taking better photos.</p>
+                    <p class="mt-3 text-slate-400"><strong>In 2025,</strong> use AI tools like ChatGPT to craft polite negotiation scripts. Set radius alerts for 50 miles and verify sellers via profiles. Flip by adding value like professional cleaning or bundling accessories for 50-100% margins.</p>
+                </div>
 
-            <div class="info-card">
-                <h3>When to Consider S-Corp</h3>
-                <p>S-Corp election can save thousands in SE tax when:</p>
-                <ul>
-                    <li>Net profit consistently >$60,000</li>
-                    <li>You can pay yourself reasonable W-2 salary</li>
-                    <li>Additional compliance costs are worth tax savings</li>
-                </ul>
-                <div class="formula-box">
-                    <p><strong>Example:</strong> $100K profit as sole prop = $14,130 SE tax</p>
-                    <p><strong>S-Corp:</strong> $50K salary + $50K distribution = $7,650 payroll tax</p>
-                    <p><strong>Savings:</strong> $6,480/year!</p>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">D. Retail & Online Arbitrage (RA/OA)</h3>
+                    <p>Scan clearance at big box stores (like Walmart, Target, TJ Maxx, and Marshalls), drug stores, and craft stores for 50–80% markdowns. Check for brand restrictions before buying. For OA, use deal sites and track price history with tools like Keepa to avoid items with tanking prices.</p>
+                    <p class="mt-3 text-slate-400"><strong>Track 2025 deals</strong> via Slickdeals forums; avoid gated Amazon brands. Use Tactical Arbitrage for OA scans and focus on clearance events at stores like Kohl's or Ross for 70%+ discounts.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">E. Estate, Storage & Local Auctions</h3>
+                    <p>Target lots you can break up into individual sales (cookware sets, tool lots, board games). Preview in person if possible and always factor the buyer’s premium, tax, and your time into your cost of goods.</p>
+                    <p class="mt-3 text-slate-400"><strong>Preview online</strong> via apps like HiBid; budget for 10-20% premiums. Break down lots into parts (e.g., tool sets) for higher individual sales. Inspect for hidden gems like vintage comics.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">F. Government Surplus & Liquidations (Advanced)</h3>
+                    <p>Find deals on municipal tools, office furniture, and lab gear. Requires inspection and a transport plan. Liquidation pallets are high variance; start with smaller case lots in categories you can test and grade. Buy from reputable marketplaces and avoid "mystery" pallets.</p>
+                    <p class="mt-3 text-slate-400"><strong>Sites like GovDeals</strong> offer inspected items; plan for bulk transport with rented vans. Avoid mystery pallets—opt for manifested ones in niches like office supplies for consistent ROIs.</p>
                 </div>
             </div>
 
-            <div class="info-card">
-                <h3>Audit Defense Preparation</h3>
-                <ul>
-                    <li>✓ Keep detailed mileage logs (GPS backup)</li>
-                    <li>✓ Photograph home office quarterly</li>
-                    <li>✓ Save all email confirmations</li>
-                    <li>✓ Document business purpose on receipts</li>
-                    <li>✓ Maintain separate business bank account</li>
-                    <li>✓ Track time spent on business activities</li>
-                    <li>✓ Keep profit/loss statements monthly</li>
-                </ul>
+            <!-- Platforms Tab -->
+            <div id="platforms" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🛒 Platform Playbooks (How to Sell Where)</h2>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">eBay (Best All-Around)</h3>
+                    <p>Use 12 clear photos, complete all item specifics, and use 90-day sold comps for pricing. List 5-10% above your minimum and accept offers. Use Promoted Listings Standard at a modest ad rate on slower items. A 30-day buyer-paid return policy is a common starting point.</p>
+                    <p class="mt-3 text-slate-400"><strong>In 2025,</strong> eBay's fees are ~13%; use Terapeak for trend data. Offer free shipping on items over $35 to boost search rankings. Handle returns gracefully to maintain Top Rated Seller status.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Mercari (Simple, Casual Goods)</h3>
+                    <p>Price items to move, use the "smart pricing" feature, and choose prepaid labels when possible. Be aware of the 3-day buyer review window after delivery.</p>
+                    <p class="mt-3 text-slate-400"><strong>Mercari's 10% fee</strong> is low; promote via social shares. Use bundled shipping for multiple items to save costs. Monitor 2025 trends like casual wear for quick sales.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Poshmark (Fashion/Shoes/Home)</h3>
+                    <p>The flat-rate shipping simplifies selling heavy shoes and coats. Share your listings daily and use the "Offer to Likers" feature. The buyer has 3 days to report any issues.</p>
+                    <p class="mt-3 text-slate-400"><strong>Poshmark's $7.95 flat shipping</strong> favors bulky items; join Posh Parties for exposure. In 2025, focus on sustainable fashion to align with user preferences.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Facebook Marketplace / OfferUp (Local)</h3>
+                    <p>Best for cash or in-app payments. Always meet at police safe-exchange zones. The biggest advantage is no shipping fees for local hand-offs.</p>
+                    <p class="mt-3 text-slate-400"><strong>No fees for local sales;</strong> use in-app payments for security. Price 10-20% below eBay comps for faster turnover. Verify buyers via ratings.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Amazon (Advanced)</h3>
+                    <p>Offers great velocity but is very strict. Expect brand/category gating, invoice requests, and authenticity enforcement. Best for new, authentic, replenishable goods you can document. Start elsewhere unless you are ready for high compliance standards.</p>
+                    <p class="mt-3 text-slate-400"><strong>Amazon's FBA</strong> handles shipping but requires UPCs; ungated categories like books are beginner-friendly. Comply with 2025 authenticity rules to avoid suspensions.</p>
+                </div>
             </div>
 
-            <div class="info-card">
-                <h3>Quick Reference Checklist</h3>
-                <p><strong>Print this for tax time:</strong></p>
-                <ul>
-                    <li>☐ Separate business bank account active</li>
-                    <li>☐ Inventory spreadsheet with SKUs maintained</li>
-                    <li>☐ All receipts scanned/saved digitally</li>
-                    <li>☐ Mileage log current and detailed</li>
-                    <li>☐ Home office measurements documented</li>
-                    <li>☐ De minimis election prepared if using</li>
-                    <li>☐ Quarterly payments made on time</li>
-                    <li>☐ Platform reports downloaded</li>
-                    <li>☐ QBI deduction calculated</li>
-                    <li>☐ Records backed up (3+ years)</li>
-                </ul>
+            <!-- Listing & Shipping Tab -->
+            <div id="listing" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📦 Listings & Shipping Without Surprises</h2>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Listings That Actually Sell</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Title Formula:</strong> Brand + Model + Size/Spec + Keywords.</li>
+                        <li><strong>Photos (8-12):</strong> Front, back, sides, top/bottom, defects, tags, measurements.</li>
+                        <li><strong>Description:</strong> What it is, condition, what’s included, tested/cleaned status, measurements.</li>
+                        <li><strong>Item Specifics:</strong> Fill out everything possible. Platform SEO loves this.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">SEO & Optimization</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>SEO Optimization:</strong> Use long-tail keywords like "Nike Air Max 90 size 10 used" for better search placement.</li>
+                        <li><strong>Video Listings:</strong> Add short clips demonstrating item function on platforms like eBay for 15% higher conversion.</li>
+                        <li><strong>Description Templates:</strong> Create reusable formats to speed up listing; include FAQs to reduce inquiries.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Shipping Materials</h3>
+                    <p>Poly mailers (10×13, 14.5×19), boxes (8×6×4 and 12×10×8 are good starter sizes), bubble wrap, kraft paper, tape, and a thermal label printer.</p>
+                    <p class="mt-3 text-slate-400"><strong>In 2025,</strong> source recycled materials from Uline; invest in a label scale for precise weights. Consider thermal printers like Rollo for efficiency.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Shipping Decision Guide</h3>
+                     <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Under 1 lb (soft goods, tees):</strong> Poly mailer + economical ground service.</li>
+                        <li><strong>1–3 lb (shoes, small electronics):</strong> Compare USPS vs UPS; double-box if fragile.</li>
+                        <li><strong>Over 3 lb / large:</strong> Dimensional weight might apply—measure carefully and compare carriers.</li>
+                    </ul>
+                    <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Shipping Options</h4>
+                     <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>International Options:</strong> Use Pirate Ship for discounted rates; add customs forms for global sales.</li>
+                        <li><strong>Carrier Comparison:</strong> FedEx for heavy items; track via apps to provide buyers real-time updates.</li>
+                        <li><strong>Sustainable Shipping:</strong> Offer carbon-neutral options via USPS to attract eco-conscious customers.</li>
+                    </ul>
+                </div>
             </div>
-        </div>
 
-        <div class="button-container">
-            <button onclick="location.href='expenses.html'" class="secondary-button">Track Expenses</button>
-            <button onclick="location.href='mileage.html'" class="primary-button">Log Mileage →</button>
-        </div>
-    </div>
+            <!-- Workflow & Safety Tab -->
+            <div id="workflow" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🛡️ Risk, Safety & Workflow</h2>
 
-    <nav class="bottom-nav">
-        <a href="index.html"><img src="icons/home.png" alt="Home"><span>Home</span></a>
-        <a href="inventory.html"><img src="icons/inventory.png" alt="Inventory"><span>Inventory</span></a>
-        <a href="expenses.html"><img src="icons/dollar.png" alt="Expenses"><span>Expenses</span></a>
-        <a href="more.html"><img src="icons/more.png" alt="More"><span>More</span></a>
-    </nav>
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Risk, Safety & Compliance</h3>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Authenticity/IP:</strong> Sell only authentic goods. Avoid restricted brands. Keep receipts as proof.</li>
+                        <li><strong>Recalls & Safety:</strong> Check items (especially baby gear, electronics) for recalls on CPSC.gov before listing.</li>
+                        <li><strong>Local Meetups:</strong> Choose police or retailer safe-exchange zones. Avoid night meets and decline overpayment/check scams.</li>
+                        <li><strong>Batteries/Hazmat:</strong> Follow carrier rules for shipping lithium batteries and other hazardous materials.</li>
+                    </ul>
+                     <h4 class="text-md font-bold text-yellow-400 mt-6 mb-3">Additional Compliance</h4>
+                    <ul class="list-disc list-inside space-y-2 text-slate-300">
+                        <li><strong>Tax Compliance:</strong> Use apps like TaxJar for sales tax tracking; file quarterly in 2025 to avoid penalties.</li>
+                        <li><strong>Cyber Risks:</strong> Use VPNs for public Wi-Fi sourcing; enable multi-factor on all accounts.</li>
+                        <li><strong>Supply Chain Checks:</strong> Verify suppliers for ethical sourcing to meet growing ESG standards.</li>
+                    </ul>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Inventory System (Start on Day 1)</h3>
+                    <p>Give every item an SKU (e.g., A-01, A-02...). Store items in labeled bins. Put the SKU in your listing description and on a physical tag on the item so you can find it easily when it sells.</p>
+                    <p class="mt-3 text-slate-400"><strong>Scale with software</strong> like InventoryLab; barcode items for quick scans. Rotate stock seasonally to prevent obsolescence.</p>
+                </div>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Daily Workflow</h3>
+                    <p>Source (2–4 hrs/wk) → Clean/Test (batch) → Photograph (batch) → List (daily) → Ship (same/next day) → Bookkeeping (10 min/day).</p>
+                    <p class="mt-3 text-slate-400"><strong>Incorporate weekly reviews:</strong> Analyze sell-through rates and adjust sourcing. Outsource photography if volume exceeds 50 items/week.</p>
+                </div>
+            </div>
+
+            <!-- Growth Plan Tab -->
+            <div id="growth" class="tab-content space-y-6">
+                <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📈 90-Day Growth Plan</h2>
+
+                <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Month 1: Foundation</h3>
+                    <p>Get 100 listings live. Target $1,000 in total revenue. Learn how to pack your items like a pro.</p>
+                    <p class="mt-3 text-slate-400"><strong>Build a social media presence</strong> on Instagram for free promotion; aim for 20% repeat buyers through excellent service.</p>
+                </div>
+
+                 <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Month 2: Scaling</h3>
+                    <p>Reach 200–250 active listings. Add a cross-listing tool. Map out a weekly sourcing route (~6–10 hrs/wk). Start tracking your sell-through rate by category and get rid of items that aren't selling.</p>
+                    <p class="mt-3 text-slate-400"><strong>Hire virtual assistants</strong> for listing via Upwork; expand to Depop for younger demographics in 2025 trends.</p>
+                </div>
+
+                 <div class="bg-slate-800 p-6 rounded-lg shadow-md border border-slate-700">
+                    <h3 class="text-lg font-bold text-white mb-3">Month 3: Systematizing</h3>
+                    <p>Reach 300–400 active listings. Add one advanced sourcing method (auctions/gov surplus). Standardize your SKU/bin system. Perform weekly price checks on stale inventory. Focus on flipping your capital faster.</p>
+                    <p class="mt-3 text-slate-400"><strong>Diversify with wholesale</strong> via Faire; track metrics monthly and pivot from low-STR categories. Consider building a team for sourcing.</p>
+                </div>
+
+                 <div class="bg-gradient-to-r from-yellow-500 to-yellow-400 text-slate-900 p-6 rounded-lg shadow-lg">
+                    <h3 class="text-lg font-bold mb-2">Keep Going!</h3>
+                    <p>Start simple, track your numbers, and improve one tiny thing each week (better sourcing spots, cleaner photos, sharper titles, faster shipping). Small, repeatable wins compound into a real business.</p>
+                </div>
+            </div>
+        </main>
+
+    </div> <!-- End Main Container -->
+
+    <!-- Bottom Navigation -->
+<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Home</span>
+    </a>
+    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Inventory</span>
+    </a>
+    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Expenses</span>
+    </a>
+    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Mileage</span>
+    </a>
+    <a href="scores.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/powerscore.png" alt="Scores" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Scores</span>
+    </a>
+    <a href="more.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+        <span class="text-xs">More</span>
+    </a>
+</nav>
 
     <script>
-        function showTab(tabName) {
-            // Hide all tabs
+        function showTab(tabName, elm) {
+            // Hide all tab content
             document.querySelectorAll('.tab-content').forEach(tab => {
                 tab.classList.remove('active');
             });
             
-            // Remove active class from all buttons
+            // Deactivate all tab buttons
             document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
+                btn.classList.remove('active', 'bg-yellow-400', 'text-slate-900');
+                btn.classList.add('text-slate-300', 'hover:bg-slate-700');
             });
             
-            // Show selected tab
+            // Show the selected tab content
             document.getElementById(tabName).classList.add('active');
             
-            // Add active class to clicked button
-            event.target.classList.add('active');
+            // Activate the clicked button
+            elm.classList.add('active', 'bg-yellow-400', 'text-slate-900');
+            elm.classList.remove('text-slate-300', 'hover:bg-slate-700');
         }
+
+        // Add shadow to sticky nav on scroll
+        const stickyNav = document.getElementById('sticky-nav-wrapper');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                stickyNav.classList.add('scrolled');
+            } else {
+                stickyNav.classList.remove('scrolled');
+            }
+        });
     </script>
 </body>
 </html>

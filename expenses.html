@@ -60,6 +60,23 @@
                 <p id="grandTotal" class="text-4xl font-bold text-yellow-400 mt-1">$0.00</p>
             </div>
             
+            <!-- Search, Sort, Filter -->
+            <div class="mb-4">
+                <input type="text" id="searchInput" placeholder="Search by vendor or description..." class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <select id="sortControl" class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+                    <option value="newest">Sort by: Newest</option>
+                    <option value="oldest">Sort by: Oldest</option>
+                    <option value="highest_cost">Sort by: Highest Cost</option>
+                    <option value="lowest_cost">Sort by: Lowest Cost</option>
+                </select>
+                <select id="categoryFilter" class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+                    <option value="all">Filter by Category: All</option>
+                    <!-- Categories will be populated dynamically -->
+                </select>
+            </div>
+
             <!-- Download Buttons -->
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button id="downloadCsvBtn" class="btn-secondary py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">
@@ -171,30 +188,12 @@
 
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-            <span class="text-xs font-medium">Home</span>
-        </a>
-        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-            <span class="text-xs font-medium">Inventory</span>
-        </a>
-        <a href="expenses.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
-            <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-            <span class="text-xs">Expenses</span>
-        </a>
-        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-            <span class="text-xs font-medium">Mileage</span>
-        </a>
-        <a href="scores.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="w-6 h-6 mb-1" src="icons/powerscore.png" alt="Scores" onerror="this.style.display='none'">
-            <span class="text-xs font-medium">Scores</span>
-        </a>
-        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-            <span class="text-xs">More</span>
-        </a>
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs font-medium">Home</span></a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs font-medium">Inventory</span></a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs">Expenses</span></a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs font-medium">Mileage</span></a>
+        <a href="scores.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/powerscore.png" alt="Scores" onerror="this.style.display='none'"><span class="text-xs font-medium">Scores</span></a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
     </nav>
 
     <script>
@@ -212,6 +211,9 @@
             const addOrChangeReceiptBtn = document.getElementById('addOrChangeReceiptBtn');
             const downloadCsvBtn = document.getElementById('downloadCsvBtn');
             const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            const searchInput = document.getElementById('searchInput');
+            const sortControl = document.getElementById('sortControl');
+            const categoryFilter = document.getElementById('categoryFilter');
             
             const receiptViewerModal = document.getElementById('receiptViewerModal');
             const fullReceiptImage = document.getElementById('fullReceiptImage');
@@ -224,6 +226,29 @@
                 localStorage.setItem('scan2flip-expenses', JSON.stringify(expenses));
                 displayExpenses();
             };
+
+            // --- Image Compression ---
+            function compressImage(file, maxWidth = 800, quality = 0.7) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = (event) => {
+                        const img = new Image();
+                        img.src = event.target.result;
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            const aspectRatio = img.width / img.height;
+                            canvas.width = maxWidth;
+                            canvas.height = maxWidth / aspectRatio;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                            resolve(canvas.toDataURL('image/jpeg', quality));
+                        };
+                        img.onerror = (error) => reject(error);
+                    };
+                    reader.onerror = (error) => reject(error);
+                });
+            }
 
             // --- Modal Controls ---
             const openModal = (expense = null) => {
@@ -271,19 +296,21 @@
                 receiptInput.click();
             });
 
-            receiptInput.addEventListener('change', (event) => {
+            receiptInput.addEventListener('change', async (event) => {
                 const file = event.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (e) => {
+                    try {
+                        const compressedImageData = await compressImage(file);
                         if (expenseModal.classList.contains('hidden')) {
                             openModal(); 
                         }
-                        receiptPreview.src = e.target.result;
-                        receiptDataInput.value = e.target.result;
+                        receiptPreview.src = compressedImageData;
+                        receiptDataInput.value = compressedImageData;
                         receiptPreviewContainer.classList.remove('hidden');
-                    };
-                    reader.readAsDataURL(file);
+                    } catch (error) {
+                        console.error("Image compression failed:", error);
+                        alert("Sorry, there was an error processing that image.");
+                    }
                 }
             });
             
@@ -340,9 +367,19 @@
                 const container = document.getElementById('expensesListContainer');
                 const emptyState = document.getElementById('emptyState');
                 const grandTotalEl = document.getElementById('grandTotal');
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategory = categoryFilter.value;
 
-                if (expenses.length === 0) {
+                let filteredExpenses = expenses.filter(exp => {
+                    const matchesSearch = exp.vendor.toLowerCase().includes(searchTerm) || exp.description.toLowerCase().includes(searchTerm);
+                    const matchesCategory = selectedCategory === 'all' || exp.category === selectedCategory;
+                    return matchesSearch && matchesCategory;
+                });
+
+                if (filteredExpenses.length === 0) {
                     container.innerHTML = '';
+                    emptyState.querySelector('h3').textContent = 'No Matching Expenses';
+                    emptyState.querySelector('p').textContent = 'Try adjusting your search or filters.';
                     container.appendChild(emptyState);
                     emptyState.classList.remove('hidden');
                     grandTotalEl.textContent = '$0.00';
@@ -352,7 +389,7 @@
                 emptyState.classList.add('hidden');
                 container.innerHTML = '';
 
-                const grouped = expenses.reduce((acc, exp) => {
+                const grouped = filteredExpenses.reduce((acc, exp) => {
                     const month = new Date(exp.date).toLocaleString('default', { month: 'long', year: 'numeric' });
                     if (!acc[month]) acc[month] = [];
                     acc[month].push(exp);
@@ -360,15 +397,23 @@
                 }, {});
                 
                 const sortedMonths = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
-                const currentMonthKey = new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
-                let grandTotal = 0;
+                let grandTotal = filteredExpenses.reduce((sum, exp) => sum + exp.amount, 0);
 
                 sortedMonths.forEach(month => {
-                    const monthExpenses = grouped[month].sort((a, b) => new Date(b.date) - new Date(a.date));
+                    let monthExpenses = grouped[month];
+                    const sortValue = sortControl.value;
+                    monthExpenses.sort((a,b) => {
+                         switch(sortValue) {
+                            case 'oldest': return new Date(a.date) - new Date(b.date);
+                            case 'highest_cost': return b.amount - a.amount;
+                            case 'lowest_cost': return a.amount - b.amount;
+                            case 'newest':
+                            default: return new Date(b.date) - new Date(a.date);
+                        }
+                    });
+                    
                     const monthTotal = monthExpenses.reduce((sum, exp) => sum + exp.amount, 0);
-                    grandTotal += monthTotal;
-
-                    const isCollapsed = month !== currentMonthKey;
+                    const isCollapsed = sortedMonths.length > 1 && month !== new Date().toLocaleString('default', { month: 'long', year: 'numeric' });
 
                     const monthSection = document.createElement('div');
                     monthSection.className = 'bg-slate-800 rounded-lg shadow-md border border-slate-700';
@@ -415,29 +460,44 @@
                 });
 
                 grandTotalEl.textContent = `$${grandTotal.toFixed(2)}`;
+                populateCategoryFilter();
+                addEventListeners();
+            };
+            
+            const populateCategoryFilter = () => {
+                const categories = [...new Set(expenses.map(exp => exp.category))];
+                categoryFilter.innerHTML = '<option value="all">Filter by Category: All</option>';
+                categories.sort().forEach(cat => {
+                    const option = document.createElement('option');
+                    option.value = cat;
+                    option.textContent = cat;
+                    categoryFilter.appendChild(option);
+                });
+            };
 
-                container.querySelectorAll('.month-header').forEach(header => {
+            const addEventListeners = () => {
+                document.querySelectorAll('.month-header').forEach(header => {
                     header.addEventListener('click', () => {
                         header.nextElementSibling.classList.toggle('hidden');
                         header.querySelector('svg').classList.toggle('rotate-180');
                     });
                 });
                 
-                container.querySelectorAll('.view-receipt-btn').forEach(btn => {
+                document.querySelectorAll('.view-receipt-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const expense = expenses.find(ex => ex.id === parseInt(e.target.dataset.expenseId));
                         if(expense && expense.receipt) openReceiptViewer(expense.receipt);
                     });
                 });
                 
-                container.querySelectorAll('.edit-btn').forEach(btn => {
+                document.querySelectorAll('.edit-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         const expense = expenses.find(ex => ex.id === parseInt(e.target.dataset.expenseId));
                         if(expense) openModal(expense);
                     });
                 });
 
-                container.querySelectorAll('.delete-btn').forEach(btn => {
+                document.querySelectorAll('.delete-btn').forEach(btn => {
                     btn.addEventListener('click', (e) => {
                         deleteExpense(parseInt(e.target.dataset.expenseId));
                     });
@@ -488,6 +548,9 @@
                 doc.save("scan2flip_expenses.pdf");
             };
             
+            searchInput.addEventListener('input', displayExpenses);
+            sortControl.addEventListener('change', displayExpenses);
+            categoryFilter.addEventListener('change', displayExpenses);
             downloadCsvBtn.addEventListener('click', downloadCSV);
             downloadPdfBtn.addEventListener('click', downloadPDF);
 

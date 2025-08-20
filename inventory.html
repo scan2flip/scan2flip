@@ -2,114 +2,556 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1f2d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Inventory - Scan2Flip</title>
-    
-    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
-    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
+    <!-- jsPDF Library for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+            color: #cbd5e1; /* text-slate-300 */
+        }
+        .btn-primary {
+            background-color: #facc15; /* yellow-400 */
+            color: #1e293b; /* slate-800 */
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #fde047; /* yellow-300 */
+        }
+        .btn-secondary {
+            background-color: #334155; /* slate-700 */
+            color: #f1f5f9; /* slate-100 */
+            font-weight: 600;
+        }
+        #itemImageInput { display: none; }
+        .tooltip-container { position: relative; display: inline-flex; align-items: center; }
+        .tooltip { visibility: hidden; width: 200px; background-color: #334155; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; font-weight: 500; line-height: 1.4; }
+        .tooltip-container:hover .tooltip { visibility: visible; opacity: 1; }
+        .tab-button.active { background-color: #facc15; color: #1e293b; }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo-container">
-                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
-                <div class="logo-text">SCAN2FLIP</div>
-            </div>
-            <div class="header-stats">
-                <div class="scan-counter" id="scanCounter">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
-                    </svg>
-                    <span id="scanCount">5/5 Daily</span>
-                </div>
-                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
-                    +<span id="packCount">0</span> packs
-                </div>
-            </div>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Main App Container -->
+    <div class="container mx-auto max-w-4xl pb-28">
+
+        <!-- Header -->
+        <header class="text-center py-6 px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">📦 Inventory Log</h1>
+            <p class="text-lg text-slate-400">Track your items from purchase to profit.</p>
         </header>
 
-        <div class="page-content">
-            <div class="inventory-grid" id="inventoryGrid">
-                <div class="empty-state">
-                    <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
-                    </svg>
-                    <div class="empty-title">No Items Yet</div>
-                    <div class="empty-text">Start scanning items to build your inventory</div>
+        <!-- Main Content -->
+        <main class="px-4">
+            <!-- Advanced Analytics Dashboard -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Sell-Thru Rate</h2>
+                    <p id="sellThruRate" class="text-xl font-bold text-white mt-1">0%</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Avg. Sale Price</h2>
+                    <p id="avgSalePrice" class="text-xl font-bold text-white mt-1">$0.00</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Avg. Profit</h2>
+                    <p id="avgProfitMargin" class="text-xl font-bold text-white mt-1">$0.00</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Avg. Days Listed</h2>
+                    <p id="avgDaysListed" class="text-xl font-bold text-white mt-1">0</p>
                 </div>
             </div>
-        </div>
 
-        <nav class="bottom-nav">
-            <a class="nav-item" href="index.html">
-                <img src="/icons/home.png" alt="Home">
-                <span>Home</span>
-            </a>
-            <a class="nav-item active" href="inventory.html">
-                <img src="/icons/inventory.png" alt="Inventory">
-                <span>Inventory</span>
-            </a>
-            <a class="nav-item" href="expenses.html">
-                <img src="/icons/dollar.png" alt="Expenses">
-                <span>Expenses</span>
-            </a>
-            <a class="nav-item" href="mileage.html">
-                <img src="/icons/mileage.png" alt="Mileage">
-                <span>Mileage</span>
-            </a>
-            <a class="nav-item" href="scores.html">
-                <img src="/icons/powerscore.png" alt="History">
-                <span>Scores</span>
-            </a>
-            <a class="nav-item" href="more.html">
-                <img src="/icons/coins.png" alt="More">
-                <span>More</span>
-            </a>
-        </nav>
+            <!-- Inventory Summary -->
+            <div class="grid grid-cols-3 gap-4 mb-6 text-center">
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <div class="tooltip-container">
+                        <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Active Value</h2>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1.5 text-slate-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" /></svg>
+                        <span class="tooltip">This is the total cost of all your currently listed (unsold) items.</span>
+                    </div>
+                    <p id="activeValue" class="text-xl font-bold text-white mt-1">$0.00</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Items Listed</h2>
+                    <p id="itemsListed" class="text-xl font-bold text-white mt-1">0</p>
+                </div>
+                <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
+                    <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Total Profit</h2>
+                    <p id="totalProfit" class="text-xl font-bold text-green-400 mt-1">$0.00</p>
+                </div>
+            </div>
+            
+            <!-- Search, Sort, Filter -->
+            <div class="mb-4">
+                <input type="text" id="searchInput" placeholder="Search inventory..." class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-4">
+                <select id="sortControl" class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+                    <option value="newest">Sort by: Newest</option>
+                    <option value="oldest">Sort by: Oldest</option>
+                    <option value="highest_profit">Sort by: Highest Profit</option>
+                    <option value="lowest_profit">Sort by: Lowest Profit</option>
+                    <option value="highest_cost">Sort by: Highest Cost</option>
+                    <option value="lowest_cost">Sort by: Lowest Cost</option>
+                </select>
+                <select id="sourceFilter" class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
+                    <option value="all">Filter by Source: All</option>
+                    <!-- Sources will be populated dynamically -->
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <button id="downloadCsvBtn" class="btn-secondary py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">Download CSV</button>
+                <button id="downloadPdfBtn" class="btn-secondary py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">Download PDF</button>
+            </div>
+
+            <!-- Add Item Button -->
+            <div class="mb-6">
+                <button id="addInventoryBtn" class="w-full btn-primary flex items-center justify-center gap-2">Add Item Manually</button>
+            </div>
+            <input type="file" id="itemImageInput" accept="image/*">
+
+            <!-- Inventory Tabs -->
+            <div class="mb-4">
+                <div class="flex space-x-1 rounded-lg bg-slate-800 p-1">
+                    <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg active" data-status="Unlisted">Unlisted</button>
+                    <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg" data-status="Listed">Listed</button>
+                    <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg" data-status="Sold">Sold</button>
+                    <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg" data-status="Archived">Archived</button>
+                </div>
+            </div>
+
+            <!-- Inventory List Container -->
+            <div id="inventoryListContainer" class="space-y-4">
+                <div id="emptyState" class="text-center py-12 text-slate-500">
+                    <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/></svg>
+                    <h3 class="mt-2 text-lg font-semibold text-slate-300">No Items in Inventory</h3>
+                    <p class="mt-1 text-sm">Items you "Keep" after scanning will appear here.</p>
+                </div>
+                <!-- Items injected here -->
+            </div>
+        </main>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Modals -->
+    <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-md m-4 p-6 border border-slate-700">
+            <h3 id="itemModalTitle" class="text-xl font-bold text-white mb-4">Add New Item</h3>
+            <form id="itemForm">
+                <input type="hidden" id="itemId">
+                <div class="space-y-4">
+                    <img id="itemImagePreview" src="https://placehold.co/400x400/1e293b/475569?text=Add+Photo" alt="Item image" class="w-32 h-32 object-cover rounded-lg mx-auto cursor-pointer border-2 border-dashed border-slate-600">
+                    <div>
+                        <label for="itemName" class="block text-sm font-medium text-slate-400">Item Name</label>
+                        <input type="text" id="itemName" placeholder="e.g., Vintage Nike T-Shirt" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2" required>
+                    </div>
+                     <div>
+                        <label for="itemSource" class="block text-sm font-medium text-slate-400">Purchased From (Source)</label>
+                        <input type="text" id="itemSource" placeholder="e.g., Goodwill, Garage Sale, Walmart" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2" required>
+                    </div>
+                    <div>
+                        <label for="itemPurchaseDate" class="block text-sm font-medium text-slate-400">Purchase Date</label>
+                        <input type="date" id="itemPurchaseDate" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2" required>
+                    </div>
+                    <div>
+                        <label for="itemCost" class="block text-sm font-medium text-slate-400">Purchase Cost (COGS, incl. tax)</label>
+                        <div class="relative">
+                             <div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center"><span class="text-slate-400">$</span></div>
+                            <input type="number" id="itemCost" step="0.01" placeholder="0.00" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white pl-7 p-2" required>
+                        </div>
+                    </div>
+                     <div>
+                        <label for="itemNotes" class="block text-sm font-medium text-slate-400">Notes</label>
+                        <textarea id="itemNotes" placeholder="e.g., Small scratch on back, listed on eBay 8/20/25" rows="3" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2"></textarea>
+                    </div>
+                    <div id="receiptPreviewContainer" class="hidden">
+                         <label class="block text-sm font-medium text-slate-400">Receipt Preview</label>
+                         <img id="receiptPreview" src="" alt="Receipt Preview" class="mt-1 rounded-md max-h-40 w-auto mx-auto cursor-pointer">
+                         <input type="hidden" id="receiptData">
+                    </div>
+                    <button type="button" id="addOrChangeReceiptBtn" class="w-full text-center py-2 px-4 border-2 border-dashed border-slate-600 rounded-lg text-slate-400 hover:bg-slate-700 hover:border-slate-500">Add / Change Receipt</button>
+                </div>
+                <div class="mt-6 flex justify-end gap-4">
+                    <button type="button" id="cancelItemBtn" class="btn-secondary py-2 px-4 rounded-lg">Cancel</button>
+                    <button type="submit" class="btn-primary py-2 px-4">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div id="soldModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-md m-4 p-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-white mb-4">Mark Item as Sold</h3>
+            <form id="soldForm"><input type="hidden" id="soldItemId"><div class="space-y-4"><div><label for="soldDate" class="block text-sm font-medium text-slate-400">Date Sold</label><input type="date" id="soldDate" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2" required></div><div><label for="soldPlatform" class="block text-sm font-medium text-slate-400">Sold Where</label><select id="soldPlatform" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-2" required><option value="eBay">eBay</option> <option value="Poshmark">Poshmark</option> <option value="Mercari">Mercari</option> <option value="Facebook Marketplace">Facebook Marketplace</option> <option value="Local">Local</option> <option value="Other">Other</option></select></div><div><label for="soldPrice" class="block text-sm font-medium text-slate-400">Sold Price</label><div class="relative"><div class="pointer-events-none absolute inset-y-0 left-0 pl-3 flex items-center"><span class="text-slate-400">$</span></div><input type="number" id="soldPrice" step="0.01" placeholder="0.00" class="mt-1 block w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white pl-7 p-2" required></div></div></div><div class="mt-6 flex justify-end gap-4"><button type="button" id="cancelSoldBtn" class="btn-secondary py-2 px-4 rounded-lg">Cancel</button><button type="submit" class="btn-primary py-2 px-4">Confirm Sale</button></div></form>
+        </div>
+    </div>
+    <div id="receiptViewerModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 hidden">
+        <div class="relative p-4"><button id="closeReceiptViewer" class="absolute -top-2 -right-2 bg-white rounded-full p-1 text-slate-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button><img id="fullReceiptImage" src="" class="max-h-screen max-w-screen-lg"></div>
+    </div>
 
-    <script src="app.js"></script>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs font-medium">Home</span></a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs">Inventory</span></a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs font-medium">Expenses</span></a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs font-medium">Mileage</span></a>
+        <a href="scores.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/powerscore.png" alt="Scores" onerror="this.style.display='none'"><span class="text-xs font-medium">Scores</span></a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
+    </nav>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            updateInventoryDisplay();
-        });
+            // --- Element References ---
+            const addInventoryBtn = document.getElementById('addInventoryBtn');
+            const itemModal = document.getElementById('itemModal');
+            const itemForm = document.getElementById('itemForm');
+            const cancelItemBtn = document.getElementById('cancelItemBtn');
+            const itemImagePreview = document.getElementById('itemImagePreview');
+            const itemImageInput = document.getElementById('itemImageInput');
+            const receiptPreviewContainer = document.getElementById('receiptPreviewContainer');
+            const receiptPreview = document.getElementById('receiptPreview');
+            const receiptDataInput = document.getElementById('receiptData');
+            const addOrChangeReceiptBtn = document.getElementById('addOrChangeReceiptBtn');
+            const soldModal = document.getElementById('soldModal');
+            const soldForm = document.getElementById('soldForm');
+            const cancelSoldBtn = document.getElementById('cancelSoldBtn');
+            const receiptViewerModal = document.getElementById('receiptViewerModal');
+            const fullReceiptImage = document.getElementById('fullReceiptImage');
+            const closeReceiptViewer = document.getElementById('closeReceiptViewer');
+            const searchInput = document.getElementById('searchInput');
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const downloadCsvBtn = document.getElementById('downloadCsvBtn');
+            const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+            const sortControl = document.getElementById('sortControl');
+            const sourceFilter = document.getElementById('sourceFilter');
 
-        function updateInventoryDisplay() {
-            const grid = document.getElementById('inventoryGrid');
-            if (state.inventory.length === 0) {
-                grid.innerHTML = `
-                    <div class="empty-state">
-                        <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/>
-                        </svg>
-                        <div class="empty-title">No Items Yet</div>
-                        <div class="empty-text">Start scanning items to build your inventory</div>
-                    </div>`;
-                return;
-            }
+            // --- State Management ---
+            let inventory = JSON.parse(localStorage.getItem('scan2flip-inventory')) || [];
+            let expenses = JSON.parse(localStorage.getItem('scan2flip-expenses')) || [];
+            let currentStatusFilter = 'Unlisted';
+
+            const saveInventory = () => {
+                localStorage.setItem('scan2flip-inventory', JSON.stringify(inventory));
+                displayInventory();
+            };
+            const saveExpenses = () => localStorage.setItem('scan2flip-expenses', JSON.stringify(expenses));
+
+            // --- Modal Controls ---
+            const openItemModal = (item = null) => {
+                itemForm.reset();
+                itemImagePreview.src = 'https://placehold.co/400x400/1e293b/475569?text=Add+Photo';
+                receiptPreviewContainer.classList.add('hidden');
+                if (item) {
+                    document.getElementById('itemModalTitle').textContent = 'Edit Item';
+                    document.getElementById('itemId').value = item.id;
+                    document.getElementById('itemName').value = item.name;
+                    document.getElementById('itemSource').value = item.source;
+                    document.getElementById('itemPurchaseDate').value = item.purchaseDate;
+                    document.getElementById('itemCost').value = item.cost;
+                    document.getElementById('itemNotes').value = item.notes || '';
+                    if(item.image) itemImagePreview.src = item.image;
+                    if(item.receipt) {
+                        receiptPreview.src = item.receipt;
+                        receiptDataInput.value = item.receipt;
+                        receiptPreviewContainer.classList.remove('hidden');
+                    }
+                } else {
+                    document.getElementById('itemModalTitle').textContent = 'Add New Item';
+                    document.getElementById('itemId').value = '';
+                    document.getElementById('itemPurchaseDate').value = new Date().toISOString().slice(0, 10);
+                }
+                itemModal.classList.remove('hidden');
+            };
+            const closeItemModal = () => itemModal.classList.add('hidden');
+            const openSoldModal = (item) => {
+                soldForm.reset();
+                document.getElementById('soldItemId').value = item.id;
+                document.getElementById('soldDate').value = new Date().toISOString().slice(0, 10);
+                soldModal.classList.remove('hidden');
+            };
+            const closeSoldModal = () => soldModal.classList.add('hidden');
+            addInventoryBtn.addEventListener('click', () => openItemModal());
+            cancelItemBtn.addEventListener('click', closeItemModal);
+            itemImagePreview.addEventListener('click', () => itemImageInput.click());
+            addOrChangeReceiptBtn.addEventListener('click', () => itemImageInput.click());
+            cancelSoldBtn.addEventListener('click', closeSoldModal);
+
+            // --- Image & Receipt Handling ---
+            itemImageInput.addEventListener('change', (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        itemImagePreview.src = e.target.result;
+                        receiptPreview.src = e.target.result;
+                        receiptDataInput.value = e.target.result;
+                        receiptPreviewContainer.classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            const openReceiptViewer = (imageData) => {
+                fullReceiptImage.src = imageData;
+                receiptViewerModal.classList.remove('hidden');
+            };
+            const closeReceiptViewerModal = () => receiptViewerModal.classList.add('hidden');
+            closeReceiptViewer.addEventListener('click', closeReceiptViewerModal);
+            receiptViewerModal.addEventListener('click', (e) => {
+                if(e.target === receiptViewerModal) closeReceiptViewerModal();
+            });
+
+            // --- Form Submissions ---
+            itemForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const id = document.getElementById('itemId').value;
+                const itemData = {
+                    id: id ? parseInt(id) : Date.now(),
+                    name: document.getElementById('itemName').value,
+                    source: document.getElementById('itemSource').value,
+                    purchaseDate: document.getElementById('itemPurchaseDate').value,
+                    cost: parseFloat(document.getElementById('itemCost').value),
+                    notes: document.getElementById('itemNotes').value,
+                    image: itemImagePreview.src,
+                    receipt: receiptDataInput.value || null,
+                    status: id ? inventory.find(i => i.id === parseInt(id)).status : 'Unlisted',
+                    soldInfo: id ? inventory.find(i => i.id === parseInt(id)).soldInfo : null
+                };
+                if (id) {
+                    inventory = inventory.map(item => item.id === itemData.id ? itemData : item);
+                } else {
+                    inventory.push(itemData);
+                }
+                saveInventory();
+                closeItemModal();
+            });
             
-            grid.innerHTML = state.inventory.map(item => `
-                <div class="inventory-item">
-                    <div class="inventory-item-info">
-                        <h3>${item.name}</h3>
-                        <p>Worth: $${item.worthPaying} | Sells for: $${item.avgPrice}</p>
-                    </div>
-                    <div class="inventory-item-status status-${item.status}">
-                        ${item.status}
-                    </div>
-                </div>
-            `).join('');
-        }
+            soldForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const itemId = parseInt(document.getElementById('soldItemId').value);
+                const itemIndex = inventory.findIndex(item => item.id === itemId);
+                if (itemIndex > -1) {
+                    const item = inventory[itemIndex];
+                    item.status = 'Sold';
+                    item.soldInfo = {
+                        date: document.getElementById('soldDate').value,
+                        price: parseFloat(document.getElementById('soldPrice').value),
+                        platform: document.getElementById('soldPlatform').value
+                    };
+                    const cogsExpense = {
+                        id: Date.now(), date: item.soldInfo.date, category: 'Inventory (COGS)',
+                        vendor: item.source, description: `COGS for: ${item.name}`,
+                        amount: item.cost, receipt: item.receipt
+                    };
+                    expenses.push(cogsExpense);
+                    saveInventory();
+                    saveExpenses();
+                }
+                closeSoldModal();
+            });
+            
+            const deleteItem = (id) => {
+                if(confirm('Are you sure you want to delete this item?')) {
+                    inventory = inventory.filter(item => item.id !== id);
+                    saveInventory();
+                }
+            };
+            
+            const listItem = (id) => {
+                 const itemIndex = inventory.findIndex(item => item.id === id);
+                 if(itemIndex > -1) {
+                    inventory[itemIndex].status = 'Listed';
+                    saveInventory();
+                 }
+            };
+            
+            const archiveItem = (id) => {
+                 if(confirm('Are you sure you want to archive this item? It will be removed from your active inventory.')) {
+                    const itemIndex = inventory.findIndex(item => item.id === id);
+                    if(itemIndex > -1) {
+                        inventory[itemIndex].status = 'Archived';
+                        saveInventory();
+                    }
+                 }
+            };
+
+            // --- Display & Filtering Logic ---
+            const displayInventory = () => {
+                const container = document.getElementById('inventoryListContainer');
+                const emptyState = document.getElementById('emptyState');
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedSource = sourceFilter.value;
+
+                let filteredInventory = inventory.filter(item => {
+                    const matchesStatus = item.status === currentStatusFilter;
+                    const matchesSearch = item.name.toLowerCase().includes(searchTerm) || item.source.toLowerCase().includes(searchTerm);
+                    const matchesSource = selectedSource === 'all' || item.source === selectedSource;
+                    return matchesStatus && matchesSearch && matchesSource;
+                });
+                
+                // Sorting logic
+                const sortValue = sortControl.value;
+                filteredInventory.sort((a, b) => {
+                    switch(sortValue) {
+                        case 'oldest': return new Date(a.purchaseDate) - new Date(b.purchaseDate);
+                        case 'highest_profit': return (b.soldInfo?.price - b.cost || 0) - (a.soldInfo?.price - a.cost || 0);
+                        case 'lowest_profit': return (a.soldInfo?.price - a.cost || 0) - (b.soldInfo?.price - b.cost || 0);
+                        case 'highest_cost': return b.cost - a.cost;
+                        case 'lowest_cost': return a.cost - b.cost;
+                        case 'newest':
+                        default: return new Date(b.purchaseDate) - new Date(a.purchaseDate);
+                    }
+                });
+                
+                if (filteredInventory.length === 0) {
+                    container.innerHTML = '';
+                    emptyState.querySelector('.empty-title').textContent = `No ${currentStatusFilter} Items`;
+                    emptyState.querySelector('.empty-text').textContent = searchTerm || selectedSource !== 'all' ? 'Try adjusting your search or filters.' : `Your ${currentStatusFilter.toLowerCase()} items will appear here.`;
+                    container.appendChild(emptyState);
+                    emptyState.classList.remove('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    container.innerHTML = filteredInventory.map(item => {
+                        const profit = item.status === 'Sold' ? item.soldInfo.price - item.cost : null;
+                        return `
+                        <div class="bg-slate-800 rounded-lg shadow-md border border-slate-700 flex items-start p-4 gap-4">
+                            <img src="${item.image}" alt="${item.name}" class="w-20 h-20 object-cover rounded-md flex-shrink-0">
+                            <div class="flex-grow">
+                                <h3 class="font-bold text-white">${item.name}</h3>
+                                <p class="text-sm text-slate-400">Source: ${item.source}</p>
+                                <p class="text-sm text-slate-400">Purchased: ${item.purchaseDate}</p>
+                                <p class="text-sm text-slate-400">Cost (COGS): <span class="font-semibold text-red-400">$${item.cost.toFixed(2)}</span></p>
+                                ${item.notes ? `<p class="text-xs text-slate-500 mt-1 italic">Note: ${item.notes}</p>` : ''}
+                                ${item.receipt ? `<button class="text-xs text-yellow-400 hover:underline view-receipt-btn" data-item-id="${item.id}">View Receipt</button>` : ''}
+                                ${item.status === 'Sold' ? `
+                                    <div class="mt-2 pt-2 border-t border-slate-700">
+                                        <p class="text-sm text-slate-400">Sold for: <span class="font-semibold text-green-400">$${item.soldInfo.price.toFixed(2)}</span> on ${item.soldInfo.platform}</p>
+                                        <p class="text-sm font-bold text-green-400">Gross Profit: $${profit.toFixed(2)}</p>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="flex flex-col gap-2 items-center flex-shrink-0">
+                                ${item.status === 'Unlisted' ? `<button class="w-full text-center py-2 px-3 rounded-lg bg-blue-500 text-white font-semibold text-sm list-item-btn" data-item-id="${item.id}">List</button>` : ''}
+                                ${item.status === 'Listed' ? `<button class="w-full text-center py-2 px-3 rounded-lg bg-green-500 text-white font-semibold text-sm mark-sold-btn" data-item-id="${item.id}">Sold</button>` : ''}
+                                ${item.status === 'Sold' ? `<span class="py-2 px-3 rounded-lg bg-slate-600 text-slate-300 font-semibold text-sm">Sold</span>` : ''}
+                                ${item.status === 'Archived' ? `<span class="py-2 px-3 rounded-lg bg-slate-600 text-slate-300 font-semibold text-sm">Archived</span>` : ''}
+                                <div class="flex gap-2 mt-2">
+                                    ${(item.status === 'Unlisted' || item.status === 'Listed') ? `<button class="archive-item-btn" title="Archive" data-item-id="${item.id}"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor"><path d="M4 3a2 2 0 100 4h12a2 2 0 100-4H4z" /><path fill-rule="evenodd" d="M3 8h14v7a2 2 0 01-2 2H5a2 2 0 01-2-2V8zm5 3a1 1 0 011-1h2a1 1 0 110 2H9a1 1 0 01-1-1z" clip-rule="evenodd" /></svg></button>` : ''}
+                                    <button class="edit-item-btn" data-item-id="${item.id}"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-400" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg></button>
+                                    <button class="delete-item-btn" data-item-id="${item.id}"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg></button>
+                                </div>
+                            </div>
+                        </div>
+                        `
+                    }).join('');
+                }
+                updateSummaryAndFilters();
+                addEventListeners();
+            };
+            
+            const updateSummaryAndFilters = () => {
+                const listedItems = inventory.filter(item => item.status === 'Listed');
+                const soldItems = inventory.filter(item => item.status === 'Sold');
+                
+                document.getElementById('activeValue').textContent = `$${listedItems.reduce((s, i) => s + i.cost, 0).toFixed(2)}`;
+                document.getElementById('itemsListed').textContent = listedItems.length;
+                document.getElementById('totalProfit').textContent = `$${soldItems.reduce((s, i) => s + (i.soldInfo.price - i.cost), 0).toFixed(2)}`;
+                
+                // Analytics Dashboard
+                const totalSold = soldItems.length;
+                const totalListed = listedItems.length;
+                const totalProfitValue = soldItems.reduce((sum, item) => sum + (item.soldInfo.price - item.cost), 0);
+                const totalSaleValue = soldItems.reduce((sum, item) => sum + item.soldInfo.price, 0);
+                const totalDaysListed = soldItems.reduce((sum, item) => {
+                    const purchaseDate = new Date(item.purchaseDate);
+                    const soldDate = new Date(item.soldInfo.date);
+                    return sum + (soldDate - purchaseDate) / (1000 * 60 * 60 * 24);
+                }, 0);
+
+                const sellThruRate = (totalSold + totalListed) > 0 ? (totalSold / (totalSold + totalListed) * 100) : 0;
+                document.getElementById('sellThruRate').textContent = `${sellThruRate.toFixed(1)}%`;
+                document.getElementById('avgSalePrice').textContent = `$${(totalSold > 0 ? totalSaleValue / totalSold : 0).toFixed(2)}`;
+                document.getElementById('avgProfitMargin').textContent = `$${(totalSold > 0 ? totalProfitValue / totalSold : 0).toFixed(2)}`;
+                document.getElementById('avgDaysListed').textContent = (totalSold > 0 ? totalDaysListed / totalSold : 0).toFixed(0);
+
+                // Populate source filter
+                const sources = [...new Set(inventory.map(item => item.source))];
+                sourceFilter.innerHTML = '<option value="all">Filter by Source: All</option>';
+                sources.sort().forEach(source => {
+                    const option = document.createElement('option');
+                    option.value = source;
+                    option.textContent = source;
+                    sourceFilter.appendChild(option);
+                });
+            };
+            
+            const addEventListeners = () => {
+                document.querySelectorAll('.list-item-btn').forEach(b => b.addEventListener('click', e => listItem(parseInt(e.target.dataset.itemId))));
+                document.querySelectorAll('.mark-sold-btn').forEach(b => b.addEventListener('click', e => openSoldModal(inventory.find(i => i.id === parseInt(e.target.dataset.itemId)))));
+                document.querySelectorAll('.edit-item-btn').forEach(b => b.addEventListener('click', e => openItemModal(inventory.find(i => i.id === parseInt(e.currentTarget.dataset.itemId)))));
+                document.querySelectorAll('.delete-item-btn').forEach(b => b.addEventListener('click', e => deleteItem(parseInt(e.currentTarget.dataset.itemId))));
+                document.querySelectorAll('.archive-item-btn').forEach(b => b.addEventListener('click', e => archiveItem(parseInt(e.currentTarget.dataset.itemId))));
+                document.querySelectorAll('.view-receipt-btn').forEach(b => b.addEventListener('click', e => openReceiptViewer(inventory.find(i => i.id === parseInt(e.currentTarget.dataset.itemId)).receipt)));
+            };
+            
+            searchInput.addEventListener('input', displayInventory);
+            sortControl.addEventListener('change', displayInventory);
+            sourceFilter.addEventListener('change', displayInventory);
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    currentStatusFilter = button.dataset.status;
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    displayInventory();
+                });
+            });
+
+            // --- Download Functions ---
+            const downloadCSV = () => {
+                const itemsToDownload = inventory.filter(item => item.status === currentStatusFilter);
+                if(itemsToDownload.length === 0) return alert(`No ${currentStatusFilter} items to download.`);
+                const headers = ['ID', 'Name', 'Source', 'Purchase Date', 'Cost', 'Status', 'Sold Date', 'Sold Price', 'Sold Platform', 'Gross Profit', 'Notes'];
+                const rows = itemsToDownload.map(item => [
+                    item.id, `"${item.name}"`, `"${item.source}"`, item.purchaseDate, item.cost, item.status,
+                    item.soldInfo?.date || '', item.soldInfo?.price || '', item.soldInfo?.platform || '',
+                    item.soldInfo ? (item.soldInfo.price - item.cost).toFixed(2) : '', `"${item.notes || ''}"`
+                ]);
+                let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+                const link = document.createElement("a");
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", `scan2flip_inventory_${currentStatusFilter.toLowerCase()}.csv`);
+                link.click();
+            };
+
+            const downloadPDF = () => {
+                const itemsToDownload = inventory.filter(item => item.status === currentStatusFilter);
+                if(itemsToDownload.length === 0) return alert(`No ${currentStatusFilter} items to download.`);
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const tableColumn = ["Date", "Name", "Source", "Cost", "Sold For", "Profit"];
+                const tableRows = itemsToDownload.map(item => [
+                    item.purchaseDate, item.name, item.source, `$${item.cost.toFixed(2)}`,
+                    item.soldInfo ? `$${item.soldInfo.price.toFixed(2)}` : '-',
+                    item.soldInfo ? `$${(item.soldInfo.price - item.cost).toFixed(2)}` : '-'
+                ]);
+                doc.autoTable(tableColumn, tableRows, { startY: 20 });
+                doc.text(`Scan2Flip Inventory Report - ${currentStatusFilter}`, 14, 15);
+                doc.save(`scan2flip_inventory_${currentStatusFilter.toLowerCase()}.pdf`);
+            };
+            
+            downloadCsvBtn.addEventListener('click', downloadCSV);
+            downloadPdfBtn.addEventListener('click', downloadPDF);
+
+            // Initial Load
+            displayInventory();
+        });
     </script>
 </body>
 </html>

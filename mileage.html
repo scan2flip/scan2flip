@@ -77,32 +77,28 @@
             </div>
         </div>
 
-        <nav class="bottom-nav">
-            <a class="nav-item" href="index.html">
-                <img src="/icons/home.png" alt="Home">
-                <span>Home</span>
-            </a>
-            <a class="nav-item" href="inventory.html">
-                <img src="/icons/inventory.png" alt="Inventory">
-                <span>Inventory</span>
-            </a>
-            <a class="nav-item" href="expenses.html">
-                <img src="/icons/dollar.png" alt="Expenses">
-                <span>Expenses</span>
-            </a>
-            <a class="nav-item active" href="mileage.html">
-                <img src="/icons/mileage.png" alt="Mileage">
-                <span>Mileage</span>
-            </a>
-            <a class="nav-item" href="scores.html">
-                <img src="/icons/powerscore.png" alt="History">
-                <span>Scores</span>
-            </a>
-            <a class="nav-item" href="more.html">
-                <img src="/icons/coins.png" alt="More">
-                <span>More</span>
-            </a>
-        </nav>
+        <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Home</span>
+    </a>
+    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Inventory</span>
+    </a>
+    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Expenses</span>
+    </a>
+    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">Mileage</span>
+    </a>
+    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+        <span class="text-xs font-medium">More</span>
+    </a>
+</nav>
     </div>
 
     <div class="toast" id="toast"></div>

@@ -2,112 +2,207 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta name="theme-color" content="#0d1f2d">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>More - Scan2Flip</title>
-    
-    <link rel="icon" type="image/png" href="/icons/scan2flip-logo.png">
-    <link rel="apple-touch-icon" href="/icons/scan2flip-logo.png">
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="styles.css">
+    <!-- jsPDF Library for PDF Generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* bg-slate-900 */
+            color: #cbd5e1; /* text-slate-300 */
+        }
+        .btn-secondary {
+            background-color: #1e293b; /* bg-slate-800 */
+            color: #f1f5f9; /* slate-100 */
+            font-weight: 600;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: left;
+            width: 100%;
+            border: 1px solid #334155; /* border-slate-700 */
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .btn-secondary:hover {
+            background-color: #334155; /* slate-700 */
+        }
+        .btn-primary {
+            background-color: #facc15; /* yellow-400 */
+            color: #1e293b; /* slate-800 */
+            font-weight: 700;
+        }
+    </style>
 </head>
-<body>
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo-container">
-                <img src="/icons/scan2flip-logo.png" alt="Scan2Flip" style="width: 48px; height: 48px;">
-                <div class="logo-text">SCAN2FLIP</div>
-            </div>
-            <div class="header-stats">
-                <div class="scan-counter" id="scanCounter">
-                    <svg width="16" height="16" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M3 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1H4a1 1 0 01-1-1v-3zM13 4a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1V4zM13 13a1 1 0 011-1h3a1 1 0 011 1v3a1 1 0 01-1 1h-3a1 1 0 01-1-1v-3z"/>
-                    </svg>
-                    <span id="scanCount">5/5 Daily</span>
-                </div>
-                <div class="scan-pack-badge" id="scanPackBadge" style="display: none;">
-                    +<span id="packCount">0</span> packs
-                </div>
-            </div>
+<body class="bg-slate-900 text-slate-300">
+
+    <!-- Main App Container -->
+    <div class="container mx-auto max-w-4xl pb-28">
+
+        <!-- Header -->
+        <header class="text-center py-6 px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">More Options</h1>
+            <p class="text-lg text-slate-400">Guides, settings, and account management.</p>
         </header>
 
-        <div class="page-content">
-            <div style="padding: 1.5rem;">
-                <h2 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1.5rem;">More</h2>
-                <div style="display: flex; flex-direction: column; gap: 1rem;">
-                    <a href="upgrade.html" class="btn btn-secondary" style="text-decoration: none;">
-                        Upgrade Plan
-                    </a>
-                    <button class="btn btn-secondary" id="goldMineBtn" onclick="showGoldMineDatabase()">
-                        View Gold Mine™
-                    </button>
-                    <a href="flipping101.html" class="btn btn-secondary" style="text-decoration: none;">
-                        Flipping 101
-                    </a>
-                    <a href="irs101.html" class="btn btn-secondary" style="text-decoration: none;">
-                        IRS 101
-                    </a>
-                    <button class="btn btn-secondary" onclick="exportData()">
-                        Export Data
-                    </button>
-                    <button class="btn btn-secondary" onclick="showSettings()">
-                        Settings
-                    </button>
-                    <button class="btn btn-secondary" onclick="logout()">
-                        Sign Out
-                    </button>
+        <!-- Main Content -->
+        <main class="px-4">
+            <div class="space-y-4">
+                <a href="upgrade.html" class="btn-secondary text-yellow-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5 2a1 1 0 00-1 1v1.116l-1.42 2.84A1 1 0 003.5 8.525l2.415-1.035.815 1.63a1 1 0 001.74.001l.815-1.63 2.415 1.035a1 1 0 001.19-.571l1.42-2.84V3a1 1 0 00-1-1H5zm10 3.667l-2.083 4.166a1 1 0 00.416 1.334l3.334 1.666a1 1 0 001.333-.417L20 10.333V5a2 2 0 00-2-2h-3v.667zM2 12a1 1 0 011-1h14a1 1 0 110 2H3a1 1 0 01-1-1zm2 3a1 1 0 100 2h12a1 1 0 100-2H4z" clip-rule="evenodd" /></svg>
+                    <span>Upgrade Plan</span>
+                </a>
+                <a href="scores.html" class="btn-secondary">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" /><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" /></svg>
+                    <span>Power Scores</span>
+                </a>
+                <a href="flipping101.html" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 16c1.255 0 2.443-.29 3.5-.804V4.804zM14.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 0114.5 16c1.255 0 2.443-.29 3.5-.804V4.804A7.968 7.968 0 0014.5 4z" /></svg>
+                    <span>Flipping 101 Guide</span>
+                </a>
+                <a href="irs101.html" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd" /></svg>
+                    <span>IRS 101 Guide</span>
+                </a>
+                <button id="exportDataBtn" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    <span>Export Data</span>
+                </button>
+                <button class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0L8 7.152l-4.242.618c-1.68.246-2.35 2.33-1.12 3.522l3.07 2.99-.726 4.226c-.288 1.672 1.454 2.946 2.98 2.188L10 17.348l3.778 1.986c1.528.758 3.27-0.516 2.98-2.188l-.725-4.226 3.07-2.99c1.23-1.192.56-3.276-1.12-3.522L12 7.152l-.51-3.982zM10 15.152l-3.19 1.676.61-3.56-2.58-2.514 3.57-.52L10 6.848l1.6 3.434 3.57.52-2.58 2.514.61 3.56L10 15.152z" clip-rule="evenodd" /></svg>
+                    <span>Settings</span>
+                </button>
+                <button class="btn-secondary text-red-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd" /></svg>
+                    <span>Sign Out</span>
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Export Modal -->
+    <div id="exportModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-sm m-4 p-6 border border-slate-700">
+            <h3 class="text-xl font-bold text-white mb-4">Export Data</h3>
+            <p class="text-slate-400 mb-6">Choose a report and format to download.</p>
+            <div class="space-y-4">
+                <div>
+                    <label class="font-semibold text-white">Inventory Report</label>
+                    <div class="flex gap-4 mt-2">
+                        <button id="exportInventoryCsv" class="w-full py-2 px-4 rounded-lg btn-secondary">CSV</button>
+                        <button id="exportInventoryPdf" class="w-full py-2 px-4 rounded-lg btn-secondary">PDF</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="font-semibold text-white">Expenses Report</label>
+                    <div class="flex gap-4 mt-2">
+                        <button id="exportExpensesCsv" class="w-full py-2 px-4 rounded-lg btn-secondary">CSV</button>
+                        <button id="exportExpensesPdf" class="w-full py-2 px-4 rounded-lg btn-secondary">PDF</button>
+                    </div>
                 </div>
             </div>
+            <div class="mt-6 text-right">
+                <button id="cancelExportBtn" class="py-2 px-4 rounded-lg btn-primary">Close</button>
+            </div>
         </div>
-
-        <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
     </div>
 
-    <div class="toast" id="toast"></div>
+    <!-- Bottom Navigation -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs font-medium">Home</span></a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs font-medium">Inventory</span></a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs font-medium">Expenses</span></a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs font-medium">Mileage</span></a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
+    </nav>
 
-    <script src="app.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            initApp();
-            updateGoldMineButton();
+            const exportDataBtn = document.getElementById('exportDataBtn');
+            const exportModal = document.getElementById('exportModal');
+            const cancelExportBtn = document.getElementById('cancelExportBtn');
+
+            const openModal = () => exportModal.classList.remove('hidden');
+            const closeModal = () => exportModal.classList.add('hidden');
+
+            exportDataBtn.addEventListener('click', openModal);
+            cancelExportBtn.addEventListener('click', closeModal);
+            exportModal.addEventListener('click', (e) => {
+                if(e.target === exportModal) closeModal();
+            });
+
+            // --- Download Functions ---
+            const downloadInventoryCSV = () => {
+                const inventory = JSON.parse(localStorage.getItem('scan2flip-inventory')) || [];
+                if(inventory.length === 0) return alert('No inventory data to export.');
+                const headers = ['ID', 'Name', 'Source', 'Purchase Date', 'Cost', 'Status', 'Sold Date', 'Sold Price', 'Sold Platform', 'Gross Profit', 'Notes'];
+                const rows = inventory.map(item => [
+                    item.id, `"${item.name}"`, `"${item.source}"`, item.purchaseDate, item.cost, item.status,
+                    item.soldInfo?.date || '', item.soldInfo?.price || '', item.soldInfo?.platform || '',
+                    item.soldInfo ? (item.soldInfo.price - item.cost).toFixed(2) : '', `"${item.notes || ''}"`
+                ]);
+                let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+                const link = document.createElement("a");
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", "scan2flip_inventory.csv");
+                link.click();
+            };
+
+            const downloadInventoryPDF = () => {
+                const inventory = JSON.parse(localStorage.getItem('scan2flip-inventory')) || [];
+                if(inventory.length === 0) return alert('No inventory data to export.');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const tableColumn = ["Date", "Name", "Source", "Cost", "Status", "Sold For", "Profit"];
+                const tableRows = inventory.map(item => [
+                    item.purchaseDate, item.name, item.source, `$${item.cost.toFixed(2)}`, item.status,
+                    item.soldInfo ? `$${item.soldInfo.price.toFixed(2)}` : '-',
+                    item.soldInfo ? `$${(item.soldInfo.price - item.cost).toFixed(2)}` : '-'
+                ]);
+                doc.autoTable(tableColumn, tableRows, { startY: 20 });
+                doc.text("Scan2Flip Inventory Report", 14, 15);
+                doc.save("scan2flip_inventory.pdf");
+            };
+
+            const downloadExpensesCSV = () => {
+                const expenses = JSON.parse(localStorage.getItem('scan2flip-expenses')) || [];
+                if(expenses.length === 0) return alert('No expense data to export.');
+                const headers = ['Date', 'Category', 'Vendor', 'Description', 'Amount'];
+                const rows = expenses.map(exp => [exp.date, exp.category, exp.vendor, exp.description, exp.amount.toFixed(2)]);
+                let csvContent = "data:text/csv;charset=utf-8," + headers.join(",") + "\n" + rows.map(e => e.join(",")).join("\n");
+                const link = document.createElement("a");
+                link.setAttribute("href", encodeURI(csvContent));
+                link.setAttribute("download", "scan2flip_expenses.csv");
+                link.click();
+            };
+
+            const downloadExpensesPDF = () => {
+                const expenses = JSON.parse(localStorage.getItem('scan2flip-expenses')) || [];
+                if(expenses.length === 0) return alert('No expense data to export.');
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                const tableColumn = ["Date", "Category", "Vendor", "Description", "Amount"];
+                const tableRows = expenses.map(exp => [
+                    exp.date, exp.category, exp.vendor, exp.description, `$${exp.amount.toFixed(2)}`
+                ]);
+                let total = expenses.reduce((sum, exp) => sum + exp.amount, 0);
+                doc.autoTable(tableColumn, tableRows, { startY: 20 });
+                const finalY = doc.autoTable.previous.finalY;
+                doc.text(`Total Expenses: $${total.toFixed(2)}`, 14, finalY + 15);
+                doc.text("Scan2Flip Expense Report", 14, 15);
+                doc.save("scan2flip_expenses.pdf");
+            };
+            
+            document.getElementById('exportInventoryCsv').addEventListener('click', downloadInventoryCSV);
+            document.getElementById('exportInventoryPdf').addEventListener('click', downloadInventoryPDF);
+            document.getElementById('exportExpensesCsv').addEventListener('click', downloadExpensesCSV);
+            document.getElementById('exportExpensesPdf').addEventListener('click', downloadExpensesPDF);
         });
-
-        function updateGoldMineButton() {
-            const goldMineBtn = document.getElementById('goldMineBtn');
-            if (state.user.tier !== 'powerPro') {
-                goldMineBtn.style.display = 'none';
-            }
-        }
-
-        function showGoldMineDatabase() {
-            if (!requireTier('powerPro', 'Gold Mine™')) return;
-            window.location.href = 'goldmine.html';
-        }
     </script>
 </body>
 </html>

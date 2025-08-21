@@ -28,23 +28,47 @@
             color: #f1f5f9; /* slate-100 */
             font-weight: 600;
         }
+
+        /* --- ADDED FOR RESPONSIVE SCALING --- */
+        .nav-icon {
+            width: 24px; /* 1.5rem for Tailwind w-6 */
+            height: 24px; /* 1.5rem for Tailwind h-6 */
+        }
+        .nav-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        /* Tablet size and up (md) */
+        @media (min-width: 768px) {
+            .nav-icon {
+                width: 32px; /* 2rem for Tailwind w-8 */
+                height: 32px; /* 2rem for Tailwind h-8 */
+            }
+            .nav-text {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+        /* Desktop size and up (lg) */
+        @media (min-width: 1024px) {
+            .nav-icon {
+                width: 40px; /* 2.5rem for Tailwind w-10 */
+                height: 40px; /* 2.5rem for Tailwind h-10 */
+            }
+        }
+        /* --- END OF ADDED CSS --- */
     </style>
+    <script type="module" src="auth-guard.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-300">
 
-    <!-- Main App Container -->
     <div class="container mx-auto max-w-4xl pb-28">
 
-        <!-- Header -->
         <header class="text-center py-6 px-4">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">🚀 Choose Your Plan</h1>
             <p class="text-lg text-slate-400">Unlock the tools to grow your business.</p>
         </header>
 
-        <!-- Main Content -->
         <main class="px-4">
             <div class="space-y-8">
-                <!-- Free Tier -->
                 <div class="bg-slate-800 p-6 rounded-lg border border-slate-700">
                     <h3 class="text-2xl font-bold text-white">Free</h3>
                     <p class="text-4xl font-extrabold text-white mt-2">$0 <span class="text-lg font-medium text-slate-400">/ month</span></p>
@@ -56,7 +80,6 @@
                     <button class="w-full mt-6 py-3 px-4 rounded-lg btn-secondary font-semibold" disabled>Current Plan</button>
                 </div>
 
-                <!-- Pro Tier -->
                 <div class="bg-slate-800 p-6 rounded-lg border-2 border-yellow-400 relative">
                     <div class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-yellow-400 text-slate-900 text-xs font-bold uppercase px-3 py-1 rounded-full">Recommended</div>
                     <h3 class="text-2xl font-bold text-yellow-400">Pro</h3>
@@ -71,7 +94,6 @@
                     <button class="w-full mt-6 py-3 px-4 rounded-lg btn-primary">Upgrade to Pro</button>
                 </div>
 
-                <!-- Power Pro Tier -->
                 <div class="bg-slate-800 p-6 rounded-lg border border-slate-700">
                     <h3 class="text-2xl font-bold text-white">Power Pro</h3>
                     <p class="text-4xl font-extrabold text-white mt-2">$19.99 <span class="text-lg font-medium text-slate-400">/ month</span></p>
@@ -85,7 +107,6 @@
                     <button class="w-full mt-6 py-3 px-4 rounded-lg btn-primary">Upgrade to Power Pro</button>
                 </div>
                 
-                <!-- Scan Packs Add-on -->
                 <div class="bg-slate-800 p-6 rounded-lg border border-slate-700 text-center">
                     <h3 class="text-xl font-bold text-white">Need More Scans?</h3>
                     <p class="mt-2 text-slate-400">Add a scan pack anytime to any plan.</p>
@@ -96,29 +117,28 @@
         </main>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Home</span>
+        </a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Inventory</span>
+        </a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Expenses</span>
+        </a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Mileage</span>
+        </a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+            <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+            <span class="nav-text font-semibold">More</span>
+        </a>
+    </nav>
 
 </body>
 </html>

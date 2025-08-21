@@ -40,20 +40,42 @@
             background-color: #facc15; /* yellow-400 */
             border-radius: 3px;
         }
+
+        /* --- ADDED FOR RESPONSIVE SCALING --- */
+        .nav-icon {
+            width: 24px; /* 1.5rem for Tailwind w-6 */
+            height: 24px; /* 1.5rem for Tailwind h-6 */
+        }
+        .nav-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        /* Tablet size and up (md) */
+        @media (min-width: 768px) {
+            .nav-icon {
+                width: 32px; /* 2rem for Tailwind w-8 */
+                height: 32px; /* 2rem for Tailwind h-8 */
+            }
+            .nav-text {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+        /* Desktop size and up (lg) */
+        @media (min-width: 1024px) {
+            .nav-icon {
+                width: 40px; /* 2.5rem for Tailwind w-10 */
+                height: 40px; /* 2.5rem for Tailwind h-10 */
+            }
+        }
+        /* --- END OF ADDED CSS --- */
     </style>
 </head>
 <body class="bg-slate-900 text-slate-300">
 
-    <!-- Main Container -->
-    <div class="container mx-auto max-w-4xl px-4 pb-28"> <!-- Added padding-bottom for bottom-nav -->
-
-        <!-- Header -->
-        <header class="text-center py-8 md:py-12">
+    <div class="container mx-auto max-w-4xl px-4 pb-28"> <header class="text-center py-8 md:py-12">
             <h1 class="text-4xl md:text-5xl font-bold text-white mb-2">📋 IRS 101</h1>
             <p class="text-lg text-slate-400">Maximize Deductions & Minimize Tax Headaches</p>
         </header>
 
-        <!-- New Disclaimer Card -->
         <div class="bg-slate-800 border-l-4 border-yellow-400 text-slate-300 p-6 rounded-r-lg mb-8 shadow-lg">
             <h3 class="text-xl font-bold text-yellow-400 mb-4">IMPORTANT: Disclaimer and Terms of Use</h3>
             <p class="mb-4"><strong>Please read this disclaimer carefully before using the information provided in this application.</strong></p>
@@ -83,7 +105,6 @@
             </div>
         </div>
 
-        <!-- Tab Navigation -->
         <div id="sticky-nav-wrapper" class="sticky-nav">
              <nav class="tab-nav flex space-x-2 overflow-x-auto whitespace-nowrap border-b border-slate-700 px-1 py-3">
                 <button class="tab-button active flex-shrink-0 px-4 py-2 text-sm font-semibold rounded-full text-slate-900 bg-yellow-400" onclick="showTab('basics', this)">Basics</button>
@@ -95,9 +116,7 @@
             </nav>
         </div>
 
-        <!-- Tab Content Area -->
         <main class="pt-8">
-            <!-- Basics Tab -->
             <div id="basics" class="tab-content active space-y-6">
                 <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📊 2025 Tax Rules for Resellers</h2>
                 
@@ -158,7 +177,6 @@
                 </div>
             </div>
 
-            <!-- Deductions Tab -->
             <div id="deductions" class="tab-content space-y-6">
                  <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">💰 The Master List of Reseller Deductions</h2>
                 
@@ -263,7 +281,6 @@
                 </div>
             </div>
             
-            <!-- Tracking Tab -->
             <div id="tracking" class="tab-content space-y-6">
                  <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📱 How to "Audit-Proof" Your Records</h2>
 
@@ -307,7 +324,6 @@
                 </div>
             </div>
 
-            <!-- Planning Tab -->
             <div id="planning" class="tab-content space-y-6">
                 <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">📅 Tax Planning & Strategy</h2>
 
@@ -372,7 +388,6 @@
                 </div>
             </div>
 
-            <!-- Advanced Tab -->
             <div id="advanced" class="tab-content space-y-6">
                 <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">🎯 Advanced Levers & Professional Help</h2>
 
@@ -406,7 +421,6 @@
                 </div>
             </div>
 
-            <!-- Checklist Tab -->
             <div id="checklist" class="tab-content space-y-6">
                 <h2 class="text-2xl font-bold text-white border-b border-slate-700 pb-2">✅ Quick Checklist (Printable)</h2>
 
@@ -427,10 +441,7 @@
             </div>
         </main>
 
-    </div> <!-- End Main Container -->
-
-    <!-- Bottom Navigation -->
-<nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+    </div> <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
     <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
         <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
         <span class="text-xs font-medium">Home</span>
@@ -486,3 +497,5 @@
     </script>
 </body>
 </html>
+}
+next

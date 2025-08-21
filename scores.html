@@ -14,6 +14,34 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* --- ADDED FOR RESPONSIVE SCALING --- */
+        .nav-icon {
+            width: 24px; /* 1.5rem for Tailwind w-6 */
+            height: 24px; /* 1.5rem for Tailwind h-6 */
+        }
+        .nav-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        /* Tablet size and up (md) */
+        @media (min-width: 768px) {
+            .nav-icon {
+                width: 32px; /* 2rem for Tailwind w-8 */
+                height: 32px; /* 2rem for Tailwind h-8 */
+            }
+            .nav-text {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+        /* Desktop size and up (lg) */
+        @media (min-width: 1024px) {
+            .nav-icon {
+                width: 40px; /* 2.5rem for Tailwind w-10 */
+                height: 40px; /* 2.5rem for Tailwind h-10 */
+            }
+        }
+        /* --- END OF ADDED CSS --- */
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -58,27 +86,27 @@
         </div>
 
         <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
+            <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+                <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+                <span class="nav-text font-medium">Home</span>
+            </a>
+            <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+                <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+                <span class="nav-text font-medium">Inventory</span>
+            </a>
+            <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+                <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+                <span class="nav-text font-medium">Expenses</span>
+            </a>
+            <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+                <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+                <span class="nav-text font-medium">Mileage</span>
+            </a>
+            <a href="more.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+                <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+                <span class="nav-text font-semibold">More</span>
+            </a>
+        </nav>
     </div>
 
     <div class="toast" id="toast"></div>

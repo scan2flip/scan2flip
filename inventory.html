@@ -6,7 +6,6 @@
     <title>Inventory - Scan2Flip</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- jsPDF Library for PDF Generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
     <style>
@@ -36,22 +35,45 @@
         .tooltip { visibility: hidden; width: 200px; background-color: #334155; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -100px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; font-weight: 500; line-height: 1.4; }
         .tooltip-container:hover .tooltip { visibility: visible; opacity: 1; }
         .tab-button.active { background-color: #facc15; color: #1e293b; }
+
+        /* --- ADDED FOR RESPONSIVE SCALING --- */
+        .nav-icon {
+            width: 24px; /* 1.5rem for Tailwind w-6 */
+            height: 24px; /* 1.5rem for Tailwind h-6 */
+        }
+        .nav-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        /* Tablet size and up (md) */
+        @media (min-width: 768px) {
+            .nav-icon {
+                width: 32px; /* 2rem for Tailwind w-8 */
+                height: 32px; /* 2rem for Tailwind h-8 */
+            }
+            .nav-text {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+        /* Desktop size and up (lg) */
+        @media (min-width: 1024px) {
+            .nav-icon {
+                width: 40px; /* 2.5rem for Tailwind w-10 */
+                height: 40px; /* 2.5rem for Tailwind h-10 */
+            }
+        }
+        /* --- END OF ADDED CSS --- */
     </style>
 </head>
 <body class="bg-slate-900 text-slate-300">
 
-    <!-- Main App Container -->
     <div class="container mx-auto max-w-4xl pb-28">
 
-        <!-- Header -->
         <header class="text-center py-6 px-4">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">📦 Inventory Log</h1>
             <p class="text-lg text-slate-400">Track your items from purchase to profit.</p>
         </header>
 
-        <!-- Main Content -->
         <main class="px-4">
-            <!-- Advanced Analytics Dashboard -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 text-center">
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                     <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Sell-Thru Rate</h2>
@@ -71,7 +93,6 @@
                 </div>
             </div>
 
-            <!-- Inventory Summary -->
             <div class="grid grid-cols-3 gap-4 mb-6 text-center">
                 <div class="bg-slate-800 p-3 rounded-lg border border-slate-700">
                     <div class="tooltip-container">
@@ -91,7 +112,6 @@
                 </div>
             </div>
             
-            <!-- Search, Sort, Filter -->
             <div class="mb-4">
                 <input type="text" id="searchInput" placeholder="Search inventory..." class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
             </div>
@@ -106,21 +126,18 @@
                 </select>
                 <select id="sourceFilter" class="w-full bg-slate-700 border-slate-600 rounded-md shadow-sm text-white p-3">
                     <option value="all">Filter by Source: All</option>
-                    <!-- Sources will be populated dynamically -->
-                </select>
+                    </select>
             </div>
             <div class="grid grid-cols-2 gap-4 mb-6">
                 <button id="downloadCsvBtn" class="btn-secondary py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">Download CSV</button>
                 <button id="downloadPdfBtn" class="btn-secondary py-2 px-4 rounded-lg font-semibold flex items-center justify-center gap-2">Download PDF</button>
             </div>
 
-            <!-- Add Item Button -->
             <div class="mb-6">
                 <button id="addInventoryBtn" class="w-full btn-primary flex items-center justify-center gap-2">Add Item Manually</button>
             </div>
             <input type="file" id="itemImageInput" accept="image/*">
 
-            <!-- Inventory Tabs -->
             <div class="mb-4">
                 <div class="flex space-x-1 rounded-lg bg-slate-800 p-1">
                     <button class="tab-button w-full py-2.5 text-sm font-medium leading-5 rounded-lg active" data-status="Unlisted">Unlisted</button>
@@ -130,19 +147,16 @@
                 </div>
             </div>
 
-            <!-- Inventory List Container -->
             <div id="inventoryListContainer" class="space-y-4">
                 <div id="emptyState" class="text-center py-12 text-slate-500">
                     <svg class="mx-auto h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 7l-8 8-4-4-5 5M14 7h6m0 0v6"/></svg>
                     <h3 class="mt-2 text-lg font-semibold text-slate-300">No Items in Inventory</h3>
                     <p class="mt-1 text-sm">Items you "Keep" after scanning will appear here.</p>
                 </div>
-                <!-- Items injected here -->
-            </div>
+                </div>
         </main>
     </div>
 
-    <!-- Modals -->
     <div id="itemModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-md m-4 p-6 border border-slate-700">
             <h3 id="itemModalTitle" class="text-xl font-bold text-white mb-4">Add New Item</h3>
@@ -197,29 +211,28 @@
         <div class="relative p-4"><button id="closeReceiptViewer" class="absolute -top-2 -right-2 bg-white rounded-full p-1 text-slate-800"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg></button><img id="fullReceiptImage" src="" class="max-h-screen max-w-screen-lg"></div>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-    <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Home</span>
-    </a>
-    <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Inventory</span>
-    </a>
-    <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Expenses</span>
-    </a>
-    <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">Mileage</span>
-    </a>
-    <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-        <img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-        <span class="text-xs font-medium">More</span>
-    </a>
-</nav>
+        <a href="index.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Home</span>
+        </a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+            <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+            <span class="nav-text font-semibold">Inventory</span>
+        </a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Expenses</span>
+        </a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Mileage</span>
+        </a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">More</span>
+        </a>
+    </nav>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -594,3 +607,5 @@
     </script>
 </body>
 </html>
+}
+next

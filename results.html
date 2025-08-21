@@ -52,19 +52,43 @@
             border-radius: 0.5rem;
             padding: 1rem;
         }
+
+        /* --- ADDED FOR RESPONSIVE SCALING --- */
+        .nav-icon {
+            width: 24px; /* 1.5rem for Tailwind w-6 */
+            height: 24px; /* 1.5rem for Tailwind h-6 */
+        }
+        .nav-text {
+            font-size: 0.75rem; /* text-xs */
+        }
+        /* Tablet size and up (md) */
+        @media (min-width: 768px) {
+            .nav-icon {
+                width: 32px; /* 2rem for Tailwind w-8 */
+                height: 32px; /* 2rem for Tailwind h-8 */
+            }
+            .nav-text {
+                font-size: 0.875rem; /* text-sm */
+            }
+        }
+        /* Desktop size and up (lg) */
+        @media (min-width: 1024px) {
+            .nav-icon {
+                width: 40px; /* 2.5rem for Tailwind w-10 */
+                height: 40px; /* 2.5rem for Tailwind h-10 */
+            }
+        }
+        /* --- END OF ADDED CSS --- */
     </style>
 </head>
 <body class="bg-slate-900 text-slate-300">
 
-    <!-- Main App Container -->
     <div class="container mx-auto max-w-4xl pb-28">
 
-        <!-- Header -->
         <header class="text-center py-6 px-4">
             <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Scan Results</h1>
         </header>
 
-        <!-- Main Content -->
         <main class="px-4">
             <div id="loadingState" class="text-center py-20">
                 <svg class="animate-spin h-10 w-10 text-yellow-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -75,7 +99,6 @@
             </div>
 
             <div id="resultsContent" class="hidden">
-                <!-- Power Score -->
                 <div class="flex flex-col items-center mb-6">
                     <div id="powerScoreContainer" class="power-score-badge-container">
                         <img id="powerScoreBadge" src="" alt="Power Score Badge" class="power-score-badge-bg">
@@ -84,21 +107,17 @@
                     <p class="mt-2 text-sm font-bold uppercase tracking-widest text-slate-400">Power Score™</p>
                 </div>
 
-                <!-- Item Info -->
                 <div class="text-center mb-6">
                     <img id="itemImage" src="" alt="Item Image" class="w-32 h-32 object-contain rounded-lg mx-auto mb-4">
                     <h2 id="itemName" class="text-2xl font-bold text-white"></h2>
                 </div>
 
-                <!-- Condition Analysis -->
                 <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
                     <h3 class="font-bold text-white mb-3 text-center">Value by Condition</h3>
                     <div id="conditionAnalysis" class="space-y-3">
-                        <!-- Populated by JS -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Part-Out Analysis -->
                 <div id="partOutSection" class="bg-slate-800 p-4 rounded-lg border-2 border-dashed border-yellow-400 mb-6 hidden relative">
                     <div class="flex items-center justify-center gap-2 mb-3">
                          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -109,8 +128,7 @@
                     </div>
                     <div id="partOutContent">
                         <div id="partOutList" class="space-y-2">
-                            <!-- Populated by JS -->
-                        </div>
+                            </div>
                     </div>
                     <div id="partOutUpgrade" class="hidden">
                         <div class="upgrade-overlay">
@@ -124,7 +142,6 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-4">
                     <button id="leaveItBtn" class="py-4 px-4 rounded-lg font-bold bg-red-600/20 text-red-400 hover:bg-red-600/30">Leave It</button>
                     <button id="keepItBtn" class="py-4 px-4 rounded-lg font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30">Keep It</button>
@@ -133,13 +150,27 @@
         </main>
     </div>
 
-    <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-        <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold"><img class="w-6 h-6 mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'"><span class="text-xs">Home</span></a>
-        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'"><span class="text-xs font-medium">Inventory</span></a>
-        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'"><span class="text-xs font-medium">Expenses</span></a>
-        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'"><span class="text-xs font-medium">Mileage</span></a>
-        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors"><img class="w-6 h-6 mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'"><span class="text-xs">More</span></a>
+        <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+            <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
+            <span class="nav-text font-semibold">Home</span>
+        </a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Inventory</span>
+        </a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Expenses</span>
+        </a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
+            <span class="nav-text font-medium">Mileage</span>
+        </a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
+            <span class="nav-text">More</span>
+        </a>
     </nav>
 
     <script>

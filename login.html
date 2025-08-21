@@ -71,51 +71,54 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Redirect if already logged in
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                // User is signed in, redirect them to the home page.
-                window.location.href = 'index.html';
+        // Only redirect if already logged in AND not currently logging in
+let isLoggingIn = false;
+onAuthStateChanged(auth, (user) => {
+    if (user && !isLoggingIn) {
+        // User is already signed in, redirect them to the home page.
+        window.location.href = 'index.html';
+    }
+});
+
+// Handle Login Form Submission
+const loginForm = document.getElementById('loginForm');
+const errorMessage = document.getElementById('errorMessage');
+
+loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    isLoggingIn = true;  // Set flag to prevent redirect during login
+    const email = loginForm.email.value;
+    const password = loginForm.password.value;
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            // Signed in successfully
+            const user = userCredential.user;
+            console.log('User logged in:', user.uid);
+            // The onAuthStateChanged listener will handle the redirect
+        })
+        .catch((error) => {
+            isLoggingIn = false;  // Reset flag on error
+            // Handle Errors here.
+            let message = "An unknown error occurred.";
+            switch (error.code) {
+                case 'auth/invalid-email':
+                    message = "Please enter a valid email address.";
+                    break;
+                case 'auth/user-not-found':
+                case 'auth/wrong-password':
+                case 'auth/invalid-credential':
+                    message = "Invalid email or password. Please try again.";
+                    break;
+                default:
+                    message = "Could not log in. Please try again later.";
+                    console.error('Login error:', error);
+                    break;
             }
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
         });
-
-        // Handle Login Form Submission
-        const loginForm = document.getElementById('loginForm');
-        const errorMessage = document.getElementById('errorMessage');
-
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = loginForm.email.value;
-            const password = loginForm.password.value;
-
-            signInWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed in successfully
-                    const user = userCredential.user;
-                    console.log('User logged in:', user.uid);
-                    // The onAuthStateChanged listener will handle the redirect
-                })
-                .catch((error) => {
-                    // Handle Errors here.
-                    let message = "An unknown error occurred.";
-                    switch (error.code) {
-                        case 'auth/invalid-email':
-                            message = "Please enter a valid email address.";
-                            break;
-                        case 'auth/user-not-found':
-                        case 'auth/wrong-password':
-                        case 'auth/invalid-credential':
-                            message = "Invalid email or password. Please try again.";
-                            break;
-                        default:
-                            message = "Could not log in. Please try again later.";
-                            console.error('Login error:', error);
-                            break;
-                    }
-                    errorMessage.textContent = message;
-                    errorMessage.classList.remove('hidden');
-                });
-        });
+});
     </script>
 </body>
 </html>

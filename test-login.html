@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Login - Scan2Flip</title>
+</head>
+<body>
+    <h1>Test Login</h1>
+    <form id="loginForm">
+        <input type="email" id="email" placeholder="Email" required><br>
+        <input type="password" id="password" placeholder="Password" required><br>
+        <button type="submit">Log In</button>
+    </form>
+    <div id="result"></div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBoQwuUzYaa5fyklCn0Nh21unRmEGa4GuM",
+            authDomain: "scan2flip-41afe.firebaseapp.com",
+            projectId: "scan2flip-41afe",
+            storageBucket: "scan2flip-41afe.firebasestorage.app",
+            messagingSenderId: "747191811793",
+            appId: "1:747191811793:web:e9d935f1a55c66fb7e4ff0"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('result').innerHTML = `SUCCESS! Logged in as: ${userCredential.user.email}<br>UID: ${userCredential.user.uid}<br><a href="index.html">Go to app</a>`;
+            } catch (error) {
+                document.getElementById('result').innerHTML = `ERROR: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

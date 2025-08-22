@@ -22,23 +22,30 @@
             color: #f1f5f9; /* slate-100 */
         }
 
+        /* Mobile First Styles (Larger Base Size) */
         .nav-icon {
-            width: 24px;
-            height: 24px;
+            width: 32px;
+            height: 32px;
         }
         .nav-text {
             font-size: 0.75rem;
         }
+
+        /* Tablet Styles */
         @media (min-width: 768px) {
-            .nav-icon { width: 32px; height: 32px; }
+            .nav-icon { width: 40px; height: 40px; }
             .nav-text { font-size: 0.875rem; }
         }
+
+        /* Desktop Styles (Floating Dock Icons) */
         @media (min-width: 1024px) {
-            .nav-icon { width: 40px; height: 40px; }
-        }
-        @media (min-width: 1280px) {
-            .nav-icon { width: 48px; height: 48px; }
-            .nav-text { font-size: 1rem; }
+            .nav-icon { 
+                width: 56px; 
+                height: 56px;
+            }
+            .nav-text { 
+                font-size: 0.875rem; 
+            }
         }
         
         /* Hides content until auth state is confirmed */
@@ -87,24 +94,24 @@
             
         </main>
 
-        <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20 flex-shrink-0">
-            <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+        <nav class="fixed bottom-0 lg:bottom-4 left-0 right-0 bg-slate-800 border-t border-slate-700 flex justify-around h-24 z-20 flex-shrink-0 lg:h-32 lg:bg-transparent lg:border-none lg:justify-center lg:gap-x-8">
+            <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full lg:w-auto font-semibold">
                 <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
                 <span class="nav-text font-semibold">Home</span>
             </a>
-            <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full lg:w-auto transition-colors">
                 <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
                 <span class="nav-text font-medium">Inventory</span>
             </a>
-            <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full lg:w-auto transition-colors">
                 <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
                 <span class="nav-text font-medium">Expenses</span>
             </a>
-            <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full lg:w-auto transition-colors">
                 <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
                 <span class="nav-text font-medium">Mileage</span>
             </a>
-            <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
+            <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full lg:w-auto transition-colors">
                 <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
                 <span class="nav-text">More</span>
             </a>

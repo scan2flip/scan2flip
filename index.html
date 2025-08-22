@@ -118,6 +118,20 @@
         </nav>
     </div>
 
+    <!-- Welcome Modal for New Users -->
+    <div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
+        <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-sm m-4 p-6 border border-slate-700 text-center">
+            <img src="icons/scan2flip-logo.png" alt="Scan2Flip Logo" class="w-16 h-16 mx-auto mb-4">
+            <h3 class="text-xl font-bold text-white mb-2">Welcome to Scan2Flip! 🎉</h3>
+            <p class="text-slate-300 mb-4">Ready to find profitable items? Just tap the big scan button to get started.</p>
+            <div class="bg-slate-700/50 p-3 rounded-lg mb-4 border-l-4 border-yellow-400 text-left">
+                <p class="text-sm text-slate-300"><strong>💡 Pro Tip:</strong> Enable "Quick Scan" above to open the camera instantly!</p>
+            </div>
+            <button id="startScanningBtn" class="w-full py-3 px-4 rounded-lg bg-yellow-400 text-slate-900 font-bold mb-2 transition-transform hover:scale-105">Start Scanning!</button>
+            <button id="gotItBtn" class="text-slate-400 hover:text-white text-sm">Got it, thanks!</button>
+        </div>
+    </div>
+
     <div id="scanOptionsModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-xs m-4 p-6 border border-slate-700">
             <h3 class="text-xl font-bold text-white mb-4 text-center">Start Scanning</h3>
@@ -177,6 +191,7 @@
         const scanButton = document.getElementById('scanButton');
         const scanOptionsModal = document.getElementById('scanOptionsModal');
         const loginRequiredModal = document.getElementById('loginRequiredModal');
+        const welcomeModal = document.getElementById('welcomeModal'); // New element
         const closeLoginModalBtn = document.getElementById('closeLoginModalBtn');
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
@@ -223,6 +238,15 @@
                 document.getElementById('logoutBtn').addEventListener('click', () => {
                     signOut(auth).catch(error => console.error('Sign out error', error));
                 });
+
+                // ** NEW: Check if the welcome modal should be shown **
+                const hasSeenWelcome = localStorage.getItem(`welcome-seen-${user.uid}`);
+                if (!hasSeenWelcome) {
+                    setTimeout(() => {
+                        welcomeModal.classList.remove('hidden');
+                    }, 1000); // Small delay for a smoother experience
+                }
+
             } else {
                 currentUser = null;
                 authContainer.innerHTML = `
@@ -234,6 +258,26 @@
             updateDashboardStats();
             appContainer.classList.remove('auth-loading');
         });
+        
+        // --- NEW: Welcome Modal Logic ---
+        const startScanningBtn = document.getElementById('startScanningBtn');
+        const gotItBtn = document.getElementById('gotItBtn');
+
+        startScanningBtn.addEventListener('click', () => {
+            if (currentUser) {
+                localStorage.setItem(`welcome-seen-${currentUser.uid}`, 'true');
+            }
+            welcomeModal.classList.add('hidden');
+            scanButton.click(); // Programmatically click the main scan button
+        });
+
+        gotItBtn.addEventListener('click', () => {
+            if (currentUser) {
+                localStorage.setItem(`welcome-seen-${currentUser.uid}`, 'true');
+            }
+            welcomeModal.classList.add('hidden');
+        });
+
 
         // --- Scan/Snap/Upload & Quick Scan Toggle Logic ---
         

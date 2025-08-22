@@ -194,17 +194,18 @@
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                authContainer.innerHTML = `<button id="logoutBtn" class="text-sm font-semibold text-white hover:text-yellow-400 transition-colors">Log Out</button>`;
+                // Logged-in state: Yellow "Log Out" button
+                authContainer.innerHTML = `<button id="logoutBtn" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log Out</button>`;
                 document.getElementById('logoutBtn').addEventListener('click', () => {
                     signOut(auth).catch(error => console.error('Sign out error', error));
                 });
             } else {
                 currentUser = null;
+                // Logged-out state: "Sign Up" and "Log In" buttons
                 authContainer.innerHTML = `
-                    <div class="text-sm font-semibold text-white">
-                        <a href="signup.html" class="hover:text-yellow-400 transition-colors">Sign Up</a>
-                        <span class="text-slate-500 mx-1">or</span>
-                        <a href="login.html" class="hover:text-yellow-400 transition-colors">Log In</a>
+                    <div class="flex items-center gap-2">
+                        <a href="signup.html" class="bg-slate-700 text-white font-semibold text-sm px-3 py-1 rounded-md hover:bg-slate-600 transition-colors">Sign Up</a>
+                        <a href="login.html" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log In</a>
                     </div>`;
             }
             updateDashboardStats();

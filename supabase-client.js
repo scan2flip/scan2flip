@@ -3,7 +3,7 @@ import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
 
 // Your NEW Supabase credentials
 const SUPABASE_URL = 'https://ebzhjsgkyqzrviyqwvhg.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViemhqc2dreXF6cnZpeXF3dmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkwOTYsImV4cCI6MjA3MVM4NTA5Nn0.ZPVbWV2hfNMukSrFFXiKpgqkV6JkYY9cLfuo2f0lL_4';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViemhqc2dreXF6cnZpeXF3dmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkwOTYsImV4cCI6MjA3MTU4NTA5Nn0.ZPVbWV2hfNMukSrFFXiKpgqkV6JkYY9cLfuo2f0lL_4';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

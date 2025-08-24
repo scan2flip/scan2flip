@@ -313,19 +313,20 @@
         });
         
         // --- NEW: EULA Acceptance Logic ---
-        acceptEulaBtn.addEventListener('click', async () => {
-            if (currentUser) {
-                try {
-                    await Scan2FlipDB.acceptEula(currentUser.uid, CURRENT_EULA_VERSION);
-                    eulaModal.classList.add('hidden');
-                    appContainer.classList.remove('hidden');
-                    console.log('EULA accepted for existing user.');
-                } catch (error) {
-                    console.error('Error accepting EULA:', error);
-                    alert('An error occurred. Please try again.');
-                }
-            }
-        });
+     acceptEulaBtn.addEventListener('click', async () => {
+    if (currentUser) {
+        try {
+            await Scan2FlipDB.acceptEula(currentUser.uid, CURRENT_EULA_VERSION);
+            eulaModal.classList.add('hidden');
+            appContainer.classList.remove('hidden');
+            appContainer.classList.remove('auth-loading');  // 👈 ADD THIS LINE
+            console.log('EULA accepted for existing user.');
+        } catch (error) {
+            console.error('Error accepting EULA:', error);
+            alert('An error occurred. Please try again.');
+        }
+    }
+});
         // --- END NEW LOGIC ---
 
         // --- NEW: Welcome Modal Logic ---

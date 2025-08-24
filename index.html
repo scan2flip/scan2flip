@@ -123,7 +123,6 @@
         </nav>
     </div>
 
-    <!-- Welcome Modal for New Users -->
     <div id="welcomeModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 hidden">
         <div class="bg-slate-800 rounded-lg shadow-xl w-full max-w-sm m-4 p-6 border border-slate-700 text-center">
             <img src="icons/scan2flip-logo.png" alt="Scan2Flip Logo" class="w-16 h-16 mx-auto mb-4">
@@ -189,6 +188,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { Scan2FlipDB } from './supabase-client.js';
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -201,6 +201,7 @@
         const authContainer = document.getElementById('auth-container');
         const appContainer = document.getElementById('app-container');
         let currentUser = null;
+        let userProfile = null;
 
         function updateDashboardStats() {
             const monthProfitEl = document.getElementById('monthProfit');
@@ -236,30 +237,45 @@
             winRateEl.textContent = `${winRate.toFixed(0)}%`;
         }
 
-        onAuthStateChanged(auth, (user) => {
+        onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                authContainer.innerHTML = `<button id="logoutBtn" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log Out</button>`;
-                document.getElementById('logoutBtn').addEventListener('click', () => {
-                    signOut(auth).catch(error => console.error('Sign out error', error));
-                });
+                
+                try {
+                    // Try to get user profile from Supabase
+                    try {
+                        userProfile = await Scan2FlipDB.getUserProfile(user.uid);
+                    } catch (error) {
+                        // If profile doesn't exist, create it
+                        console.log('Creating new user profile...');
+                        userProfile = await Scan2FlipDB.createUserProfile(user.uid, user.email);
+                    }
 
-                // ** NEW: Check if the welcome modal should be shown **
-                const hasSeenWelcome = localStorage.getItem(`welcome-seen-${user.uid}`);
-                if (!hasSeenWelcome) {
-                    setTimeout(() => {
-                        welcomeModal.classList.remove('hidden');
-                    }, 1000); // Small delay for a smoother experience
+                    authContainer.innerHTML = `<button id="logoutBtn" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log Out</button>`;
+                    document.getElementById('logoutBtn').addEventListener('click', () => {
+                        signOut(auth).catch(error => console.error('Sign out error', error));
+                    });
+
+                    const hasSeenWelcome = localStorage.getItem(`welcome-seen-${user.uid}`);
+                    if (!hasSeenWelcome) {
+                        setTimeout(() => {
+                            welcomeModal.classList.remove('hidden');
+                        }, 1000);
+                    }
+
+                } catch (error) {
+                    console.error('Error setting up user:', error);
                 }
-
             } else {
                 currentUser = null;
+                userProfile = null;
                 authContainer.innerHTML = `
                     <div class="flex items-center gap-2">
                         <a href="signup.html" class="bg-slate-700 text-white font-semibold text-sm px-3 py-1 rounded-md hover:bg-slate-600 transition-colors">Sign Up</a>
                         <a href="login.html" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log In</a>
                     </div>`;
             }
+            
             updateDashboardStats();
             appContainer.classList.remove('auth-loading');
         });

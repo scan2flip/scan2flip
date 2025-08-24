@@ -1,19 +1,19 @@
-// supabase-client.js - Database connection with Market Intelligence
+// supabase-client.js - Clean version for new project
 import { createClient } from 'https://cdn.skypack.dev/@supabase/supabase-js@2';
 
-// Your Supabase credentials
-const SUPABASE_URL = 'https://ojloefpjdodetbdmhgab.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9qbG9lZnBqZG9kZXRiZG1oZ2FiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5OTM2MjEsImV4cCI6MjA3MTU2OTYyMX0.hoQWOAOqjUUvroSLIcU594E8dgAwNux5aGHc5aikU2o';
+// Your NEW Supabase credentials
+const SUPABASE_URL = 'https://ebzhjsgkyqzrviyqwvhg.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViemhqc2dreXF6cnZpeXF3dmhnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYwMDkwOTYsImV4cCI6MjA3MVM4NTA5Nn0.ZPVbWV2hfNMukSrFFXiKpgqkV6JkYY9cLfuo2f0lL_4';
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Enhanced database functions with Market Intelligence
+// Database functions with TEXT IDs (Firebase compatible)
 export class Scan2FlipDB {
     
     // User Profile Operations
     static async createUserProfile(userId, email, settings = {}) {
         const profile = {
-            id: userId,
+            id: userId, // Firebase UID as TEXT
             email,
             subscription_tier: 'free',
             home_currency: 'USD',
@@ -56,7 +56,7 @@ export class Scan2FlipDB {
         return data;
     }
 
-    // This is the function that was missing!
+    // EULA acceptance (this was missing before!)
     static async acceptEula(userId, version) {
         const { data, error } = await supabase
             .from('user_profiles')
@@ -75,89 +75,7 @@ export class Scan2FlipDB {
         return data;
     }
     
-    // Market Intelligence - Detailed Scan Logging
-    static async logDetailedScan(userId, scanData, userTier) {
-        const now = new Date();
-        const detailedScan = {
-            user_id: userId,
-            location: {
-                city: scanData.location?.city || 'Unknown',
-                state: scanData.location?.state || 'Unknown',
-                zip: scanData.location?.zip || '',
-                store_type: scanData.source_store || 'Unknown'
-            },
-            item: {
-                barcode: scanData.barcode || '',
-                name: scanData.name || 'Unknown Item',
-                category: scanData.category || 'Unknown',
-                brand: scanData.brand || 'Unknown',
-                image_url: scanData.image || '',
-                condition: scanData.condition || 'Unknown'
-            },
-            market_data: {
-                avg_sold_price: scanData.avgSalePrice || 0,
-                sell_through_rate: scanData.sellThroughRate || 0,
-                power_score: scanData.powerScore || 0,
-                platform_prices: scanData.platformPrices || {},
-                ebay_listings: scanData.soldListings?.length || 0
-            },
-            user_action: scanData.user_action || 'scanned_only', // 'kept', 'passed', 'scanned_only'
-            user_tier: userTier,
-            scan_method: scanData.scan_method || 'photo',
-            source_store: scanData.source_store || 'Unknown',
-            day_of_week: now.getDay() + 1, // 1-7, Sunday = 1
-            hour_of_day: now.getHours(),
-            is_seasonal_item: this.detectSeasonalItem(scanData.category, scanData.name),
-            seasonal_category: this.getSeasonalCategory(scanData.category, scanData.name)
-        };
-        
-        const { data, error } = await supabase
-            .from('detailed_scans')
-            .insert([detailedScan])
-            .select()
-            .single();
-            
-        if (error) throw error;
-        return data;
-    }
-    
-    // Helper function to detect seasonal items
-    static detectSeasonalItem(category, name) {
-        const seasonalKeywords = [
-            'halloween', 'christmas', 'valentine', 'easter', 'thanksgiving',
-            'costume', 'decoration', 'ornament', 'lights', 'pumpkin',
-            'santa', 'elf', 'reindeer', 'snowman', 'tree', 'wreath',
-            'candy', 'chocolate', 'gift', 'present', 'holiday'
-        ];
-        
-        const searchText = `${category} ${name}`.toLowerCase();
-        return seasonalKeywords.some(keyword => searchText.includes(keyword));
-    }
-    
-    // Helper function to get seasonal category
-    static getSeasonalCategory(category, name) {
-        const searchText = `${category} ${name}`.toLowerCase();
-        
-        if (searchText.includes('halloween') || searchText.includes('costume') || searchText.includes('pumpkin')) {
-            return 'Halloween';
-        }
-        if (searchText.includes('christmas') || searchText.includes('santa') || searchText.includes('ornament')) {
-            return 'Christmas';
-        }
-        if (searchText.includes('valentine')) {
-            return 'Valentine';
-        }
-        if (searchText.includes('easter')) {
-            return 'Easter';
-        }
-        if (searchText.includes('thanksgiving')) {
-            return 'Thanksgiving';
-        }
-        
-        return null;
-    }
-    
-    // Regular Inventory Operations (unchanged)
+    // Inventory Operations
     static async addToInventory(userId, item) {
         const inventoryItem = {
             user_id: userId,
@@ -211,114 +129,6 @@ export class Scan2FlipDB {
             
         if (error) throw error;
         return data;
-    }
-    
-    // Market Intelligence Analytics
-    static async getTrendingItems(limit = 10) {
-        const { data, error } = await supabase
-            .from('market_trends')
-            .select('*')
-            .in('trend_status', ['accelerating', 'emerging'])
-            .order('scan_velocity_24h', { ascending: false })
-            .limit(limit);
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    static async getGoldRushAlerts() {
-        const { data, error } = await supabase
-            .rpc('detect_gold_rush');
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    static async getRegionalTrends(region) {
-        const { data, error } = await supabase
-            .from('detailed_scans')
-            .select('item, market_data, created_at')
-            .eq('location->city', region)
-            .gte('created_at', new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString())
-            .order('created_at', { ascending: false });
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    static async getSeasonalTrends() {
-        const { data, error } = await supabase
-            .from('seasonal_patterns')
-            .select('*')
-            .order('trigger_date', { ascending: true });
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    // Power Alerts for Power Pro Users
-    static async createPowerAlert(alertData) {
-        const { data, error } = await supabase
-            .from('power_alerts')
-            .insert([alertData])
-            .select()
-            .single();
-            
-        if (error) throw error;
-        return data;
-    }
-    
-    static async getPowerAlerts(userTier, region = null) {
-        let query = supabase
-            .from('power_alerts')
-            .select('*')
-            .eq('status', 'sent')
-            .contains('target_tier', [userTier])
-            .gte('expires_at', new Date().toISOString());
-            
-        if (region) {
-            query = query.or(`target_regions.is.empty,target_regions.cs.{${region}}`);
-        }
-        
-        const { data, error } = await query
-            .order('created_at', { ascending: false })
-            .limit(10);
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    // Admin Dashboard Functions
-    static async getAdminDashboardStats() {
-        const { data, error } = await supabase
-            .from('admin_dashboard_stats')
-            .select('*')
-            .single();
-            
-        if (error) throw error;
-        return data;
-    }
-    
-    static async getDetailedScansForAdmin(limit = 100, offset = 0) {
-        const { data, error } = await supabase
-            .from('detailed_scans')
-            .select('*')
-            .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
-            
-        if (error) throw error;
-        return data || [];
-    }
-    
-    static async getMarketTrendsForAdmin() {
-        const { data, error } = await supabase
-            .from('market_trends')
-            .select('*')
-            .order('scan_velocity_24h', { ascending: false })
-            .limit(50);
-            
-        if (error) throw error;
-        return data || [];
     }
     
     // Expense Operations
@@ -422,11 +232,84 @@ export class Scan2FlipDB {
         
         return totalPurchasedItems > 0 ? (profitableSales / totalPurchasedItems) * 100 : 0;
     }
+
+    // Market Intelligence - Log detailed scans
+    static async logDetailedScan(userId, scanData, userTier) {
+        const now = new Date();
+        const detailedScan = {
+            user_id: userId,
+            location: {
+                city: scanData.location?.city || 'Unknown',
+                state: scanData.location?.state || 'Unknown',
+                zip: scanData.location?.zip || '',
+                store_type: scanData.source_store || 'Unknown'
+            },
+            item: {
+                barcode: scanData.barcode || '',
+                name: scanData.name || 'Unknown Item',
+                category: scanData.category || 'Unknown',
+                brand: scanData.brand || 'Unknown',
+                image_url: scanData.image || '',
+                condition: scanData.condition || 'Unknown'
+            },
+            market_data: {
+                avg_sold_price: scanData.avgSalePrice || 0,
+                sell_through_rate: scanData.sellThroughRate || 0,
+                power_score: scanData.powerScore || 0,
+                platform_prices: scanData.platformPrices || {},
+                ebay_listings: scanData.soldListings?.length || 0
+            },
+            user_action: scanData.user_action || 'scanned_only',
+            user_tier: userTier,
+            scan_method: scanData.scan_method || 'photo',
+            source_store: scanData.source_store || 'Unknown',
+            day_of_week: now.getDay() + 1,
+            hour_of_day: now.getHours(),
+            is_seasonal_item: this.detectSeasonalItem(scanData.category, scanData.name),
+            seasonal_category: this.getSeasonalCategory(scanData.category, scanData.name)
+        };
+        
+        const { data, error } = await supabase
+            .from('detailed_scans')
+            .insert([detailedScan])
+            .select()
+            .single();
+            
+        if (error) throw error;
+        return data;
+    }
+    
+    // Helper functions for seasonal detection
+    static detectSeasonalItem(category, name) {
+        const seasonalKeywords = [
+            'halloween', 'christmas', 'valentine', 'easter', 'thanksgiving',
+            'costume', 'decoration', 'ornament', 'lights', 'pumpkin',
+            'santa', 'elf', 'reindeer', 'snowman', 'tree', 'wreath'
+        ];
+        
+        const searchText = `${category} ${name}`.toLowerCase();
+        return seasonalKeywords.some(keyword => searchText.includes(keyword));
+    }
+    
+    static getSeasonalCategory(category, name) {
+        const searchText = `${category} ${name}`.toLowerCase();
+        
+        if (searchText.includes('halloween') || searchText.includes('costume')) {
+            return 'Halloween';
+        }
+        if (searchText.includes('christmas') || searchText.includes('santa')) {
+            return 'Christmas';
+        }
+        if (searchText.includes('valentine')) return 'Valentine';
+        if (searchText.includes('easter')) return 'Easter';
+        if (searchText.includes('thanksgiving')) return 'Thanksgiving';
+        
+        return null;
+    }
 }
 
-// Enhanced Data Migration with Market Intelligence
+// Data migration helper
 export class DataMigration {
-    
     static async migrateLocalStorageToSupabase(userId) {
         try {
             // Migrate inventory
@@ -452,46 +335,9 @@ export class DataMigration {
                     }
                 }
                 
-                // Archive old localStorage data
                 localStorage.setItem('scan2flip-inventory-backup', localStorage.getItem('scan2flip-inventory'));
                 localStorage.removeItem('scan2flip-inventory');
                 console.log('Inventory migration completed');
-            }
-            
-            // Migrate expenses (if any)
-            const localExpenses = JSON.parse(localStorage.getItem('scan2flip-expenses') || '[]');
-            if (localExpenses.length > 0) {
-                console.log(`Migrating ${localExpenses.length} expenses...`);
-                
-                for (const expense of localExpenses) {
-                    try {
-                        await Scan2FlipDB.addExpense(userId, expense);
-                    } catch (error) {
-                        console.error('Error migrating expense:', error);
-                    }
-                }
-                
-                localStorage.setItem('scan2flip-expenses-backup', localStorage.getItem('scan2flip-expenses'));
-                localStorage.removeItem('scan2flip-expenses');
-                console.log('Expenses migration completed');
-            }
-            
-            // Migrate mileage (if any)
-            const localMileage = JSON.parse(localStorage.getItem('scan2flip-mileage') || '[]');
-            if (localMileage.length > 0) {
-                console.log(`Migrating ${localMileage.length} mileage entries...`);
-                
-                for (const mileage of localMileage) {
-                    try {
-                        await Scan2FlipDB.addMileage(userId, mileage);
-                    } catch (error) {
-                        console.error('Error migrating mileage:', error);
-                    }
-                }
-                
-                localStorage.setItem('scan2flip-mileage-backup', localStorage.getItem('scan2flip-mileage'));
-                localStorage.removeItem('scan2flip-mileage');
-                console.log('Mileage migration completed');
             }
             
             return { success: true, message: 'Migration completed successfully' };
@@ -500,59 +346,5 @@ export class DataMigration {
             console.error('Migration error:', error);
             return { success: false, error: error.message };
         }
-    }
-}
-
-// Real-time subscription helpers
-export class RealtimeManager {
-    
-    static subscribeToInventoryChanges(userId, callback) {
-        return supabase
-            .channel('inventory-changes')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'inventory',
-                    filter: `user_id=eq.${userId}`
-                },
-                callback
-            )
-            .subscribe();
-    }
-    
-    static subscribeToMarketTrends(callback) {
-        return supabase
-            .channel('market-trends')
-            .on(
-                'postgres_changes',
-                {
-                    event: '*',
-                    schema: 'public',
-                    table: 'market_trends'
-                },
-                callback
-            )
-            .subscribe();
-    }
-    
-    static subscribeToPowerAlerts(callback) {
-        return supabase
-            .channel('power-alerts')
-            .on(
-                'postgres_changes',
-                {
-                    event: 'INSERT',
-                    schema: 'public',
-                    table: 'power_alerts'
-                },
-                callback
-            )
-            .subscribe();
-    }
-    
-    static unsubscribe(subscription) {
-        supabase.removeChannel(subscription);
     }
 }

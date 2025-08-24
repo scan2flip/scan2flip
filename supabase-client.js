@@ -55,6 +55,25 @@ export class Scan2FlipDB {
         if (error) throw error;
         return data;
     }
+
+    // This is the function that was missing!
+    static async acceptEula(userId, version) {
+        const { data, error } = await supabase
+            .from('user_profiles')
+            .update({
+                eula_accepted: true,
+                eula_version: version,
+                eula_accepted_date: new Date().toISOString(),
+                data_sharing_consent: true,
+                market_intelligence_enabled: true
+            })
+            .eq('id', userId)
+            .select()
+            .single();
+            
+        if (error) throw error;
+        return data;
+    }
     
     // Market Intelligence - Detailed Scan Logging
     static async logDetailedScan(userId, scanData, userTier) {
@@ -302,7 +321,7 @@ export class Scan2FlipDB {
         return data || [];
     }
     
-    // Expense Operations (unchanged)
+    // Expense Operations
     static async addExpense(userId, expenseData) {
         const expense = {
             user_id: userId,
@@ -334,7 +353,7 @@ export class Scan2FlipDB {
         return data || [];
     }
     
-    // Mileage Operations (unchanged)
+    // Mileage Operations
     static async addMileage(userId, mileageData) {
         const mileage = {
             user_id: userId,

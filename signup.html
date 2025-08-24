@@ -11,6 +11,29 @@
             font-family: 'Inter', sans-serif;
             background-color: #0f172a; /* bg-slate-900 */
         }
+        .input-field {
+            background-color: #1e293b; /* slate-800 */
+            border: 1px solid #334155; /* slate-700 */
+            color: #cbd5e1; /* slate-300 */
+        }
+        .btn-primary {
+            background-color: #facc15; /* yellow-400 */
+            color: #1e293b; /* slate-800 */
+            font-weight: 700;
+        }
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+        details > summary svg {
+            transition: transform 0.3s ease-in-out;
+        }
+        details[open] > summary svg {
+            transform: rotate(90deg);
+        }
     </style>
 </head>
 <body class="bg-slate-900 text-slate-300">
@@ -35,10 +58,217 @@
                                class="mt-1 block w-full bg-slate-700 border border-slate-600 rounded-md shadow-sm text-white p-3 focus:outline-none focus:ring-2 focus:ring-yellow-400">
                         <p class="mt-2 text-xs text-slate-500">Must be at least 6 characters long.</p>
                     </div>
+                    
+                    <div class="bg-slate-800 rounded-lg p-4 border border-slate-700">
+                        <details>
+                            <summary class="flex justify-between items-center text-sm font-semibold text-slate-400">
+                                Scan2Flip End User License Agreement
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                                </svg>
+                            </summary>
+                            <div class="mt-4 text-xs space-y-3 max-h-64 overflow-y-auto pr-2" style="scrollbar-width: thin;">
+                                <p><strong>1. THE SCAN2FLIP INTELLIGENCE NETWORK</strong></p>
+                                <p><strong>What We Do</strong></p>
+                                <p>Scan2Flip combines scan data from all users to identify market trends, seasonal patterns, and profitable opportunities. Think of it as a collaborative intelligence network where everyone benefits.</p>
+                                <p><strong>Your Participation</strong></p>
+                                <p>When you use Scan2Flip, you contribute to and benefit from our market intelligence system by providing the following data:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Scan Activity: Items scanned, categories, brands, barcodes, photos</li>
+                                    <li>Market Decisions: Whether you kept, passed, or wishlisted items</li>
+                                    <li>Location Information: City, state, zip code (with your permission)</li>
+                                    <li>Timing Data: When and where you scan (to identify seasonal trends)</li>
+                                    <li>Purchase Outcomes: What you buy, sell, and profit margins (when you choose to track)</li>
+                                    <li>Usage Patterns: How you use the app, features accessed, time spent</li>
+                                </ul>
+                                <p><strong>What You Get Back:</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Trend Alerts: Early notifications when items start trending</li>
+                                    <li>Regional Intelligence: What's hot in your specific area</li>
+                                    <li>Seasonal Predictions: When to buy/sell different categories</li>
+                                    <li>Competitive Insights: Market saturation and opportunity identification</li>
+                                    <li>Price Optimization: Better profit predictions based on real market data</li>
+                                </ul>
+                                <p><strong>2. DATA USE AND SHARING</strong></p>
+                                <p><strong>How We Use Your Data</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Platform Improvement: Enhance scanning accuracy and market predictions</li>
+                                    <li>Trend Analysis: Identify emerging opportunities and market patterns</li>
+                                    <li>Personalized Alerts: Send relevant notifications based on your activity</li>
+                                    <li>Regional Intelligence: Analyze local market conditions</li>
+                                    <li>Seasonal Forecasting: Predict timing for different product categories</li>
+                                </ul>
+                                <p><strong>Data Sharing</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Anonymized Aggregation: We combine anonymized data from all users to create market insights</li>
+                                    <li>Business Intelligence: Aggregated, non-personally identifiable data may be shared with retail partners, market research firms, and industry analysts</li>
+                                    <li>API Access: Anonymized trend data may be provided through our API to third-party developers</li>
+                                    <li>Academic Research: Anonymous data may be used for market research studies</li>
+                                    <li>No Individual Data Sales: We never sell your personal information or individual scanning history</li>
+                                </ul>
+                                <p><strong>What Stays Private</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Your name, email, and personal contact information</li>
+                                    <li>Individual item purchases and specific profit amounts</li>
+                                    <li>Exact location data (we use city/region level only)</li>
+                                    <li>Private notes and custom categories</li>
+                                </ul>
+                                <p><strong>3. LOCATION SERVICES</strong></p>
+                                <p><strong>Permission Required</strong></p>
+                                <p>Location services require explicit permission and can be disabled at any time in your device settings.</p>
+                                <p><strong>How We Use Location</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Regional Trends: "Vintage items trending in Austin area"</li>
+                                    <li>Store Intelligence: "Estate sales in your area show higher vintage camera activity"</li>
+                                    <li>Competition Analysis: "Low competition density in your zip code"</li>
+                                    <li>Seasonal Variations: "Back-to-school items peak 2 weeks earlier in Texas"</li>
+                                </ul>
+                                <p><strong>Location Precision</strong></p>
+                                <p>We use city/region level data only. Specific addresses or precise coordinates are not stored.</p>
+                                <p><strong>4. SUBSCRIPTION TIERS AND DATA ACCESS</strong></p>
+                                <p><strong>Free Tier</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Basic scanning and inventory tracking</li>
+                                    <li>Limited access to trend data (weekly summaries)</li>
+                                    <li>Anonymous contribution to platform intelligence</li>
+                                </ul>
+                                <p><strong>Pro Tier</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Enhanced trend alerts and regional insights</li>
+                                    <li>Historical pattern analysis</li>
+                                    <li>Priority alert notifications</li>
+                                </ul>
+                                <p><strong>Power Pro Tier</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Real-time gold rush alerts</li>
+                                    <li>Predictive trend analysis</li>
+                                    <li>Advanced regional competition intelligence</li>
+                                    <li>Custom alert preferences</li>
+                                </ul>
+                                <p><strong>5. DATA RETENTION AND DELETION</strong></p>
+                                <p><strong>Retention Period</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Active account data: Retained while account is active</li>
+                                    <li>Anonymized trend data: Retained indefinitely for platform intelligence</li>
+                                    <li>Personal information: Deleted within 30 days of account closure</li>
+                                </ul>
+                                <p><strong>Your Rights</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Access: Request a copy of your data</li>
+                                    <li>Correction: Update or correct your information</li>
+                                    <li>Deletion: Request account and data deletion (some anonymized data may remain for platform functionality)</li>
+                                    <li>Opt-out: Disable location services or trend participation at any time</li>
+                                </ul>
+                                <p><strong>6. MONETIZATION AND REVENUE SHARING</strong></p>
+                                <p><strong>Platform Revenue</strong></p>
+                                <p>Scan2Flip may generate revenue through:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Subscription fees</li>
+                                    <li>API access licensing</li>
+                                    <li>Anonymized data licensing to businesses</li>
+                                    <li>Advertising and partnerships</li>
+                                </ul>
+                                <p><strong>No User Revenue Sharing</strong></p>
+                                <p>Users do not receive direct compensation for data contribution. The value exchange is the intelligence and insights provided by the platform.</p>
+                                <p><strong>7. DATA SECURITY AND PROTECTION</strong></p>
+                                <p><strong>Security Measures</strong></p>
+                                <p>Encryption of sensitive data in transit and at rest</p>
+                                <p>Regular security audits and vulnerability assessments</p>
+                                <p>Limited employee access to personal data</p>
+                                <p>Secure data centers with industry-standard protection</p>
+                                <p><strong>Breach Notification</strong></p>
+                                <p>Users will be notified within 72 hours of any data breach affecting personal information.</p>
+                                <p><strong>8. PRIVACY COMPLIANCE</strong></p>
+                                <p><strong>Regulatory Compliance</strong></p>
+                                <p>This service complies with:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>CCPA (California Consumer Privacy Act)</li>
+                                    <li>GDPR (General Data Protection Regulation) for EU users</li>
+                                    <li>COPPA (Children's Online Privacy Protection Act) - No users under 13</li>
+                                </ul>
+                                <p><strong>International Users</strong></p>
+                                <p>Data may be processed in the United States. By using the service, international users consent to data transfer and processing in the US.</p>
+                                <p><strong>9. ARTIFICIAL INTELLIGENCE AND MACHINE LEARNING</strong></p>
+                                <p><strong>AI Usage</strong></p>
+                                <p>We use artificial intelligence and machine learning to:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Improve product recognition accuracy</li>
+                                    <li>Predict market trends and price movements</li>
+                                    <li>Personalize user experience and recommendations</li>
+                                    <li>Detect seasonal patterns and opportunities</li>
+                                </ul>
+                                <p><strong>Training Data</strong></p>
+                                <p>Your anonymized scan data may be used to train and improve our AI models, resulting in better predictions and insights for all users.</p>
+                                <p><strong>10. INTELLECTUAL PROPERTY</strong></p>
+                                <p><strong>Platform Content</strong></p>
+                                <p>All trend reports, market intelligence, and analytical insights generated by the platform remain the intellectual property of Scan2Flip, Inc.</p>
+                                <p><strong>User Content</strong></p>
+                                <p>You retain ownership of photos and notes you create, but grant Scan2Flip a license to use this content for platform functionality and improvement.</p>
+                                <p><strong>11. LIMITATION OF LIABILITY</strong></p>
+                                <p><strong>Market Intelligence Disclaimer</strong></p>
+                                <p>Market trends, price predictions, and profitability insights are for informational purposes only. Scan2Flip is not responsible for:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Investment losses based on platform recommendations</li>
+                                    <li>Market changes or price fluctuations</li>
+                                    <li>Accuracy of third-party pricing data</li>
+                                    <li>Individual business outcomes</li>
+                                </ul>
+                                <p><strong>Data Accuracy</strong></p>
+                                <p>While we strive for accuracy, market intelligence is based on user-contributed data and may contain errors or omissions.</p>
+                                <p><strong>12. TERMINATION</strong></p>
+                                <p><strong>Account Closure</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Users may close accounts at any time</li>
+                                    <li>Scan2Flip may terminate accounts for violation of terms</li>
+                                    <li>Upon termination, personal data will be deleted within 30 days</li>
+                                    <li>Anonymized contribution to platform intelligence may remain</li>
+                                </ul>
+                                <p><strong>13. CHANGES TO THIS AGREEMENT</strong></p>
+                                <p><strong>Updates</strong></p>
+                                <p>This agreement may be updated to reflect new features, legal requirements, or business practices. Users will be notified of significant changes and may be required to re-accept terms.</p>
+                                <p><strong>Notification Method</strong></p>
+                                <p>Updates will be communicated via:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Email notification</li>
+                                    <li>In-app notification</li>
+                                    <li>Updated terms posted on website</li>
+                                </ul>
+                                <p><strong>14. CONSENT AND ACCEPTANCE</strong></p>
+                                <p><strong>Explicit Consent</strong></p>
+                                <p>By clicking "I AGREE" below, you explicitly consent to:</p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>✓ Collection and analysis of your scanning activity and market decisions</li>
+                                    <li>✓ Use of location data for regional market intelligence (if location services enabled)</li>
+                                    <li>✓ Contribution to anonymized market trend analysis</li>
+                                    <li>✓ Receipt of trend alerts and market intelligence based on platform data</li>
+                                    <li>✓ Use of your data to improve AI and machine learning models</li>
+                                    <li>✓ Potential sharing of anonymized, aggregated data with business partners</li>
+                                </ul>
+                                <p><strong>Opt-In Required</strong></p>
+                                <p>This agreement requires explicit opt-in. There is no default acceptance or pre-checked boxes.</p>
+                                <p><strong>Contact Information</strong></p>
+                                <ul class="list-disc list-inside space-y-1">
+                                    <li>Scan2Flip, Inc.</li>
+                                    <li>Email: legal@scan2flip.com</li>
+                                    <li>Address: [YOUR BUSINESS ADDRESS]</li>
+                                </ul>
+                                <p><strong>YOUR CHOICE</strong></p>
+                                <p>🎯 JOIN THE INTELLIGENCE NETWORK</p>
+                                <p>Help make Scan2Flip smarter and get early access to profitable trends, regional insights, and market intelligence that gives you an unfair advantage.</p>
+                            </div>
+                        </details>
+                        <div class="flex items-center mt-4">
+                            <input type="checkbox" id="eulaCheckbox" class="h-4 w-4 text-yellow-400 bg-slate-700 border-slate-600 rounded focus:ring-2 focus:ring-offset-2 focus:ring-yellow-400 focus:ring-offset-slate-800">
+                            <label for="eulaCheckbox" class="ml-2 text-sm text-slate-400">
+                                I agree to the <a href="#" class="text-yellow-400 hover:underline">terms</a>.
+                            </label>
+                        </div>
+                    </div>
+                    
                     <div id="errorMessage" class="hidden text-sm text-red-400 text-center p-3 bg-red-500/10 rounded-md"></div>
                     <div>
-                        <button type="submit"
-                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-slate-900 bg-yellow-400 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 focus:ring-offset-slate-800">
+                        <button type="submit" id="signupBtn" disabled
+                                class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-slate-900 bg-yellow-400 hover:bg-yellow-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 focus:ring-offset-slate-800 disabled:opacity-50 disabled:cursor-not-allowed">
                             Create Account
                         </button>
                     </div>
@@ -51,66 +281,88 @@
         </div>
     </div>
 
-    <!-- Firebase SDKs -->
     <script type="module">
-        // IMPORTANT: Replace these with your actual Firebase project configuration
         const firebaseConfig = {
-  apiKey: "AIzaSyBoQwuUzYaa5fyklCn0Nh21unRmEGa4GuM",
-  authDomain: "scan2flip-41afe.firebaseapp.com",
-  projectId: "scan2flip-41afe",
-  storageBucket: "scan2flip-41afe.firebasestorage.app",
-  messagingSenderId: "747191811793",
-  appId: "1:747191811793:web:e9d935f1a55c66fb7e4ff0"
-};
+            apiKey: "AIzaSyBoQwuUzYaa5fyklCn0Nh21unRmEGa4GuM",
+            authDomain: "scan2flip-41afe.firebaseapp.com",
+            projectId: "scan2flip-41afe",
+            storageBucket: "scan2flip-41afe.firebasestorage.app",
+            messagingSenderId: "747191811793",
+            appId: "1:747191811793:web:e9d935f1a55c66fb7e4ff0"
+        };
+        const CURRENT_EULA_VERSION = '1.0.0';
 
-
-        // Import the functions you need from the SDKs
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
         import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { Scan2FlipDB } from './supabase-client.js';
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
-        // Handle Signup Form Submission
         const signupForm = document.getElementById('signupForm');
         const errorMessage = document.getElementById('errorMessage');
+        const eulaCheckbox = document.getElementById('eulaCheckbox');
+        const signupBtn = document.getElementById('signupBtn');
+        const eulaDetails = document.querySelector('details');
+        const summaryIcon = document.querySelector('summary svg');
+        
+        eulaCheckbox.addEventListener('change', () => {
+            signupBtn.disabled = !eulaCheckbox.checked;
+        });
+        
+        eulaDetails.addEventListener('toggle', () => {
+            if (eulaDetails.open) {
+                summaryIcon.style.transform = 'rotate(90deg)';
+            } else {
+                summaryIcon.style.transform = 'rotate(0deg)';
+            }
+        });
 
-        signupForm.addEventListener('submit', (e) => {
+        signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            if (!eulaCheckbox.checked) {
+                errorMessage.textContent = "You must agree to the EULA to create an account.";
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
             const email = signupForm.email.value;
             const password = signupForm.password.value;
 
-            createUserWithEmailAndPassword(auth, email, password)
-                .then((userCredential) => {
-                    // Signed up and signed in successfully
-                    const user = userCredential.user;
-                    console.log('User created:', user.uid);
-                    // Firebase automatically signs the user in.
-                    // We can now redirect them to the main app page.
-                    window.location.href = 'index.html';
-                })
-                .catch((error) => {
-                    // Handle Errors here.
-                    let message = "An unknown error occurred.";
-                    switch (error.code) {
-                        case 'auth/invalid-email':
-                            message = "Please enter a valid email address.";
-                            break;
-                        case 'auth/email-already-in-use':
-                            message = "This email address is already in use.";
-                            break;
-                        case 'auth/weak-password':
-                            message = "The password is too weak. Please use at least 6 characters.";
-                            break;
-                        default:
-                            message = "Could not create account. Please try again later.";
-                            console.error('Signup error:', error);
-                            break;
-                    }
-                    errorMessage.textContent = message;
-                    errorMessage.classList.remove('hidden');
-                });
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+                
+                try {
+                    await Scan2FlipDB.acceptEula(user.uid, CURRENT_EULA_VERSION);
+                } catch (dbError) {
+                    console.error("Failed to log EULA acceptance in Supabase:", dbError);
+                }
+
+                console.log('User created and EULA acceptance logged:', user.uid);
+                window.location.href = 'index.html';
+                
+            } catch (error) {
+                let message = "An unknown error occurred.";
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        message = "Please enter a valid email address.";
+                        break;
+                    case 'auth/email-already-in-use':
+                        message = "This email address is already in use.";
+                        break;
+                    case 'auth/weak-password':
+                        message = "The password is too weak. Please use at least 6 characters.";
+                        break;
+                    default:
+                        message = "Could not create account. Please try again later.";
+                        console.error('Signup error:', error);
+                        break;
+                }
+                errorMessage.textContent = message;
+                errorMessage.classList.remove('hidden');
+            }
         });
     </script>
 </body>

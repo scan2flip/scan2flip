@@ -313,20 +313,20 @@
         });
         
         // --- NEW: EULA Acceptance Logic ---
-     acceptEulaBtn.addEventListener('click', async () => {
-    if (currentUser) {
-        try {
-            await Scan2FlipDB.acceptEula(currentUser.uid, CURRENT_EULA_VERSION);
-            eulaModal.classList.add('hidden');
-            appContainer.classList.remove('hidden');
-            appContainer.classList.remove('auth-loading');  // 👈 ADD THIS LINE
-            console.log('EULA accepted for existing user.');
-        } catch (error) {
-            console.error('Error accepting EULA:', error);
-            alert('An error occurred. Please try again.');
-        }
-    }
-});
+        acceptEulaBtn.addEventListener('click', async () => {
+            if (currentUser) {
+                try {
+                    await Scan2FlipDB.acceptEula(currentUser.uid, CURRENT_EULA_VERSION);
+                    eulaModal.classList.add('hidden');
+                    appContainer.classList.remove('hidden');
+                    appContainer.classList.remove('auth-loading');
+                    console.log('EULA accepted for existing user.');
+                } catch (error) {
+                    console.error('Error accepting EULA:', error);
+                    alert('An error occurred. Please try again.');
+                }
+            }
+        });
         // --- END NEW LOGIC ---
 
         // --- NEW: Welcome Modal Logic ---
@@ -408,11 +408,29 @@
         snapPhotoBtn.addEventListener('click', startCamera);
         uploadImageBtn.addEventListener('click', startUpload);
 
+        // --- UPDATED LOGIC TO HANDLE IMAGE DATA ---
         cameraInput.addEventListener('change', (event) => {
-            if (event.target.files && event.target.files[0]) {
-                console.log("Image captured/selected:", event.target.files[0].name);
-                scanOptionsModal.classList.add('hidden');
-                window.location.href = 'results.html';
+            const file = event.target.files && event.target.files[0];
+            if (file) {
+                console.log("Image captured/selected:", file.name);
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        // Store the Base64 image data in localStorage for the results page
+                        localStorage.setItem('pendingScanImage', e.target.result);
+                        scanOptionsModal.classList.add('hidden');
+                        window.location.href = 'results.html';
+                    } catch (error) {
+                        console.error("Error storing image in localStorage:", error);
+                        alert("Could not process the image. The file might be too large.");
+                    }
+                };
+                reader.onerror = () => {
+                    console.error("FileReader error");
+                    alert("There was an error reading the image file. Please try again.");
+                };
+                // Read the file into a Base64 string
+                reader.readAsDataURL(file);
             }
         });
     </script>

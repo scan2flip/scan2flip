@@ -81,6 +81,7 @@
         /* --- END OF ADDED CSS --- */
     </style>
     <script type="module" src="auth-guard.js"></script>
+    <script src="scan-service.js"></script>
 </head>
 <body class="bg-slate-900 text-slate-300">
 
@@ -134,8 +135,8 @@
                     <div id="partOutUpgrade" class="hidden">
                         <div class="upgrade-overlay">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-yellow-400 mb-2" viewBox="0 0 24 24" fill="currentColor">
-                              <path d="M21.92,7.62A1,1,0,0,0,21,7H18.63A7,7,0,0,0,5.22,4.78L4.78,5.22A7,7,0,0,0,7.63,18H10a1,1,0,0,0,0-2H7.63A5,5,0,0,1,16.5,7.13L16,6.63a5,5,0,0,1-2.5,4.5,1,1,0,0,0-.5,1.35,1,1,0,0,0,1.37.5A7,7,0,0,0,18.63,9H21a1,1,0,0,0,.92-1.38Z"/>
-                              <path d="M13,10a3,3,0,1,0,3,3A3,3,0,0,0,13,10Zm0,4a1,1,0,1,1,1-1A1,1,0,0,1,13,14Z"/>
+                                <path d="M21.92,7.62A1,1,0,0,0,21,7H18.63A7,7,0,0,0,5.22,4.78L4.78,5.22A7,7,0,0,0,7.63,18H10a1,1,0,0,0,0-2H7.63A5,5,0,0,1,16.5,7.13L16,6.63a5,5,0,0,1-2.5,4.5,1,1,0,0,0-.5,1.35,1,1,0,0,0,1.37.5A7,7,0,0,0,18.63,9H21a1,1,0,0,0,.92-1.38Z"/>
+                                <path d="M13,10a3,3,0,1,0,3,3A3,3,0,0,0,13,10Zm0,4a1,1,0,1,1,1-1A1,1,0,0,1,13,14Z"/>
                             </svg>
                             <p class="text-yellow-400 font-bold text-lg mb-2">PARTS ALERT!</p>
                             <button class="btn-primary py-2 px-6">UPGRADE TO POWER PRO to See Them!</button>
@@ -175,10 +176,10 @@
     </nav>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- MOCK DATA ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- MOCK DATA FOR FALLBACK ---
             const mockScanData = {
-                name: "Panasonic PV-V4022 VCR",
+                name: "API Failed: Mock VCR",
                 image: "https://placehold.co/300x300/e2e8f0/334155?text=VCR",
                 soldListings: [
                     { price: 65, condition: 'New' }, { price: 75, condition: 'New' },
@@ -196,10 +197,36 @@
                 minProfitMargin: 0.50,
                 tier: 'free' // 'free', 'pro', or 'powerPro'
             };
+            
+            // --- API & DATA HANDLING ---
+            const imageData = localStorage.getItem('pendingScanImage');
+            
+            if (imageData && window.scanService) {
+                try {
+                    const apiResult = await window.scanService.analyzeImage(imageData);
+                    console.log("API Response:", apiResult);
+                    displayScanResult(apiResult);
+                } catch (error) {
+                    console.error("API call failed, falling back to mock data:", error);
+                    alert("There was an issue analyzing the image. Displaying sample data.");
+                    displayScanResult(mockScanData);
+                } finally {
+                    localStorage.removeItem('pendingScanImage'); // Clear the image after attempt
+                }
+            } else {
+                if (!imageData) {
+                     alert("No image data found for scanning. Redirecting to home page.");
+                } else if (!window.scanService) {
+                    alert("Scan service failed to load. Please check your connection.");
+                }
+                window.location.href = 'index.html';
+            }
+
 
             // --- CORE LOGIC ---
             function analyzeSoldListings(listings) {
                 const conditions = { 'New': [], 'Used': [], 'For parts or not working': [] };
+                if (!listings) return {};
                 listings.forEach(l => { if (conditions[l.condition]) conditions[l.condition].push(l.price); });
                 const analysis = {};
                 for (const cond in conditions) {
@@ -221,10 +248,10 @@
             // --- DISPLAY LOGIC ---
             function displayScanResult(data) {
                 const analysis = analyzeSoldListings(data.soldListings);
-                const totalSold = data.soldListings.length;
-                const sellThrough = totalSold / (totalSold + data.activeListings) * 100;
+                const totalSold = data.soldListings ? data.soldListings.length : 0;
+                const sellThrough = (totalSold + (data.activeListings || 0)) > 0 ? (totalSold / (totalSold + data.activeListings)) * 100 : 0;
                 const primaryCondition = analysis['Used'] || analysis['New'] || analysis['For parts or not working'];
-                const avgPrice = primaryCondition.avgPrice;
+                const avgPrice = primaryCondition ? primaryCondition.avgPrice : 0;
                 const powerScore = calculatePowerScore(sellThrough, avgPrice);
                 const worthPaying = calculateWorthPaying(avgPrice, userSettings.minProfitMargin);
 
@@ -294,8 +321,6 @@
                 alert(`${scanData.name} added to your Unlisted inventory!`);
                 window.location.href = 'inventory.html';
             }
-
-            setTimeout(() => displayScanResult(mockScanData), 1500);
         });
     </script>
 </body>

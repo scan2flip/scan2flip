@@ -1,7 +1,7 @@
 // api/scan.js - Real implementation with actual API calls
 import formidable from 'formidable';
 import axios from 'axios';
-import * as cheerio from 'cheerio';  // ← CHANGE THIS LINE
+import * as cheerio from 'cheerio';
 import FormData from 'form-data';
 import fs from 'fs';
 
@@ -90,48 +90,80 @@ export default async function handler(req, res) {
         if (imageUrl && !productName) {
             console.log('Querying Google Lens with real image...');
             try {
-                const lensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(imageUrl)}`;
+                // Use the correct Google Lens URL format from WebScrapingHQ
+                const lensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(imageUrl)}&hl=en&gl=us`;
                 
+                // Critical: Use all the proper headers
                 const lensResponse = await axios.get(lensUrl, {
                     headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-                        'Accept-Language': 'en-US,en;q=0.5',
-                        'Referer': 'https://lens.google.com/',
+                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                        'Accept-Language': 'en-US,en;q=0.9',
+                        'Accept-Encoding': 'gzip, deflate, br',
+                        'DNT': '1',
+                        'Connection': 'keep-alive',
+                        'Upgrade-Insecure-Requests': '1',
+                        'Sec-Fetch-Dest': 'document',
+                        'Sec-Fetch-Mode': 'navigate',
+                        'Sec-Fetch-Site': 'none',
+                        'Sec-Fetch-User': '?1',
+                        'Cache-Control': 'max-age=0',
+                        'sec-ch-ua': '"Not)A;Brand";v="127", "Chromium";v="127"',
+                        'sec-ch-ua-mobile': '?0',
+                        'sec-ch-ua-platform': '"Windows"'
                     },
                     timeout: 30000,
-                    maxRedirects: 5
+                    maxRedirects: 5,
+                    decompress: true // Handle gzip
                 });
 
                 const $ = cheerio.load(lensResponse.data);
                 
-                // Try multiple selectors to find product identification
+                // Debug: Log what we're getting
+                console.log('Response status:', lensResponse.status);
+                console.log('HTML length:', lensResponse.data.length);
+                
+                // Try the 2025 selectors from WebScrapingHQ
                 productName = 
                     $('div[data-item-title]').first().text().trim() ||
-                    $('div[data-product-name]').first().text().trim() ||
-                    $('h3[data-item-name]').first().text().trim() ||
-                    $('[data-test-id="product-title"]').first().text().trim() ||
-                    $('div.knowledge-panel h2').first().text().trim() ||
-                    $('div[role="heading"][aria-level="3"]').first().text().trim() ||
+                    $('div[data-product-title]').first().text().trim() ||
+                    $('h1[data-product-name]').first().text().trim() ||
+                    $('div[jsname="U8S5sf"] h1').first().text().trim() || // New selector
+                    $('div[data-visual-matches] div[role="heading"]').first().text().trim() ||
+                    $('div.Vd9M6 a').first().attr('aria-label') || // Shopping result
+                    $('div.UAiK1e').first().text().trim() || // Knowledge panel
                     '';
 
-                // If still no product name, try to get any text that looks like a product
+                // If still nothing, try to find ANY product-like text
                 if (!productName) {
-                    const possibleProducts = [];
-                    $('div, h1, h2, h3, span').each((i, elem) => {
+                    // Look for shopping results
+                    const shoppingTitle = $('a[href*="/shopping/"] span').first().text().trim();
+                    if (shoppingTitle) productName = shoppingTitle;
+                }
+
+                // Log all divs with data attributes to see what's available
+                if (!productName) {
+                    console.log('=== Searching for data attributes ===');
+                    $('div[data-item-title], div[data-product-name], div[data-product-title], div[data-title]').each((i, elem) => {
                         const text = $(elem).text().trim();
-                        if (text.length > 5 && text.length < 100 && !text.includes('Google')) {
-                            possibleProducts.push(text);
+                        if (text) {
+                            console.log(`Found data attribute text: "${text}"`);
+                            if (!productName && text.length > 2 && text.length < 200) {
+                                productName = text;
+                            }
                         }
                     });
-                    productName = possibleProducts[0] || '';
                 }
 
                 console.log('Google Lens identified:', productName || 'Nothing found');
                 
             } catch (error) {
                 console.error('Google Lens query failed:', error.message);
-                // Fall back to image recognition service or mock
+                if (error.response) {
+                    console.error('Response status:', error.response.status);
+                    console.error('Response headers:', error.response.headers);
+                }
+                // Fall back to mock
                 productName = await mockProductIdentification();
             }
         }

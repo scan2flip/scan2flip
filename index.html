@@ -55,6 +55,15 @@
     </style>
 </head>
 <body class="bg-slate-900 text-slate-300">
+
+    <div id="loading-spinner-container" class="fixed inset-0 bg-slate-900 flex flex-col items-center justify-center z-50">
+        <svg class="animate-spin h-12 w-12 text-yellow-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <p class="text-slate-400 mt-4">Loading Your Dashboard...</p>
+    </div>
+
     <div id="app-container" class="flex flex-col h-screen auth-loading">
         <header class="p-4 flex justify-between items-center border-b border-slate-700 flex-shrink-0">
             <div id="auth-container">
@@ -211,6 +220,7 @@
         const auth = getAuth(app);
         const CURRENT_EULA_VERSION = '1.0.0';
 
+        const loadingSpinner = document.getElementById('loading-spinner-container');
         const scanButton = document.getElementById('scanButton');
         const scanOptionsModal = document.getElementById('scanOptionsModal');
         const loginRequiredModal = document.getElementById('loginRequiredModal');
@@ -273,15 +283,15 @@
                         userProfile = await Scan2FlipDB.createUserProfile(user.uid, user.email);
                     }
 
-                    // --- NEW EULA CHECK LOGIC ---
+                    // EULA CHECK LOGIC
                     if (profileExists && userProfile.eula_version !== CURRENT_EULA_VERSION) {
                         eulaModal.classList.remove('hidden');
-                        // Hide everything else until EULA is accepted
                         appContainer.classList.add('hidden');
+                        loadingSpinner.classList.add('hidden');
                     } else {
                         appContainer.classList.remove('auth-loading');
+                        loadingSpinner.classList.add('hidden');
                     }
-                    // --- END NEW LOGIC ---
                     
                     authContainer.innerHTML = `<button id="logoutBtn" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log Out</button>`;
                     document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -297,6 +307,9 @@
 
                 } catch (error) {
                     console.error('Error setting up user:', error);
+                    // In case of error, still hide spinner and show a basic state
+                    loadingSpinner.classList.add('hidden');
+                    appContainer.classList.remove('auth-loading');
                 }
             } else {
                 currentUser = null;
@@ -307,12 +320,13 @@
                         <a href="login.html" class="bg-yellow-400 text-slate-800 font-semibold text-sm px-3 py-1 rounded-md hover:bg-yellow-500 transition-colors">Log In</a>
                     </div>`;
                 appContainer.classList.remove('auth-loading');
+                loadingSpinner.classList.add('hidden');
             }
             
             updateDashboardStats();
         });
         
-        // --- NEW: EULA Acceptance Logic ---
+        // EULA Acceptance Logic
         acceptEulaBtn.addEventListener('click', async () => {
             if (currentUser) {
                 try {
@@ -327,9 +341,8 @@
                 }
             }
         });
-        // --- END NEW LOGIC ---
 
-        // --- NEW: Welcome Modal Logic ---
+        // Welcome Modal Logic
         const startScanningBtn = document.getElementById('startScanningBtn');
         const gotItBtn = document.getElementById('gotItBtn');
 
@@ -348,9 +361,7 @@
             welcomeModal.classList.add('hidden');
         });
 
-
-        // --- Scan/Snap/Upload & Quick Scan Toggle Logic ---
-        
+        // Scan/Snap/Upload & Quick Scan Toggle Logic
         const cameraInput = document.getElementById('cameraInput');
         const scanBarcodeBtn = document.getElementById('scanBarcodeBtn');
         const snapPhotoBtn = document.getElementById('snapPhotoBtn');
@@ -408,7 +419,7 @@
         snapPhotoBtn.addEventListener('click', startCamera);
         uploadImageBtn.addEventListener('click', startUpload);
 
-        // --- UPDATED LOGIC TO HANDLE IMAGE DATA ---
+        // Image capture and storage logic
         cameraInput.addEventListener('change', (event) => {
             const file = event.target.files && event.target.files[0];
             if (file) {

@@ -1,7 +1,7 @@
 // api/scan.js - Real implementation with actual API calls
 import formidable from 'formidable';
 import axios from 'axios';
-import cheerio from 'cheerio';
+import * as cheerio from 'cheerio';  // ← CHANGE THIS LINE
 import FormData from 'form-data';
 import fs from 'fs';
 

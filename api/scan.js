@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     try {
         // Parse the actual multipart form data from frontend
-        const form = new formidable.IncomingForm({
+        const form = formidable({
             uploadDir: '/tmp',
             keepExtensions: true,
             maxFileSize: 10 * 1024 * 1024, // 10MB max

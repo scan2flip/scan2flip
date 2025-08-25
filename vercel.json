@@ -3,5 +3,6 @@
     "api/scan.js": {
       "maxDuration": 30
     }
-  }
+  },
+  "installCommand": "npm install"
 }

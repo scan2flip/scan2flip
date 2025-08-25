@@ -4,5 +4,8 @@
       "maxDuration": 30
     }
   },
-  "installCommand": "npm install"
+  "buildCommand": "npm install",
+  "outputDirectory": ".",
+  "installCommand": "npm install",
+  "framework": null
 }

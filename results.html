@@ -201,13 +201,13 @@
             // --- API & DATA HANDLING ---
             const imageData = localStorage.getItem('pendingScanImage');
             
-            if (imageData && window.scanService) {
+            if (imageData && window.ScanService) {
                 try {
                     // Convert base64 back to File object
-const response = await fetch(imageData);
-const blob = await response.blob();
-const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
-const apiResult = await window.ScanService.scanImage(file, 'image');
+                    const response = await fetch(imageData);
+                    const blob = await response.blob();
+                    const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
+                    const apiResult = await window.ScanService.scanImage(file, 'image');
                     console.log("API Response:", apiResult);
                     displayScanResult(apiResult);
                 } catch (error) {
@@ -219,8 +219,8 @@ const apiResult = await window.ScanService.scanImage(file, 'image');
                 }
             } else {
                 if (!imageData) {
-                     alert("No image data found for scanning. Redirecting to home page.");
-                } else if (!window.scanService) {
+                        alert("No image data found for scanning. Redirecting to home page.");
+                } else if (!window.ScanService) {
                     alert("Scan service failed to load. Please check your connection.");
                 }
                 window.location.href = 'index.html';

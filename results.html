@@ -203,7 +203,11 @@
             
             if (imageData && window.scanService) {
                 try {
-                    const apiResult = await window.scanService.analyzeImage(imageData);
+                    // Convert base64 back to File object
+const response = await fetch(imageData);
+const blob = await response.blob();
+const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
+const apiResult = await window.ScanService.scanImage(file, 'image');
                     console.log("API Response:", apiResult);
                     displayScanResult(apiResult);
                 } catch (error) {

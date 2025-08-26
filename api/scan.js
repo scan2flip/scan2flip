@@ -86,94 +86,33 @@ export default async function handler(req, res) {
             productName = await mockProductIdentification();
         }
 
-        // Step 2: Query Google Lens with the ACTUAL image URL
-        if (imageUrl && !productName) {
-            console.log('Querying Google Lens with real image...');
-            try {
-                // Use the correct Google Lens URL format from WebScrapingHQ
-                const lensUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(imageUrl)}&hl=en&gl=us`;
-                
-                // Critical: Use all the proper headers
-                const lensResponse = await axios.get(lensUrl, {
-                    headers: {
-                        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/127.0.0.0 Safari/537.36',
-                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
-                        'Accept-Language': 'en-US,en;q=0.9',
-                        'Accept-Encoding': 'gzip, deflate, br',
-                        'DNT': '1',
-                        'Connection': 'keep-alive',
-                        'Upgrade-Insecure-Requests': '1',
-                        'Sec-Fetch-Dest': 'document',
-                        'Sec-Fetch-Mode': 'navigate',
-                        'Sec-Fetch-Site': 'none',
-                        'Sec-Fetch-User': '?1',
-                        'Cache-Control': 'max-age=0',
-                        'sec-ch-ua': '"Not)A;Brand";v="127", "Chromium";v="127"',
-                        'sec-ch-ua-mobile': '?0',
-                        'sec-ch-ua-platform': '"Windows"'
-                    },
-                    timeout: 30000,
-                    maxRedirects: 5,
-                    decompress: true // Handle gzip
-                });
-
-                const $ = cheerio.load(lensResponse.data);
-                
-                // Debug: Log what we're getting
-                console.log('Response status:', lensResponse.status);
-                console.log('HTML length:', lensResponse.data.length);
-                
-                // Try the 2025 selectors from WebScrapingHQ
-                productName = 
-                    $('div[data-item-title]').first().text().trim() ||
-                    $('div[data-product-title]').first().text().trim() ||
-                    $('h1[data-product-name]').first().text().trim() ||
-                    $('div[jsname="U8S5sf"] h1').first().text().trim() || // New selector
-                    $('div[data-visual-matches] div[role="heading"]').first().text().trim() ||
-                    $('div.Vd9M6 a').first().attr('aria-label') || // Shopping result
-                    $('div.UAiK1e').first().text().trim() || // Knowledge panel
-                    '';
-
-                // If still nothing, try to find ANY product-like text
-                if (!productName) {
-                    // Look for shopping results
-                    const shoppingTitle = $('a[href*="/shopping/"] span').first().text().trim();
-                    if (shoppingTitle) productName = shoppingTitle;
-                }
-
-                // Log all divs with data attributes to see what's available
-                if (!productName) {
-                    console.log('=== Searching for data attributes ===');
-                    $('div[data-item-title], div[data-product-name], div[data-product-title], div[data-title]').each((i, elem) => {
-                        const text = $(elem).text().trim();
-                        if (text) {
-                            console.log(`Found data attribute text: "${text}"`);
-                            if (!productName && text.length > 2 && text.length < 200) {
-                                productName = text;
-                            }
-                        }
-                    });
-                }
-
-                console.log('Google Lens identified:', productName || 'Nothing found');
-                
-            } catch (error) {
-                console.error('Google Lens query failed:', error.message);
-                if (error.response) {
-                    console.error('Response status:', error.response.status);
-                    console.error('Response headers:', error.response.headers);
-                }
-                // Fall back to mock
-                productName = await mockProductIdentification();
-            }
-        }
-
-        if (!productName) {
-            productName = 'Unknown Product - Try Better Photo';
-        }
-
-        console.log(`Product identified: "${productName}"`);
-
+        // Step 2: Use ScraperAPI to identify product
+if (!productName && imageUrl) {
+    console.log('Using ScraperAPI for product identification...');
+    try {
+        // Build Google reverse image search URL
+        const googleSearchUrl = `https://www.google.com/searchbyimage?image_url=${encodeURIComponent(imageUrl)}`;
+        
+        // Call ScraperAPI
+        const scraperUrl = `https://api.scraperapi.com/?api_key=${process.env.SCRAPERAPI_KEY}&url=${encodeURIComponent(googleSearchUrl)}&render=true&country_code=us`;
+        
+        const response = await axios.get(scraperUrl, { timeout: 30000 });
+        const html = response.data;
+        const $ = cheerio.load(html);
+        
+        // Try to find product name in Google's response
+        productName = 
+            $('h3').first().text().trim() ||
+            $('a[aria-label]').first().attr('aria-label') ||
+            $('div.g span').first().text().trim() ||
+            '';
+            
+        console.log('ScraperAPI found:', productName || 'Nothing');
+        
+    } catch (error) {
+        console.error('ScraperAPI failed:', error.message);
+    }
+}
         // Step 3: Query REAL eBay API with the product name
         let ebayData = null;
         if (EBAY_APP_ID && productName !== 'Unknown Product - Try Better Photo') {

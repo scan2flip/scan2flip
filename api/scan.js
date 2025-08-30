@@ -88,32 +88,33 @@ export default async function handler(req, res) {
                 console.log('Decodo status:', decodoResponse.status);
                 console.log('Decodo response structure:', JSON.stringify(decodoResponse.data, null, 2));
                 
-                // **FIXED BLOCK STARTS HERE**
-                // Correctly navigate the deeply nested structure based on the Vercel log.
                 const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
 
                 if (organicResults && organicResults.length > 0) {
                     const firstResult = organicResults[0];
-                    productName = firstResult.title || 'Unknown Product';
                     
-                    // Clean up common patterns in product names
-                    productName = productName
-                        .split('|')[0]
-                        .split('-')[0]
-                        .replace(/\s+on\s+.*$/i, '')
-                        .replace(/Buy Online.*$/i, '')
-                        .trim();
+                    // **FINALIZED BLOCK STARTS HERE**
+                    // This simpler, safer cleaning logic is recommended.
+                    let cleanedName = firstResult.title || 'Unknown Product';
+                    
+                    // Only remove the most problematic patterns
+                    cleanedName = cleanedName.split('|')[0];      // Remove after pipe
+                    cleanedName = cleanedName.split(' - ')[0];    // Remove after dash with spaces
+                    cleanedName = cleanedName.replace(/\s+at\s+.*$/i, ''); // Remove "at [Store]"
+                    cleanedName = cleanedName.replace(/^(Buy|Shop)\s+/i, ''); // Remove leading Buy/Shop
+                    
+                    productName = cleanedName.trim();
+                    // **FINALIZED BLOCK ENDS HERE**
                     
                     console.log('Extracted product name:', productName);
                 } else {
                     console.log('No organic results found in the expected path of the Decodo response');
-                    productName = "Unknown Product"; // Explicitly set fallback
+                    productName = "Unknown Product"; 
                 }
-                // **FIXED BLOCK ENDS HERE**
                 
             } catch (error) {
                 console.error('Decodo API error:', error.response?.status, error.response?.data || error.message);
-                productName = "Unknown Product"; // Fallback on API error
+                productName = "Unknown Product"; 
             }
         }
 

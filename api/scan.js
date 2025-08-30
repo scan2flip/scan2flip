@@ -1,148 +1,182 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Scan Results - Scan2Flip</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        .power-score-badge-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
-        .power-score-badge-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
-        .power-score-text { position: relative; font-size: 4.5rem; font-weight: 800; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .nav-icon { width: 32px; height: 32px; }
-        .nav-text { font-size: 0.75rem; }
-    </style>
-</head>
-<body class="bg-slate-900 text-slate-300">
+// api/scan.js - FINAL PRODUCTION VERSION
+import formidable from 'formidable';
+import axios from 'axios';
+import fs from 'fs';
+import FormData from 'form-data';
 
-    <div class="container mx-auto max-w-4xl pb-28">
-        <header class="text-center py-6 px-4">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Scan Results</h1>
-        </header>
+export const config = {
+    api: {
+        bodyParser: false,
+    },
+};
 
-        <main class="px-4">
-            <div id="loadingState" class="text-center py-20">
-                <svg class="animate-spin h-10 w-10 text-yellow-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <p class="mt-4 text-slate-400 font-semibold">Analyzing Market Data...</p>
-            </div>
+const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
+const EBAY_APP_ID = process.env.EBAY_APP_ID;
+const DECODO_USERNAME = process.env.DECODO_USERNAME;
+const DECODO_PASSWORD = process.env.DECODO_PASSWORD;
 
-            <div id="resultsContent" class="hidden">
-                <div class="flex flex-col items-center mb-6">
-                    <div id="powerScoreContainer" class="power-score-badge-container">
-                        <img id="powerScoreBadge" src="" alt="Power Score Badge" class="power-score-badge-bg">
-                        <span id="powerScore" class="power-score-text"></span>
-                    </div>
-                    <p class="mt-2 text-sm font-bold uppercase tracking-widest text-slate-400">POWER SCORE™</p>
-                </div>
+export default async function handler(req, res) {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+    if (req.method === 'OPTIONS') { return res.status(200).end(); }
 
-                <div class="text-center mb-6">
-                    <img id="itemImage" src="" alt="Item Image" class="w-32 h-32 object-contain rounded-lg mx-auto mb-4">
-                    <h2 id="itemName" class="text-2xl font-bold text-white"></h2>
-                </div>
+    try {
+        const form = formidable({ uploadDir: '/tmp', keepExtensions: true, maxFileSize: 10 * 1024 * 1024 });
+        const { files } = await new Promise((resolve, reject) => {
+            form.parse(req, (err, fields, files) => err ? reject(err) : resolve({ files }));
+        });
+        const imageFile = files.image?.[0] || files.image;
+        if (!imageFile) { return res.status(400).json({ error: 'No image file provided' }); }
 
-                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
-                    <h3 class="font-bold text-white mb-3 text-center">Value by Condition</h3>
-                    <div id="conditionAnalysis" class="space-y-3"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <button id="leaveItBtn" class="py-4 px-4 rounded-lg font-bold bg-red-600/20 text-red-400 hover:bg-red-600/30">Leave It</button>
-                    <button id="keepItBtn" class="py-4 px-4 rounded-lg font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30">Keep It</button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-        </nav>
-    
-    <script>
-        async function dataUrlToFile(dataUrl, fileName) {
-            const res = await fetch(dataUrl);
-            const blob = await res.blob();
-            return new File([blob], fileName, { type: blob.type });
+        let imageUrl = '';
+        if (IMGBB_API_KEY) {
+            const imgbbFormData = new FormData();
+            imgbbFormData.append('image', fs.createReadStream(imageFile.filepath));
+            const imgbbResponse = await axios.post(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, imgbbFormData, { headers: imgbbFormData.getHeaders(), timeout: 30000 });
+            imageUrl = imgbbResponse.data.data.url;
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const settings = JSON.parse(localStorage.getItem('scan2flip-settings')) || { profitMargin: 0.50, platformFee: 0.15, shippingCost: 8.00 };
-            
-            function calculateWorthPaying(avgSalePrice) {
-                const profit = avgSalePrice * settings.profitMargin;
-                const fees = avgSalePrice * settings.platformFee;
-                const worth = avgSalePrice - fees - settings.shippingCost - profit;
-                return worth > 0 ? worth.toFixed(2) : '0.00';
-            }
-            
-            function analyzeSoldListings(listings) {
-                const conditions = { 'New': [], 'Used': [], 'For parts': [] };
-                listings.forEach(l => { if (conditions[l.condition]) conditions[l.condition].push(l.price); });
-                const analysis = {};
-                for (const cond in conditions) {
-                    if (conditions[cond].length > 0) {
-                        analysis[cond] = {
-                            avgPrice: conditions[cond].reduce((a, b) => a + b, 0) / conditions[cond].length,
-                            count: conditions[cond].length
-                        };
-                    }
+        let productName = 'Unknown Product';
+        if (DECODO_USERNAME && DECODO_PASSWORD && imageUrl) {
+            try {
+                const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
+                const decodoResponse = await axios.post('https://scraper-api.decodo.com/v2/scrape', { target: 'google_lens', query: imageUrl, parse: true }, { headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }, timeout: 30000 });
+                const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
+                
+                if (organicResults && organicResults.length > 0) {
+                    let bestTitle = organicResults[0].title || 'Unknown Product';
+                    // **FINAL, SIMPLIFIED CLEANING LOGIC**
+                    productName = bestTitle.split('|')[0].trim();
                 }
-                return analysis;
-            }
+            } catch (error) { console.error('Decodo API error:', error.message); }
+        }
+        
+        if (productName.toLowerCase().startsWith('unknown product')) {
+            fs.unlinkSync(imageFile.filepath);
+            return res.status(422).json({ error: 'Low confidence in automated result.' });
+        }
 
-            function displayScanResult(data) {
-                const analysis = analyzeSoldListings(data.soldListings || []);
-                document.getElementById('itemName').textContent = data.productName;
-                document.getElementById('itemImage').src = data.imageUrl;
-                document.getElementById('powerScore').textContent = data.powerScore;
+        const ebayData = await getEbayData(productName, EBAY_APP_ID);
+        const powerScore = calculatePowerScore(ebayData);
+        const imageBase64 = fs.readFileSync(imageFile.filepath, { encoding: 'base64' });
+        
+        const result = {
+            productName: productName,
+            imageUrl: `data:${imageFile.mimetype || 'image/jpeg'};base64,${imageBase64}`,
+            powerScore: powerScore,
+            soldListings: ebayData.soldListings,
+            sellThroughRate: ebayData.sellThroughRate,
+            activeListings: ebayData.totalActive,
+            timestamp: new Date().toISOString()
+        };
 
-                const scoreBadge = document.getElementById('powerScoreBadge');
-                if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
-                else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
-                else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
-                else { scoreBadge.src = 'icons/red-badge.png'; }
+        fs.unlinkSync(imageFile.filepath);
+        res.status(200).json(result);
 
-                const conditionContainer = document.getElementById('conditionAnalysis');
-                conditionContainer.innerHTML = '';
-                const conditionOrder = ['New', 'Used', 'For parts'];
-                conditionOrder.forEach(cond => {
-                    if (analysis[cond]) {
-                        const worth = calculateWorthPaying(analysis[cond].avgPrice);
-                        conditionContainer.innerHTML += `<div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md"><div><p class="font-semibold text-white">${cond}</p><p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth}</span></p></div><p class="text-lg font-bold text-green-400">$${analysis[cond].avgPrice.toFixed(2)}</p></div>`;
-                    }
-                });
+    } catch (error) {
+        console.error('Handler Error:', error);
+        res.status(500).json({ error: error.message });
+    }
+}
 
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultsContent').classList.remove('hidden');
-                document.getElementById('leaveItBtn').onclick = () => window.location.href = 'index.html';
-            }
+// **REDESIGNED EBAY DATA FUNCTION**
+async function getEbayData(productName, appId) {
+    if (!appId) return { soldListings: {}, sellThroughRate: 0, totalActive: 0 };
 
-            const imageData = localStorage.getItem('pendingScanImage');
-            if (imageData) {
-                try {
-                    const file = await dataUrlToFile(imageData, 'scan.jpg');
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    const apiResponse = await fetch('/api/scan', { method: 'POST', body: formData });
-                    
-                    if (apiResponse.ok) {
-                        const resultData = await apiResponse.json();
-                        displayScanResult(resultData);
-                    } else {
-                        throw new Error(`Server responded with status: ${apiResponse.status}`);
-                    }
-                } catch (error) {
-                    console.error("API call process failed:", error);
-                    alert("A network error occurred. Please check your connection and try again.");
-                    window.location.href = 'index.html';
-                } finally {
-                    localStorage.removeItem('pendingScanImage');
-                }
-            } else {
-                alert("No image data found for scanning. Redirecting home.");
-                window.location.href = 'index.html';
+    try {
+        const ninetyDaysAgo = new Date();
+        ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
+        // eBay Finding API requires UTC format, which toISOString() provides.
+        const endTimeFrom = ninetyDaysAgo.toISOString();
+
+        // 1. Get SOLD listings from the last 90 days
+        const soldResponse = await axios.get('https://svcs.ebay.com/services/search/FindingService/v1', {
+            params: {
+                'OPERATION-NAME': 'findCompletedItems',
+                'SERVICE-VERSION': '1.0.0',
+                'SECURITY-APPNAME': appId,
+                'RESPONSE-DATA-FORMAT': 'JSON',
+                'keywords': productName,
+                'itemFilter(0).name': 'SoldItemsOnly',
+                'itemFilter(0).value': 'true',
+                'itemFilter(1).name': 'EndTimeFrom',
+                'itemFilter(1).value': endTimeFrom
             }
         });
-    </script>
-</body>
-</html>
+        const soldItems = soldResponse.data.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || [];
+        const totalSold = soldItems.length;
+
+        // 2. Get ACTIVE listings
+        const activeResponse = await axios.get('https://svcs.ebay.com/services/search/FindingService/v1', {
+            params: {
+                'OPERATION-NAME': 'findItemsAdvanced',
+                'SERVICE-VERSION': '1.0.0',
+                'SECURITY-APPNAME': appId,
+                'RESPONSE-DATA-FORMAT': 'JSON',
+                'keywords': productName
+            }
+        });
+        const activeItems = activeResponse.data.findItemsAdvancedResponse?.[0]?.searchResult?.[0]?.item || [];
+        const totalActive = activeItems.length;
+
+        // 3. Categorize sold items by Condition ID
+        const categorizedSold = { 'New': [], 'Used': [], 'For parts': [] };
+        soldItems.forEach(item => {
+            const conditionId = parseInt(item.condition?.[0]?.conditionId?.[0] || '3000');
+            const price = parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || 0);
+            if (price > 0) {
+                if (conditionId <= 1500) { categorizedSold['New'].push(price); } 
+                else if (conditionId === 7000) { categorizedSold['For parts'].push(price); } 
+                else { categorizedSold['Used'].push(price); }
+            }
+        });
+
+        // 4. Calculate averages for each condition
+        const conditionAnalysis = {};
+        for (const [condition, prices] of Object.entries(categorizedSold)) {
+            if (prices.length > 0) {
+                conditionAnalysis[condition] = {
+                    avgPrice: prices.reduce((a, b) => a + b, 0) / prices.length,
+                    count: prices.length
+                };
+            }
+        }
+
+        // 5. Calculate true Sell-Through Rate
+        const sellThroughRate = (totalSold + totalActive > 0) ? (totalSold / (totalSold + totalActive)) * 100 : 0;
+
+        return {
+            soldListings: conditionAnalysis,
+            sellThroughRate: sellThroughRate,
+            totalActive: totalActive,
+            totalSold: totalSold
+        };
+
+    } catch (error) {
+        console.error(`eBay API failed for "${productName}":`, error.message);
+        return { soldListings: {}, sellThroughRate: 0, totalActive: 0, totalSold: 0 };
+    }
+}
+
+// **UPDATED POWER SCORE CALCULATION**
+function calculatePowerScore(ebayData) {
+    const sellThroughRate = ebayData.sellThroughRate || 0;
+    const soldData = ebayData.soldListings || {};
+    
+    const primaryCondition = soldData['Used'] || soldData['New'] || { avgPrice: 0, count: 0 };
+    const avgPrice = primaryCondition.avgPrice;
+    const totalSold = ebayData.totalSold || 0; // Use total sold for volume, not just one condition
+    
+    let score = 0;
+    if (avgPrice > 100) score += 40; else if (avgPrice > 60) score += 35; else if (avgPrice > 30) score += 25; else if (avgPrice > 15) score += 15; else score += 8;
+    if (sellThroughRate > 60) score += 40; else if (sellThroughRate > 40) score += 32; else if (sellThroughRate > 20) score += 24; else if (sellThroughRate > 10) score += 16; else score += 8;
+    if (totalSold > 50) score += 20; else if (totalSold > 25) score += 16; else if (totalSold > 10) score += 12; else if (totalSold > 5) score += 8; else score += 4;
+    
+    // Bonus for a strong "For parts" market, indicating part-out potential
+    if (soldData['For parts'] && soldData['For parts'].avgPrice > 20) {
+        score += 10;
+    }
+    
+    return Math.min(Math.round(score), 100);
+}

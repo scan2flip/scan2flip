@@ -1,97 +1,225 @@
-<script>
-    document.addEventListener('DOMContentLoaded', async () => {
-        // --- USER SETTINGS (placeholder) ---
-        const userSettings = {
-            minProfitMargin: 0.50, // 50%
-            platformFee: 0.15,     // 15%
-            shippingCost: 8.00     // $8
-        };
-        
-        // This function calculates the max price you should pay
-        function calculateWorthPaying(avgSalePrice) {
-            const profit = avgSalePrice * userSettings.minProfitMargin;
-            const fees = avgSalePrice * userSettings.platformFee;
-            return avgSalePrice - fees - userSettings.shippingCost - profit;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Scan Results - Scan2Flip</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #cbd5e1;
         }
-        
-        function displayScanResult(data) {
-            // The API now sends pre-analyzed data in `conditionAnalysis`
-            const analysis = data.conditionAnalysis;
+        .power-score-badge-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
+        .power-score-badge-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
+        .power-score-text { position: relative; font-size: 4.5rem; font-weight: 800; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .tooltip-container { position: relative; display: inline-flex; align-items: center; }
+        .tooltip-text { visibility: hidden; width: 220px; background-color: #334155; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 1; bottom: 125%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-size: 0.8rem; }
+        .tooltip-container:hover .tooltip-text { visibility: visible; opacity: 1; }
+        .nav-icon { width: 32px; height: 32px; }
+        .nav-text { font-size: 0.75rem; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-300">
 
-            document.getElementById('itemName').textContent = data.productName;
-            document.getElementById('itemImage').src = data.imageUrl;
+    <div class="container mx-auto max-w-4xl pb-28">
+        <header class="text-center py-6 px-4">
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Scan Results</h1>
+        </header>
 
-            const scoreText = document.getElementById('powerScore');
-            const scoreBadge = document.getElementById('powerScoreBadge');
-            scoreText.textContent = data.powerScore;
-            
-            if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
-            else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
-            else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
-            else { scoreBadge.src = 'icons/red-badge.png'; }
+        <main class="px-4">
+            <div id="loadingState" class="text-center py-20">
+                <svg class="animate-spin h-10 w-10 text-yellow-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <p class="mt-4 text-slate-400 font-semibold">Analyzing Market Data...</p>
+            </div>
 
-            const conditionContainer = document.getElementById('conditionAnalysis');
-            conditionContainer.innerHTML = '';
-            
-            // Define the order for display
-            const conditionOrder = ['New', 'Used', 'For parts'];
+            <div id="resultsContent" class="hidden">
+                <div class="flex flex-col items-center mb-6">
+                    <div id="powerScoreContainer" class="power-score-badge-container">
+                        <img id="powerScoreBadge" src="" alt="Power Score Badge" class="power-score-badge-bg">
+                        <span id="powerScore" class="power-score-text"></span>
+                    </div>
+                    <p class="mt-2 text-sm font-bold uppercase tracking-widest text-slate-400">POWER SCORE™</p>
+                </div>
 
-            conditionOrder.forEach(cond => {
-                if (analysis[cond]) {
-                    const worth = calculateWorthPaying(analysis[cond].avgPrice);
-                    conditionContainer.innerHTML += `
-                        <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md">
-                            <div>
-                                <p class="font-semibold text-white">${cond}</p>
-                                <p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth > 0 ? worth.toFixed(2) : '0.00'}</span></p>
-                            </div>
-                            <p class="text-lg font-bold text-green-400">$${analysis[cond].avgPrice.toFixed(2)}</p>
-                        </div>
-                    `;
-                }
-            });
+                <div class="text-center mb-6">
+                    <img id="itemImage" src="" alt="Item Image" class="w-32 h-32 object-contain rounded-lg mx-auto mb-4">
+                    <h2 id="itemName" class="text-2xl font-bold text-white"></h2>
+                </div>
 
-            // The rest of your UI logic for buttons, etc.
-            document.getElementById('loadingState').classList.add('hidden');
-            document.getElementById('resultsContent').classList.remove('hidden');
+                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
+                    <h3 class="font-bold text-white mb-3 text-center">Value by Condition</h3>
+                    <div id="conditionAnalysis" class="space-y-3"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button id="leaveItBtn" class="py-4 px-4 rounded-lg font-bold bg-red-600/20 text-red-400 hover:bg-red-600/30">Leave It</button>
+                    <button id="keepItBtn" class="py-4 px-4 rounded-lg font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30">Keep It</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
+        <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
+            <img class="nav-icon mb-1" src="icons/home.png" alt="Home">
+            <span class="nav-text font-semibold">Home</span>
+        </a>
+        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full">
+            <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory">
+            <span class="nav-text font-medium">Inventory</span>
+        </a>
+        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full">
+            <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses">
+            <span class="nav-text font-medium">Expenses</span>
+        </a>
+        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full">
+            <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage">
+            <span class="nav-text font-medium">Mileage</span>
+        </a>
+        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full">
+            <img class="nav-icon mb-1" src="icons/more.png" alt="More">
+            <span class="nav-text">More</span>
+        </a>
+    </nav>
+    
+    <script>
+        // Helper function to convert a Base64 data URL to a File object
+        async function dataUrlToFile(dataUrl, fileName) {
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+            return new File([blob], fileName, { type: blob.type });
         }
 
-        // --- API Call Logic ---
-        const imageData = localStorage.getItem('pendingScanImage');
-        if (imageData) {
-            const response = await fetch(imageData);
-            const blob = await response.blob();
-            const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
+        document.addEventListener('DOMContentLoaded', async () => {
+            // --- USER SETTINGS (from localStorage or defaults) ---
+            const settings = JSON.parse(localStorage.getItem('scan2flip-settings')) || {
+                profitMargin: 0.50, // 50%
+                platformFee: 0.15,     // 15%
+                shippingCost: 8.00     // $8
+            };
             
-            const formData = new FormData();
-            formData.append('image', file);
-            
-            try {
-                // Call your Vercel serverless function
-                const apiResponse = await fetch('/api/scan', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                if (apiResponse.ok) {
-                    const resultData = await apiResponse.json();
-                    displayScanResult(resultData);
-                } else {
-                    // Handle API errors (like low confidence)
-                    const errorData = await apiResponse.json();
-                    alert(`Analysis failed: ${errorData.error || 'Please try again.'}`);
-                    window.location.href = 'index.html';
-                }
-            } catch (error) {
-                console.error("API call failed:", error);
-                alert("There was an issue analyzing the image. Displaying sample data.");
-                // displayScanResult(mockScanData); // You can keep your mock data for fallback
-            } finally {
-                localStorage.removeItem('pendingScanImage');
+            // This function calculates the max price you should pay based on your settings
+            function calculateWorthPaying(avgSalePrice) {
+                const profit = avgSalePrice * settings.profitMargin;
+                const fees = avgSalePrice * settings.platformFee;
+                const worth = avgSalePrice - fees - settings.shippingCost - profit;
+                return worth > 0 ? worth.toFixed(2) : '0.00';
             }
-        } else {
-            alert("No image data found. Redirecting home.");
-            window.location.href = 'index.html';
-        }
-    });
-</script>
+            
+            // This function renders the final results to the page
+            function displayScanResult(data) {
+                const analysis = data.conditionAnalysis;
+                document.getElementById('itemName').textContent = data.productName;
+                document.getElementById('itemImage').src = data.imageUrl;
+
+                const scoreText = document.getElementById('powerScore');
+                const scoreBadge = document.getElementById('powerScoreBadge');
+                scoreText.textContent = data.powerScore;
+                
+                if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
+                else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
+                else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
+                else { scoreBadge.src = 'icons/red-badge.png'; }
+
+                const conditionContainer = document.getElementById('conditionAnalysis');
+                conditionContainer.innerHTML = '';
+                
+                const conditionOrder = ['New', 'Used', 'For parts'];
+
+                conditionOrder.forEach(cond => {
+                    const conditionKey = (cond === 'For parts') ? 'For parts' : cond;
+                    if (analysis[conditionKey]) {
+                        const worth = calculateWorthPaying(analysis[conditionKey].avgPrice);
+                        conditionContainer.innerHTML += `
+                            <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md">
+                                <div>
+                                    <p class="font-semibold text-white">${cond}</p>
+                                    <p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth}</span></p>
+                                </div>
+                                <p class="text-lg font-bold text-green-400">$${analysis[conditionKey].avgPrice.toFixed(2)}</p>
+                            </div>
+                        `;
+                    }
+                });
+
+                document.getElementById('loadingState').classList.add('hidden');
+                document.getElementById('resultsContent').classList.remove('hidden');
+
+                // Add functionality to action buttons
+                document.getElementById('leaveItBtn').onclick = () => window.location.href = 'index.html';
+                document.getElementById('keepItBtn').onclick = () => {
+                    const primaryCondition = analysis['Used'] || analysis['New'] || { avgPrice: 1.00 };
+                    const suggestedCost = calculateWorthPaying(primaryCondition.avgPrice);
+                    const cost = prompt(`Enter your purchase cost for "${data.productName}":`, suggestedCost);
+                    if (cost !== null && !isNaN(parseFloat(cost))) {
+                        // This function is in a separate inventory-manager.js file or similar
+                        addToInventory(data, parseFloat(cost));
+                    }
+                };
+            }
+
+            function addToInventory(scanData, purchaseCost) {
+                let inventory = JSON.parse(localStorage.getItem('scan2flip-inventory')) || [];
+                const newItem = {
+                    id: Date.now(),
+                    name: scanData.productName,
+                    source: 'Scanned Item',
+                    purchaseDate: new Date().toISOString().slice(0, 10),
+                    cost: purchaseCost,
+                    notes: '',
+                    image: scanData.imageUrl,
+                    receipt: null,
+                    status: 'Unlisted',
+                    soldInfo: null
+                };
+                inventory.unshift(newItem); // Add to the beginning
+                localStorage.setItem('scan2flip-inventory', JSON.stringify(inventory));
+                alert(`${scanData.productName} added to your 'Unlisted' inventory!`);
+                window.location.href = 'inventory.html';
+            }
+
+            // --- Main API Call Logic ---
+            const imageData = localStorage.getItem('pendingScanImage');
+            if (imageData) {
+                try {
+                    // **THIS IS THE FIXED PART**
+                    // Correctly convert the Base64 data to a File object before sending
+                    const file = await dataUrlToFile(imageData, 'scan.jpg');
+                    
+                    const formData = new FormData();
+                    formData.append('image', file);
+                    
+                    const apiResponse = await fetch('/api/scan', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (apiResponse.ok) {
+                        const resultData = await apiResponse.json();
+                        displayScanResult(resultData);
+                    } else {
+                        const errorData = await apiResponse.json();
+                        alert(`Analysis failed: ${errorData.error || 'The server returned an error.'}`);
+                        window.location.href = 'index.html';
+                    }
+                } catch (error) {
+                    console.error("API call process failed:", error);
+                    alert("A network error occurred. Please check your connection and try again.");
+                    window.location.href = 'index.html';
+                } finally {
+                    localStorage.removeItem('pendingScanImage');
+                }
+            } else {
+                alert("No image data found for scanning. Redirecting home.");
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,8 +1,8 @@
-// api/scan.js - Complete working version
+// api/scan.js - Complete version with Decodo Google Lens
 import formidable from 'formidable';
 import axios from 'axios';
-import FormData from 'form-data';
 import fs from 'fs';
+import FormData from 'form-data';
 
 export const config = {
     api: {
@@ -10,12 +10,12 @@ export const config = {
     },
 };
 
-// Environment variables from Vercel
 const IMGBB_API_KEY = process.env.IMGBB_API_KEY;
 const EBAY_APP_ID = process.env.EBAY_APP_ID;
+const DECODO_USERNAME = process.env.DECODO_USERNAME;
+const DECODO_PASSWORD = process.env.DECODO_PASSWORD;
 
 export default async function handler(req, res) {
-    // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -24,12 +24,7 @@ export default async function handler(req, res) {
         return res.status(200).end();
     }
 
-    if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
-    }
-
     try {
-        // Parse the form data
         const form = formidable({
             uploadDir: '/tmp',
             keepExtensions: true,
@@ -43,68 +38,82 @@ export default async function handler(req, res) {
             });
         });
 
-        const scanId = `scan_${Date.now()}`;
         const imageFile = files.image?.[0] || files.image;
-        
         if (!imageFile) {
             return res.status(400).json({ error: 'No image file provided' });
         }
 
-        console.log(`Processing scan ${scanId}`);
-
-        // Step 1: Upload image to ImgBB (this works)
+        // Step 1: Upload to ImgBB
         let imageUrl = '';
         if (IMGBB_API_KEY) {
-            console.log('Uploading to ImgBB...');
             const imgbbFormData = new FormData();
             imgbbFormData.append('image', fs.createReadStream(imageFile.filepath));
 
+            const imgbbResponse = await axios.post(
+                `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
+                imgbbFormData,
+                { headers: imgbbFormData.getHeaders(), timeout: 30000 }
+            );
+            
+            imageUrl = imgbbResponse.data.data.url;
+            console.log('Image uploaded to ImgBB:', imageUrl);
+        }
+
+        // Step 2: Use Decodo Google Lens to identify product
+        let productName = 'Unknown Product';
+        
+        if (DECODO_USERNAME && DECODO_PASSWORD && imageUrl) {
             try {
-                const imgbbResponse = await axios.post(
-                    `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
-                    imgbbFormData,
-                    { 
-                        headers: imgbbFormData.getHeaders(),
-                        timeout: 30000 
-                    }
-                );
+                const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
                 
-                imageUrl = imgbbResponse.data.data.url;
-                console.log('Image uploaded successfully');
+                // Call Decodo's Google Lens API
+                const decodoResponse = await axios.post('https://scraper-api.decodo.com/v2/scrape', {
+                    target: 'google_lens',
+                    query: imageUrl,
+                    parse: true
+                }, {
+                    headers: {
+                        'Authorization': `Basic ${auth}`,
+                        'Content-Type': 'application/json'
+                    },
+                    timeout: 30000
+                });
+
+                // Parse the Google Lens response
+                if (decodoResponse.data && decodoResponse.data.results) {
+                    const results = decodoResponse.data.results;
+                    
+                    // Get product name from organic results
+                    if (results.organic && results.organic.length > 0) {
+                        // Extract product name from the first result
+                        productName = results.organic[0].title || 'Unknown Product';
+                        // Clean up the product name
+                        productName = productName.split('|')[0].trim();
+                        productName = productName.replace(/\s+on\s+.*$/i, '').trim();
+                    }
+                }
+                
+                console.log('Decodo identified product as:', productName);
+                
             } catch (error) {
-                console.error('ImgBB upload failed:', error.message);
+                console.error('Decodo Google Lens failed:', error.response?.data || error.message);
             }
         }
 
-        // Step 2: Simple product identification
-        // For now, just use a product name from the request or default
-        let productName = fields.productName?.[0] || fields.productName || 'Sony PlayStation Console';
+        // Step 3: Get eBay data
+        const ebayData = await getEbayData(productName, EBAY_APP_ID);
 
-        // Step 3: Get eBay data with proper error handling
-        let ebayData = null;
-        if (EBAY_APP_ID) {
-            console.log('Getting eBay data for:', productName);
-            ebayData = await getEbayData(productName, EBAY_APP_ID);
-        } else {
-            console.log('No eBay API key, using mock data');
-            ebayData = getMockData(productName);
-        }
-
-        // Step 4: Detect valuable parts
+        // Step 4: Calculate Power Score
         const partsData = detectValuableParts(productName);
-
-        // Step 5: Calculate Power Score
         const powerScore = calculatePowerScore(ebayData, partsData);
 
-        // Step 6: Prepare response
+        // Step 5: Return results
         const imageBase64 = fs.readFileSync(imageFile.filepath, { encoding: 'base64' });
         
         const result = {
-            scanId: scanId,
+            scanId: `scan_${Date.now()}`,
             productName: productName,
             imageUrl: `data:${imageFile.mimetype || 'image/jpeg'};base64,${imageBase64}`,
-            barcode: null,
-            scanMethod: 'image',
             powerScore: powerScore,
             soldListings: ebayData.soldListings || [],
             activeListings: ebayData.activeListings || 10,
@@ -112,29 +121,22 @@ export default async function handler(req, res) {
             timestamp: new Date().toISOString()
         };
 
-        // Clean up temp file
-        try {
-            fs.unlinkSync(imageFile.filepath);
-        } catch (e) {
-            console.error('Cleanup error:', e);
-        }
-
-        console.log('Scan completed successfully');
+        fs.unlinkSync(imageFile.filepath);
         res.status(200).json(result);
 
     } catch (error) {
-        console.error('Scan API Error:', error);
-        res.status(500).json({ 
-            error: 'Failed to process scan',
-            message: error.message
-        });
+        console.error('Error:', error);
+        res.status(500).json({ error: error.message });
     }
 }
 
-// Simplified eBay API call that actually works
+// Get eBay data
 async function getEbayData(productName, appId) {
+    if (!appId) {
+        return getMockData(productName);
+    }
+    
     try {
-        // Use the Finding API with minimal parameters to avoid timeouts
         const url = 'https://svcs.ebay.com/services/search/FindingService/v1';
         
         const params = {
@@ -148,23 +150,17 @@ async function getEbayData(productName, appId) {
             'itemFilter(0).name': 'SoldItemsOnly',
             'itemFilter(0).value': 'true'
         };
-
-        console.log('Calling eBay API...');
         
         const response = await axios.get(url, {
             params: params,
-            timeout: 8000 // 8 second timeout
+            timeout: 8000
         });
 
-        // Parse the response
         const data = response.data;
         if (data.findCompletedItemsResponse && data.findCompletedItemsResponse[0]) {
             const searchResult = data.findCompletedItemsResponse[0].searchResult?.[0];
             const items = searchResult?.item || [];
             
-            console.log(`Found ${items.length} sold items`);
-            
-            // Convert to our format
             const soldListings = items.map(item => {
                 const price = parseFloat(item.sellingStatus?.[0]?.currentPrice?.[0]?.__value__ || 0);
                 const condition = item.condition?.[0]?.conditionDisplayName?.[0] || 'Used';
@@ -175,14 +171,13 @@ async function getEbayData(productName, appId) {
                 };
             }).filter(item => item.price > 0);
 
-            // Calculate average price
             const avgPrice = soldListings.length > 0 
                 ? soldListings.reduce((sum, item) => sum + item.price, 0) / soldListings.length 
                 : 0;
 
             return {
                 soldListings: soldListings,
-                activeListings: 15, // Default estimate
+                activeListings: 15,
                 avgPrice: avgPrice,
                 totalSold: soldListings.length
             };
@@ -192,15 +187,12 @@ async function getEbayData(productName, appId) {
         
     } catch (error) {
         console.error('eBay API failed:', error.message);
-        // Return mock data as fallback
         return getMockData(productName);
     }
 }
 
 // Mock data fallback
 function getMockData(productName) {
-    console.log('Using mock data for:', productName);
-    
     const basePrice = 30 + Math.random() * 70;
     const numListings = 5 + Math.floor(Math.random() * 10);
     
@@ -223,7 +215,7 @@ function getMockData(productName) {
     };
 }
 
-// Map eBay conditions to our standard format
+// Map conditions
 function mapCondition(ebayCondition) {
     const conditionMap = {
         'New': 'New',
@@ -240,7 +232,7 @@ function mapCondition(ebayCondition) {
     return conditionMap[ebayCondition] || 'Used';
 }
 
-// Detect valuable parts based on product
+// Detect valuable parts
 function detectValuableParts(productName) {
     const productLower = productName.toLowerCase();
     
@@ -258,17 +250,10 @@ function detectValuableParts(productName) {
         ];
     }
     
-    if (productLower.includes('camera')) {
+    if (productLower.includes('onitsuka') || productLower.includes('tiger')) {
         return [
-            { name: 'Original Lens', avgPrice: 85, sellThrough: 90 },
-            { name: 'Battery Pack', avgPrice: 25, sellThrough: 80 }
-        ];
-    }
-    
-    if (productLower.includes('vcr') || productLower.includes('walkman')) {
-        return [
-            { name: 'Original Remote', avgPrice: 28, sellThrough: 95 },
-            { name: 'AV Cables', avgPrice: 12, sellThrough: 70 }
+            { name: 'Original Box', avgPrice: 15, sellThrough: 80 },
+            { name: 'Extra Laces', avgPrice: 8, sellThrough: 70 }
         ];
     }
     
@@ -286,28 +271,24 @@ function calculatePowerScore(ebayData, partsData) {
     
     let score = 0;
     
-    // Price component (40%)
     if (avgPrice > 100) score += 40;
     else if (avgPrice > 60) score += 35;
     else if (avgPrice > 30) score += 25;
     else if (avgPrice > 15) score += 15;
     else score += 8;
     
-    // Sell-through rate (40%)
     if (sellThroughRate > 80) score += 40;
     else if (sellThroughRate > 60) score += 32;
     else if (sellThroughRate > 40) score += 24;
     else if (sellThroughRate > 20) score += 16;
     else score += 8;
     
-    // Volume (10%)
     if (soldListings > 50) score += 10;
     else if (soldListings > 25) score += 8;
     else if (soldListings > 10) score += 6;
     else if (soldListings > 5) score += 4;
     else score += 2;
     
-    // Parts bonus (10%)
     if (partsData && partsData.length > 0) {
         const avgPartPrice = partsData.reduce((sum, part) => sum + part.avgPrice, 0) / partsData.length;
         if (avgPartPrice > 30) score += 10;

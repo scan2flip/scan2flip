@@ -1,4 +1,4 @@
-// api/scan.js - DEFINITIVE PRODUCTION VERSION
+// api/scan.js - FINAL, VERIFIED VERSION
 import formidable from 'formidable';
 import axios from 'axios';
 import fs from 'fs';
@@ -29,7 +29,7 @@ function cleanProductName(title) {
     // 1. Remove leading action verbs that cause API errors.
     productName = productName.replace(/^(buy|shop|get|find|purchase|order)\s+/i, '');
 
-    // 2. **INTELLIGENT SPLIT:** Only split on '|' if the second part looks like junk metadata.
+    // 2. INTELLIGENT SPLIT: Only split on '|' if the second part looks like junk metadata.
     if (productName.includes(' | ')) {
         const parts = productName.split(' | ');
         if (parts.length > 1 && parts[1].match(/shipping|store|shop|online|sale|discount|best price/i)) {
@@ -46,7 +46,7 @@ function cleanProductName(title) {
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); // FIXED: Added missing quote
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') { return res.status(200).end(); }
 
@@ -70,7 +70,13 @@ export default async function handler(req, res) {
         if (DECODO_USERNAME && DECODO_PASSWORD && imageUrl) {
             try {
                 const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
-                const decodoResponse = await axios.post('https://scraper-api.decodo.com/v2/scrape', { target: 'google_lens', query: imageUrl, parse: true }, { headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }, timeout: 30000 });
+                const decodoResponse = await axios.post('https://scraper-api.decodo.com/v2/scrape', 
+                    { target: 'google_lens', query: imageUrl, parse: true }, 
+                    { 
+                        headers: { 'Authorization': `Basic ${auth}`, 'Content-Type': 'application/json' }, 
+                        timeout: 60000 // CHANGED: Increased timeout to 60 seconds
+                    }
+                );
                 const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
                 
                 if (organicResults && organicResults.length > 0) {
@@ -186,7 +192,6 @@ async function getEbayData(productName, appId) {
     }
 }
 
-// COMPLETE POWER SCORE CALCULATION
 function calculatePowerScore(ebayData) {
     const sellThroughRate = ebayData.sellThroughRate || 0;
     const soldData = ebayData.soldListings || {};

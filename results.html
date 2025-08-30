@@ -1,164 +1,95 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Scan Results - Scan2Flip</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #0f172a; color: #cbd5e1; }
-        .power-score-badge-container { position: relative; width: 200px; height: 200px; display: flex; align-items: center; justify-content: center; }
-        .power-score-badge-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain; }
-        .power-score-text { position: relative; font-size: 4.5rem; font-weight: 800; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
-        .nav-icon { width: 32px; height: 32px; }
-        .nav-text { font-size: 0.75rem; }
-    </style>
-</head>
-<body class="bg-slate-900 text-slate-300">
+<script>
+    // This function is still needed to create a File object for the API call
+    function dataUrlToFile(dataUrl, fileName) {
+        const arr = dataUrl.split(',');
+        const mimeMatch = arr[0].match(/:(.*?);/);
+        if (!mimeMatch) { return null; }
+        const mime = mimeMatch[1];
+        const bstr = atob(arr[1]);
+        let n = bstr.length;
+        const u8arr = new Uint8Array(n);
+        while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+        }
+        const blob = new Blob([u8arr], { type: mime });
+        return new File([blob], fileName, { type: mime });
+    }
 
-    <div class="container mx-auto max-w-4xl pb-28">
-        <header class="text-center py-6 px-4">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Scan Results</h1>
-        </header>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const settings = JSON.parse(localStorage.getItem('scan2flip-settings')) || { profitMargin: 0.50, platformFee: 0.15, shippingCost: 8.00 };
+        
+        function calculateWorthPaying(avgSalePrice) {
+            const profit = avgSalePrice * settings.profitMargin;
+            const fees = avgSalePrice * settings.platformFee;
+            const worth = avgSalePrice - fees - settings.shippingCost - profit;
+            return worth > 0 ? worth.toFixed(2) : '0.00';
+        }
+        
+        function displayScanResult(data) {
+            const analysis = data.soldListings || {}; 
+            
+            document.getElementById('itemName').textContent = data.productName;
+            document.getElementById('itemImage').src = data.imageUrl;
+            document.getElementById('powerScore').textContent = data.powerScore;
 
-        <main class="px-4">
-            <div id="loadingState" class="text-center py-20">
-                <svg class="animate-spin h-10 w-10 text-yellow-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                <p class="mt-4 text-slate-400 font-semibold">Analyzing Market Data...</p>
-            </div>
+            const scoreBadge = document.getElementById('powerScoreBadge');
+            if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
+            else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
+            else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
+            else { scoreBadge.src = 'icons/red-badge.png'; }
 
-            <div id="resultsContent" class="hidden">
-                <div class="flex flex-col items-center mb-6">
-                    <div id="powerScoreContainer" class="power-score-badge-container">
-                        <img id="powerScoreBadge" src="" alt="Power Score Badge" class="power-score-badge-bg">
-                        <span id="powerScore" class="power-score-text"></span>
-                    </div>
-                    <p class="mt-2 text-sm font-bold uppercase tracking-widest text-slate-400">POWER SCORE™</p>
-                </div>
+            const conditionContainer = document.getElementById('conditionAnalysis');
+            conditionContainer.innerHTML = '';
+            
+            const conditionOrder = ['New', 'Used', 'For parts'];
+            let conditionsFound = 0;
+            
+            conditionOrder.forEach(cond => {
+                if (analysis[cond] && analysis[cond].count > 0) {
+                    conditionsFound++;
+                    const worth = calculateWorthPaying(analysis[cond].avgPrice);
+                    const avgPriceFormatted = analysis[cond].avgPrice.toFixed(2);
+                    conditionContainer.innerHTML += `<div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md"><div><p class="font-semibold text-white">${cond}</p><p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth}</span></p></div><p class="text-lg font-bold text-green-400">$${avgPriceFormatted}</p></div>`;
+                }
+            });
 
-                <div class="text-center mb-6">
-                    <img id="itemImage" src="" alt="Item Image" class="w-32 h-32 object-contain rounded-lg mx-auto mb-4">
-                    <h2 id="itemName" class="text-2xl font-bold text-white"></h2>
-                </div>
-
-                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
-                    <h3 class="font-bold text-white mb-3 text-center">Value by Condition</h3>
-                    <div id="conditionAnalysis" class="space-y-3"></div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <button id="leaveItBtn" class="py-4 px-4 rounded-lg font-bold bg-red-600/20 text-red-400 hover:bg-red-600/30">Leave It</button>
-                    <button id="keepItBtn" class="py-4 px-4 rounded-lg font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30">Keep It</button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-        </nav>
-    
-    <script>
-        function dataUrlToFile(dataUrl, fileName) {
-            const arr = dataUrl.split(',');
-            const mimeMatch = arr[0].match(/:(.*?);/);
-            if (!mimeMatch) { return null; }
-            const mime = mimeMatch[1];
-            const bstr = atob(arr[1]);
-            let n = bstr.length;
-            const u8arr = new Uint8Array(n);
-            while (n--) {
-                u8arr[n] = bstr.charCodeAt(n);
+            if (conditionsFound === 0) {
+                conditionContainer.innerHTML = `<p class="text-center text-slate-400">No recent sales data found to determine value.</p>`;
             }
-            const blob = new Blob([u8arr], { type: mime });
-            return new File([blob], fileName, { type: mime });
+
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultsContent').classList.remove('hidden');
+            document.getElementById('leaveItBtn').onclick = () => window.location.href = 'index.html';
+            document.getElementById('keepItBtn').onclick = () => window.location.href = 'index.html'; 
         }
 
-        document.addEventListener('DOMContentLoaded', async () => {
-            const settings = JSON.parse(localStorage.getItem('scan2flip-settings')) || { profitMargin: 0.50, platformFee: 0.15, shippingCost: 8.00 };
-            
-            function calculateWorthPaying(avgSalePrice) {
-                const profit = avgSalePrice * settings.profitMargin;
-                const fees = avgSalePrice * settings.platformFee;
-                const worth = avgSalePrice - fees - settings.shippingCost - profit;
-                return worth > 0 ? worth.toFixed(2) : '0.00';
-            }
-            
-            function analyzeSoldListings(listings) {
-                const conditions = { 'New': [], 'Used': [], 'For parts': [] };
-                (listings || []).forEach(l => { 
-                    if (conditions[l.condition]) {
-                        conditions[l.condition].push(l.price);
-                    }
-                });
-                const analysis = {};
-                for (const cond in conditions) {
-                    if (conditions[cond].length > 0) {
-                        analysis[cond] = {
-                            avgPrice: conditions[cond].reduce((a, b) => a + b, 0) / conditions[cond].length,
-                            count: conditions[cond].length
-                        };
-                    }
+        const imageData = localStorage.getItem('pendingScanImage');
+        if (imageData) {
+            try {
+                const file = dataUrlToFile(imageData, 'scan.jpg');
+                if (!file) throw new Error("Could not convert image data.");
+                
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const apiResponse = await fetch('/api/scan', { method: 'POST', body: formData });
+                
+                if (apiResponse.ok) {
+                    const resultData = await apiResponse.json();
+                    displayScanResult(resultData);
+                } else {
+                    const errorData = await apiResponse.json();
+                    throw new Error(errorData.error || `Server responded with status: ${apiResponse.status}`);
                 }
-                return analysis;
+            } catch (error) {
+                console.error("API call process failed:", error);
+                const mockData = {"productName":"API Call Failed","imageUrl":"icons/red-badge.png","powerScore":0,"soldListings":{},"sellThroughRate":0,"activeListings":0};
+                displayScanResult(mockData);
+            } finally {
+                localStorage.removeItem('pendingScanImage');
             }
-
-            function displayScanResult(data) {
-                const analysis = analyzeSoldListings(data.soldListings || []);
-                document.getElementById('itemName').textContent = data.productName;
-                document.getElementById('itemImage').src = data.imageUrl;
-                document.getElementById('powerScore').textContent = data.powerScore;
-
-                const scoreBadge = document.getElementById('powerScoreBadge');
-                if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
-                else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
-                else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
-                else { scoreBadge.src = 'icons/red-badge.png'; }
-
-                const conditionContainer = document.getElementById('conditionAnalysis');
-                conditionContainer.innerHTML = '';
-                const conditionOrder = ['New', 'Used', 'For parts'];
-                conditionOrder.forEach(cond => {
-                    if (analysis[cond]) {
-                        const worth = calculateWorthPaying(analysis[cond].avgPrice);
-                        conditionContainer.innerHTML += `<div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md"><div><p class="font-semibold text-white">${cond}</p><p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth}</span></p></div><p class="text-lg font-bold text-green-400">$${analysis[cond].avgPrice.toFixed(2)}</p></div>`;
-                    }
-                });
-
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultsContent').classList.remove('hidden');
-                document.getElementById('leaveItBtn').onclick = () => window.location.href = 'index.html';
-            }
-
-            const imageData = localStorage.getItem('pendingScanImage');
-            if (imageData) {
-                try {
-                    const file = dataUrlToFile(imageData, 'scan.jpg');
-                    if (!file) throw new Error("Could not convert image data.");
-                    
-                    const formData = new FormData();
-                    formData.append('image', file);
-                    
-                    const apiResponse = await fetch('/api/scan', { method: 'POST', body: formData });
-                    
-                    if (apiResponse.ok) {
-                        const resultData = await apiResponse.json();
-                        displayScanResult(resultData);
-                    } else {
-                        throw new Error(`Server responded with status: ${apiResponse.status}`);
-                    }
-                } catch (error) {
-                    console.error("API call process failed:", error);
-                    // This is where the stable VCR fallback happens if the live API fails
-                    const mockData = {"productName":"API Failed: Mock VCR","imageUrl":"https://placehold.co/300x300/e2e8f0/334155?text=VCR","powerScore":55,"soldListings":[{"price":45.5,"condition":"Used"},{"price":38,"condition":"Used"},{"price":25,"condition":"For parts"},{"price":22.5,"condition":"For parts"},{"price":75,"condition":"New"}],"activeListings":10,"valuableParts":[]};
-                    displayScanResult(mockData);
-                } finally {
-                    localStorage.removeItem('pendingScanImage');
-                }
-            } else {
-                window.location.href = 'index.html';
-            }
-        });
-    </script>
-</body>
-</html>
+        } else {
+            window.location.href = 'index.html';
+        }
+    });
+</script>

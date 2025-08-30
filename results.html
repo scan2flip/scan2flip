@@ -1,331 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Scan Results - Scan2Flip</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0f172a; /* bg-slate-900 */
-            color: #cbd5e1; /* text-slate-300 */
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        // --- USER SETTINGS (placeholder) ---
+        const userSettings = {
+            minProfitMargin: 0.50, // 50%
+            platformFee: 0.15,     // 15%
+            shippingCost: 8.00     // $8
+        };
+        
+        // This function calculates the max price you should pay
+        function calculateWorthPaying(avgSalePrice) {
+            const profit = avgSalePrice * userSettings.minProfitMargin;
+            const fees = avgSalePrice * userSettings.platformFee;
+            return avgSalePrice - fees - userSettings.shippingCost - profit;
         }
-        .power-score-badge-container {
-            position: relative;
-            width: 200px;
-            height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .power-score-badge-bg {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        .power-score-text {
-            position: relative;
-            font-size: 4.5rem;
-            font-weight: 800;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-        }
-        .blurred-content {
-            filter: blur(8px);
-            pointer-events: none;
-            user-select: none;
-        }
-        .upgrade-overlay {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(15, 23, 42, 0.85);
-            border-radius: 0.5rem;
-            padding: 1rem;
-        }
+        
+        function displayScanResult(data) {
+            // The API now sends pre-analyzed data in `conditionAnalysis`
+            const analysis = data.conditionAnalysis;
 
-        /* --- ADDED FOR RESPONSIVE SCALING --- */
-        .nav-icon {
-            width: 24px; /* 1.5rem for Tailwind w-6 */
-            height: 24px; /* 1.5rem for Tailwind h-6 */
-        }
-        .nav-text {
-            font-size: 0.75rem; /* text-xs */
-        }
-        /* Tablet size and up (md) */
-        @media (min-width: 768px) {
-            .nav-icon {
-                width: 32px; /* 2rem for Tailwind w-8 */
-                height: 32px; /* 2rem for Tailwind h-8 */
-            }
-            .nav-text {
-                font-size: 0.875rem; /* text-sm */
-            }
-        }
-        /* Desktop size and up (lg) */
-        @media (min-width: 1024px) {
-            .nav-icon {
-                width: 40px; /* 2.5rem for Tailwind w-10 */
-                height: 40px; /* 2.5rem for Tailwind h-10 */
-            }
-        }
-        /* --- END OF ADDED CSS --- */
-    </style>
-    <script type="module" src="auth-guard.js"></script>
-    <script type="module" src="scan-service.js"></script>
-</head>
-<body class="bg-slate-900 text-slate-300">
+            document.getElementById('itemName').textContent = data.productName;
+            document.getElementById('itemImage').src = data.imageUrl;
 
-    <div class="container mx-auto max-w-4xl pb-28">
+            const scoreText = document.getElementById('powerScore');
+            const scoreBadge = document.getElementById('powerScoreBadge');
+            scoreText.textContent = data.powerScore;
+            
+            if (data.powerScore >= 90) { scoreBadge.src = 'icons/gold-badge.png'; }
+            else if (data.powerScore >= 70) { scoreBadge.src = 'icons/green-badge.png'; }
+            else if (data.powerScore >= 50) { scoreBadge.src = 'icons/blue-badge.png'; }
+            else { scoreBadge.src = 'icons/red-badge.png'; }
 
-        <header class="text-center py-6 px-4">
-            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">Scan Results</h1>
-        </header>
+            const conditionContainer = document.getElementById('conditionAnalysis');
+            conditionContainer.innerHTML = '';
+            
+            // Define the order for display
+            const conditionOrder = ['New', 'Used', 'For parts'];
 
-        <main class="px-4">
-            <div id="loadingState" class="text-center py-20">
-                <svg class="animate-spin h-10 w-10 text-yellow-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                <p class="mt-4 text-slate-400 font-semibold">Analyzing Market Data...</p>
-            </div>
-
-            <div id="resultsContent" class="hidden">
-                <div class="flex flex-col items-center mb-6">
-                    <div id="powerScoreContainer" class="power-score-badge-container">
-                        <img id="powerScoreBadge" src="" alt="Power Score Badge" class="power-score-badge-bg">
-                        <span id="powerScore" class="power-score-text"></span>
-                    </div>
-                    <p class="mt-2 text-sm font-bold uppercase tracking-widest text-slate-400">Power Score™</p>
-                </div>
-
-                <div class="text-center mb-6">
-                    <img id="itemImage" src="" alt="Item Image" class="w-32 h-32 object-contain rounded-lg mx-auto mb-4">
-                    <h2 id="itemName" class="text-2xl font-bold text-white"></h2>
-                </div>
-
-                <div class="bg-slate-800 p-4 rounded-lg border border-slate-700 mb-6">
-                    <h3 class="font-bold text-white mb-3 text-center">Value by Condition</h3>
-                    <div id="conditionAnalysis" class="space-y-3">
-                        </div>
-                </div>
-
-                <div id="partOutSection" class="bg-slate-800 p-4 rounded-lg border-2 border-dashed border-yellow-400 mb-6 hidden relative">
-                    <div class="flex items-center justify-center gap-2 mb-3">
-                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M10.325 4.317a1.75 1.75 0 00-3.454-.53l-1.886 5.238a.25.25 0 01-.448.034L3.33 6.05a1.75 1.75 0 00-3.04.98l1.57 4.362a.25.25 0 01-.034.24l-2.43 2.835a1.75 1.75 0 002.474 2.474l2.835-2.43a.25.25 0 01.24-.034l4.362 1.57a1.75 1.75 0 00.98-3.04l-3.008-1.204a.25.25 0 01.034-.448l5.238-1.886a1.75 1.75 0 00-.53-3.454l-3.932.715a.25.25 0 01-.29-.29l.715-3.932z" />
-                            <path d="M12.94 12.94a1.75 1.75 0 102.476-2.475 1.75 1.75 0 00-2.476 2.475z" />
-                        </svg>
-                        <h3 class="font-bold text-yellow-400 text-center text-lg">PARTS ALERT!</h3>
-                    </div>
-                    <div id="partOutContent">
-                        <div id="partOutList" class="space-y-2">
+            conditionOrder.forEach(cond => {
+                if (analysis[cond]) {
+                    const worth = calculateWorthPaying(analysis[cond].avgPrice);
+                    conditionContainer.innerHTML += `
+                        <div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md">
+                            <div>
+                                <p class="font-semibold text-white">${cond}</p>
+                                <p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth > 0 ? worth.toFixed(2) : '0.00'}</span></p>
                             </div>
-                    </div>
-                    <div id="partOutUpgrade" class="hidden">
-                        <div class="upgrade-overlay">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-yellow-400 mb-2" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M21.92,7.62A1,1,0,0,0,21,7H18.63A7,7,0,0,0,5.22,4.78L4.78,5.22A7,7,0,0,0,7.63,18H10a1,1,0,0,0,0-2H7.63A5,5,0,0,1,16.5,7.13L16,6.63a5,5,0,0,1-2.5,4.5,1,1,0,0,0-.5,1.35,1,1,0,0,0,1.37.5A7,7,0,0,0,18.63,9H21a1,1,0,0,0,.92-1.38Z"/>
-                                <path d="M13,10a3,3,0,1,0,3,3A3,3,0,0,0,13,10Zm0,4a1,1,0,1,1,1-1A1,1,0,0,1,13,14Z"/>
-                            </svg>
-                            <p class="text-yellow-400 font-bold text-lg mb-2">PARTS ALERT!</p>
-                            <button class="btn-primary py-2 px-6">UPGRADE TO POWER PRO to See Them!</button>
+                            <p class="text-lg font-bold text-green-400">$${analysis[cond].avgPrice.toFixed(2)}</p>
                         </div>
-                    </div>
-                </div>
+                    `;
+                }
+            });
 
-                <div class="grid grid-cols-2 gap-4">
-                    <button id="leaveItBtn" class="py-4 px-4 rounded-lg font-bold bg-red-600/20 text-red-400 hover:bg-red-600/30">Leave It</button>
-                    <button id="keepItBtn" class="py-4 px-4 rounded-lg font-bold bg-green-500/20 text-green-400 hover:bg-green-500/30">Keep It</button>
-                </div>
-            </div>
-        </main>
-    </div>
+            // The rest of your UI logic for buttons, etc.
+            document.getElementById('loadingState').classList.add('hidden');
+            document.getElementById('resultsContent').classList.remove('hidden');
+        }
 
-    <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 shadow-[0_-1px_4px_rgba(0,0,0,0.2)] flex justify-around h-16 z-20">
-        <a href="index.html" class="flex flex-col items-center justify-center text-yellow-400 w-full font-semibold">
-            <img class="nav-icon mb-1" src="icons/home.png" alt="Home" onerror="this.style.display='none'">
-            <span class="nav-text font-semibold">Home</span>
-        </a>
-        <a href="inventory.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="nav-icon mb-1" src="icons/inventory.png" alt="Inventory" onerror="this.style.display='none'">
-            <span class="nav-text font-medium">Inventory</span>
-        </a>
-        <a href="expenses.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="nav-icon mb-1" src="icons/dollar.png" alt="Expenses" onerror="this.style.display='none'">
-            <span class="nav-text font-medium">Expenses</span>
-        </a>
-        <a href="mileage.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="nav-icon mb-1" src="icons/mileage.png" alt="Mileage" onerror="this.style.display='none'">
-            <span class="nav-text font-medium">Mileage</span>
-        </a>
-        <a href="more.html" class="flex flex-col items-center justify-center text-slate-400 hover:text-yellow-400 w-full transition-colors">
-            <img class="nav-icon mb-1" src="icons/more.png" alt="More" onerror="this.style.display='none'">
-            <span class="nav-text">More</span>
-        </a>
-    </nav>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // --- MOCK DATA FOR FALLBACK ---
-            const mockScanData = {
-                name: "API Failed: Mock VCR",
-                image: "https://placehold.co/300x300/e2e8f0/334155?text=VCR",
-                soldListings: [
-                    { price: 65, condition: 'New' }, { price: 75, condition: 'New' },
-                    { price: 40, condition: 'Used' }, { price: 35, condition: 'Used' }, { price: 45, condition: 'Used' }, { price: 38, condition: 'Used' },
-                    { price: 20, condition: 'For parts or not working' }, { price: 25, condition: 'For parts or not working' }
-                ],
-                activeListings: 12,
-                valuableParts: [
-                    { name: "Original Remote Control", avgPrice: 28, sellThrough: 95 }
-                ]
-            };
-
-            // --- USER SETTINGS (placeholder) ---
-            const userSettings = {
-                minProfitMargin: 0.50,
-                tier: 'free' // 'free', 'pro', or 'powerPro'
-            };
+        // --- API Call Logic ---
+        const imageData = localStorage.getItem('pendingScanImage');
+        if (imageData) {
+            const response = await fetch(imageData);
+            const blob = await response.blob();
+            const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
             
-            // --- API & DATA HANDLING ---
-            const imageData = localStorage.getItem('pendingScanImage');
+            const formData = new FormData();
+            formData.append('image', file);
             
-            if (imageData && window.ScanService) {
-                try {
-                    // Convert base64 back to File object
-                    const response = await fetch(imageData);
-                    const blob = await response.blob();
-                    const file = new File([blob], 'scan.jpg', { type: 'image/jpeg' });
-                    const apiResult = await window.ScanService.scanImage(file, 'image');
-                    console.log("API Response:", apiResult);
-                    displayScanResult(apiResult);
-                } catch (error) {
-                    console.error("API call failed, falling back to mock data:", error);
-                    alert("There was an issue analyzing the image. Displaying sample data.");
-                    displayScanResult(mockScanData);
-                } finally {
-                    localStorage.removeItem('pendingScanImage'); // Clear the image after attempt
-                }
-            } else {
-                if (!imageData) {
-                        alert("No image data found for scanning. Redirecting to home page.");
-                } else if (!window.ScanService) {
-                    alert("Scan service failed to load. Please check your connection.");
-                }
-                window.location.href = 'index.html';
-            }
-
-
-            // --- CORE LOGIC ---
-            function analyzeSoldListings(listings) {
-                const conditions = { 'New': [], 'Used': [], 'For parts or not working': [] };
-                if (!listings) return {};
-                listings.forEach(l => { if (conditions[l.condition]) conditions[l.condition].push(l.price); });
-                const analysis = {};
-                for (const cond in conditions) {
-                    if (conditions[cond].length > 0) {
-                        analysis[cond] = { avgPrice: conditions[cond].reduce((a, b) => a + b, 0) / conditions[cond].length };
-                    }
-                }
-                return analysis;
-            }
-
-            function calculatePowerScore(sellThrough, avgPrice) {
-                return Math.round(Math.min(sellThrough, 100) * 0.7 + Math.min(avgPrice / 2, 30));
-            }
-
-            function calculateWorthPaying(avgSalePrice, profitMargin) {
-                return avgSalePrice - (avgSalePrice * 0.15) - 8 - (avgSalePrice * profitMargin);
-            }
-
-            // --- DISPLAY LOGIC ---
-            function displayScanResult(data) {
-                const analysis = analyzeSoldListings(data.soldListings);
-                const totalSold = data.soldListings ? data.soldListings.length : 0;
-                const sellThrough = (totalSold + (data.activeListings || 0)) > 0 ? (totalSold / (totalSold + data.activeListings)) * 100 : 0;
-                const primaryCondition = analysis['Used'] || analysis['New'] || analysis['For parts or not working'];
-                const avgPrice = primaryCondition ? primaryCondition.avgPrice : 0;
-                const powerScore = calculatePowerScore(sellThrough, avgPrice);
-                const worthPaying = calculateWorthPaying(avgPrice, userSettings.minProfitMargin);
-
-                document.getElementById('itemName').textContent = data.name;
-                document.getElementById('itemImage').src = data.image;
-
-                const scoreText = document.getElementById('powerScore');
-                const scoreBadge = document.getElementById('powerScoreBadge');
-                scoreText.textContent = powerScore;
-                
-                if (powerScore >= 90) { 
-                    scoreBadge.src = 'icons/gold-badge.png';
-                    confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } }); 
-                } else if (powerScore >= 70) { 
-                    scoreBadge.src = 'icons/green-badge.png';
-                } else if (powerScore >= 50) { 
-                    scoreBadge.src = 'icons/blue-badge.png';
-                } else { 
-                    scoreBadge.src = 'icons/red-badge.png';
-                }
-
-                const conditionContainer = document.getElementById('conditionAnalysis');
-                conditionContainer.innerHTML = '';
-                ['New', 'Used', 'For parts or not working'].forEach(cond => {
-                    if (analysis[cond]) {
-                        const worth = calculateWorthPaying(analysis[cond].avgPrice, userSettings.minProfitMargin);
-                        conditionContainer.innerHTML += `<div class="flex justify-between items-center bg-slate-700/50 p-3 rounded-md"><div><p class="font-semibold text-white">${cond}</p><p class="text-xs text-slate-400">Buy under <span class="font-bold text-yellow-400">$${worth > 0 ? worth.toFixed(2) : '0.00'}</span></p></div><p class="text-lg font-bold text-green-400">$${analysis[cond].avgPrice.toFixed(2)}</p></div>`;
-                    }
+            try {
+                // Call your Vercel serverless function
+                const apiResponse = await fetch('/api/scan', {
+                    method: 'POST',
+                    body: formData
                 });
-
-                if (data.valuableParts && data.valuableParts.length > 0) {
-                    const partOutSection = document.getElementById('partOutSection');
-                    const partOutList = document.getElementById('partOutList');
-                    const partOutContent = document.getElementById('partOutContent');
-                    const partOutUpgrade = document.getElementById('partOutUpgrade');
-                    partOutList.innerHTML = '';
-                    data.valuableParts.forEach(part => {
-                        const partScore = calculatePowerScore(part.sellThrough, part.avgPrice);
-                        let colorClass = 'text-red-400';
-                        if(partScore >= 90) colorClass = 'text-yellow-400';
-                        else if (partScore >= 70) colorClass = 'text-green-400';
-                        else if (partScore >= 50) colorClass = 'text-blue-400';
-                        
-                        partOutList.innerHTML += `<div class="flex justify-between items-center bg-slate-700/50 p-2 rounded-md"><div class="flex items-center gap-2"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ${colorClass}" viewBox="0 0 20 20" fill="currentColor"><path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V5a1 1 0 00-1.447-.894l-4 2A1 1 0 0011 7v10zM4 17a1 1 0 001.447.894l4-2A1 1 0 0010 15V5a1 1 0 00-1.447-.894l-4 2A1 1 0 004 7v10z" /></svg><p class="font-semibold text-white">${part.name}</p></div><p class="text-lg font-bold text-green-400">$${part.avgPrice.toFixed(2)}</p></div>`;
-                    });
-                    partOutSection.classList.remove('hidden');
-                    if (userSettings.tier !== 'powerPro') {
-                        partOutContent.classList.add('blurred-content');
-                        partOutUpgrade.classList.remove('hidden');
-                    }
+                
+                if (apiResponse.ok) {
+                    const resultData = await apiResponse.json();
+                    displayScanResult(resultData);
+                } else {
+                    // Handle API errors (like low confidence)
+                    const errorData = await apiResponse.json();
+                    alert(`Analysis failed: ${errorData.error || 'Please try again.'}`);
+                    window.location.href = 'index.html';
                 }
-
-                document.getElementById('loadingState').classList.add('hidden');
-                document.getElementById('resultsContent').classList.remove('hidden');
-
-                document.getElementById('leaveItBtn').onclick = () => window.location.href = 'index.html';
-                document.getElementById('keepItBtn').onclick = () => {
-                    const cost = prompt(`Enter your purchase cost for "${data.name}":`, (worthPaying > 0 ? worthPaying.toFixed(2) : '1.00'));
-                    if (cost !== null && !isNaN(parseFloat(cost))) addToInventory(data, parseFloat(cost));
-                };
+            } catch (error) {
+                console.error("API call failed:", error);
+                alert("There was an issue analyzing the image. Displaying sample data.");
+                // displayScanResult(mockScanData); // You can keep your mock data for fallback
+            } finally {
+                localStorage.removeItem('pendingScanImage');
             }
-
-            function addToInventory(scanData, purchaseCost) {
-                let inventory = JSON.parse(localStorage.getItem('scan2flip-inventory')) || [];
-                inventory.push({ id: Date.now(), name: scanData.name, source: 'Scanned Item', purchaseDate: new Date().toISOString().slice(0, 10), cost: purchaseCost, notes: '', image: scanData.image, receipt: null, status: 'Unlisted', soldInfo: null });
-                localStorage.setItem('scan2flip-inventory', JSON.stringify(inventory));
-                alert(`${scanData.name} added to your Unlisted inventory!`);
-                window.location.href = 'inventory.html';
-            }
-        });
-    </script>
-</body>
-</html>
+        } else {
+            alert("No image data found. Redirecting home.");
+            window.location.href = 'index.html';
+        }
+    });
+</script>

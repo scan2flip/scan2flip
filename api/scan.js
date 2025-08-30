@@ -63,55 +63,59 @@ export default async function handler(req, res) {
         let productName = 'Unknown Product';
         
         if (DECODO_USERNAME && DECODO_PASSWORD && imageUrl) {
-    try {
-        const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
-        
-        console.log('Calling Decodo with image URL:', imageUrl);
-        
-        const decodoResponse = await axios.post(
-            'https://scraper-api.decodo.com/v2/scrape',
-            {
-                target: 'google_lens',
-                query: imageUrl,
-                headless: 'html',
-                parse: true
-            },
-            {
-                headers: {
-                    'Authorization': `Basic ${auth}`,
-                    'Content-Type': 'application/json'
-                },
-                timeout: 30000
-            }
-        );
+            try {
+                const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
+                
+                console.log('Calling Decodo with image URL:', imageUrl);
+                
+                const decodoResponse = await axios.post(
+                    'https://scraper-api.decodo.com/v2/scrape',
+                    {
+                        target: 'google_lens',
+                        query: imageUrl,
+                        headless: 'html',
+                        parse: true
+                    },
+                    {
+                        headers: {
+                            'Authorization': `Basic ${auth}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 30000
+                    }
+                );
 
-        console.log('Decodo status:', decodoResponse.status);
-        console.log('Decodo response structure:', JSON.stringify(decodoResponse.data, null, 2));
-        
-        // Navigate the nested structure from your playground test
-        if (decodoResponse.data?.results?.results?.organic && 
-            decodoResponse.data.results.results.organic.length > 0) {
-            
-            const firstResult = decodoResponse.data.results.results.organic[0];
-            productName = firstResult.title || 'Unknown Product';
-            
-            // Clean up common patterns in product names
-            productName = productName
-                .split('|')[0]
-                .split('-')[0]
-                .replace(/\s+on\s+.*$/i, '')
-                .replace(/Buy Online.*$/i, '')
-                .trim();
-            
-            console.log('Extracted product name:', productName);
-        } else {
-            console.log('No organic results found in Decodo response');
+                console.log('Decodo status:', decodoResponse.status);
+                console.log('Decodo response structure:', JSON.stringify(decodoResponse.data, null, 2));
+                
+                // **FIXED BLOCK STARTS HERE**
+                // Correctly navigate the deeply nested structure based on the Vercel log.
+                const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
+
+                if (organicResults && organicResults.length > 0) {
+                    const firstResult = organicResults[0];
+                    productName = firstResult.title || 'Unknown Product';
+                    
+                    // Clean up common patterns in product names
+                    productName = productName
+                        .split('|')[0]
+                        .split('-')[0]
+                        .replace(/\s+on\s+.*$/i, '')
+                        .replace(/Buy Online.*$/i, '')
+                        .trim();
+                    
+                    console.log('Extracted product name:', productName);
+                } else {
+                    console.log('No organic results found in the expected path of the Decodo response');
+                    productName = "Unknown Product"; // Explicitly set fallback
+                }
+                // **FIXED BLOCK ENDS HERE**
+                
+            } catch (error) {
+                console.error('Decodo API error:', error.response?.status, error.response?.data || error.message);
+                productName = "Unknown Product"; // Fallback on API error
+            }
         }
-        
-    } catch (error) {
-        console.error('Decodo API error:', error.response?.status, error.response?.data || error.message);
-    }
-}
 
         // Step 3: Get eBay data
         const ebayData = await getEbayData(productName, EBAY_APP_ID);
@@ -145,7 +149,7 @@ export default async function handler(req, res) {
 
 // Get eBay data
 async function getEbayData(productName, appId) {
-    if (!appId) {
+    if (!appId || productName.toLowerCase().startsWith('unknown product')) {
         return getMockData(productName);
     }
     

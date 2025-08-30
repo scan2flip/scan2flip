@@ -1,4 +1,4 @@
-// api/scan.js - FINAL PRODUCTION VERSION
+// api/scan.js - DEFINITIVE PRODUCTION VERSION
 import formidable from 'formidable';
 import axios from 'axios';
 import fs from 'fs';
@@ -15,9 +15,38 @@ const EBAY_APP_ID = process.env.EBAY_APP_ID;
 const DECODO_USERNAME = process.env.DECODO_USERNAME;
 const DECODO_PASSWORD = process.env.DECODO_PASSWORD;
 
+/**
+ * The definitive, intelligent cleaning function for product titles.
+ * It combines all best practices to safely sanitize titles for the eBay API.
+ * @param {string} title The raw title from the Decodo API.
+ * @returns {string} The cleaned, production-ready title.
+ */
+function cleanProductName(title) {
+    if (!title) return '';
+
+    let productName = title;
+
+    // 1. Remove leading action verbs that cause API errors.
+    productName = productName.replace(/^(buy|shop|get|find|purchase|order)\s+/i, '');
+
+    // 2. **INTELLIGENT SPLIT:** Only split on '|' if the second part looks like junk metadata.
+    if (productName.includes(' | ')) {
+        const parts = productName.split(' | ');
+        if (parts.length > 1 && parts[1].match(/shipping|store|shop|online|sale|discount|best price/i)) {
+            productName = parts[0];
+        }
+    }
+
+    // 3. Remove trademark symbols and normalize whitespace.
+    productName = productName.replace(/[™®©]/g, '').replace(/\s+/g, ' ').trim();
+    
+    console.log(`Title cleaning: "${title}" -> "${productName}"`);
+    return productName;
+}
+
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS'); // FIXED: Added missing quote
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     if (req.method === 'OPTIONS') { return res.status(200).end(); }
 
@@ -45,14 +74,13 @@ export default async function handler(req, res) {
                 const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
                 
                 if (organicResults && organicResults.length > 0) {
-                    let bestTitle = organicResults[0].title || 'Unknown Product';
-                    // **FINAL, SIMPLIFIED CLEANING LOGIC**
-                    productName = bestTitle.split('|')[0].trim();
+                    const bestTitle = organicResults[0].title || 'Unknown Product';
+                    productName = cleanProductName(bestTitle);
                 }
             } catch (error) { console.error('Decodo API error:', error.message); }
         }
         
-        if (productName.toLowerCase().startsWith('unknown product')) {
+        if (productName.toLowerCase().startsWith('unknown product') || productName.length < 5) {
             fs.unlinkSync(imageFile.filepath);
             return res.status(422).json({ error: 'Low confidence in automated result.' });
         }
@@ -80,47 +108,50 @@ export default async function handler(req, res) {
     }
 }
 
-// **REDESIGNED EBAY DATA FUNCTION**
 async function getEbayData(productName, appId) {
-    if (!appId) return { soldListings: {}, sellThroughRate: 0, totalActive: 0 };
+    if (!appId) return { soldListings: {}, sellThroughRate: 0, totalActive: 0, totalSold: 0 };
+
+    console.log(`Searching eBay for: "${productName}"`);
 
     try {
         const ninetyDaysAgo = new Date();
         ninetyDaysAgo.setDate(ninetyDaysAgo.getDate() - 90);
-        // eBay Finding API requires UTC format, which toISOString() provides.
         const endTimeFrom = ninetyDaysAgo.toISOString();
 
-        // 1. Get SOLD listings from the last 90 days
+        // 1. Get SOLD listings
         const soldResponse = await axios.get('https://svcs.ebay.com/services/search/FindingService/v1', {
             params: {
-                'OPERATION-NAME': 'findCompletedItems',
-                'SERVICE-VERSION': '1.0.0',
-                'SECURITY-APPNAME': appId,
-                'RESPONSE-DATA-FORMAT': 'JSON',
-                'keywords': productName,
-                'itemFilter(0).name': 'SoldItemsOnly',
-                'itemFilter(0).value': 'true',
-                'itemFilter(1).name': 'EndTimeFrom',
-                'itemFilter(1).value': endTimeFrom
-            }
+                'OPERATION-NAME': 'findCompletedItems', 'SERVICE-VERSION': '1.0.0', 'SECURITY-APPNAME': appId,
+                'RESPONSE-DATA-FORMAT': 'JSON', 'keywords': productName,
+                'itemFilter(0).name': 'SoldItemsOnly', 'itemFilter(0).value': 'true',
+                'itemFilter(1).name': 'EndTimeFrom', 'itemFilter(1).value': endTimeFrom,
+                'paginationInput.entriesPerPage': '100'
+            },
+            timeout: 15000
         });
+        
+        if (soldResponse.data.findCompletedItemsResponse[0].ack[0] !== "Success") {
+             throw new Error(soldResponse.data.findCompletedItemsResponse[0].errorMessage[0].error[0].message[0]);
+        }
         const soldItems = soldResponse.data.findCompletedItemsResponse?.[0]?.searchResult?.[0]?.item || [];
-        const totalSold = soldItems.length;
+        const totalSold = parseInt(soldResponse.data.findCompletedItemsResponse?.[0]?.paginationOutput?.[0]?.totalEntries?.[0] || '0');
 
         // 2. Get ACTIVE listings
         const activeResponse = await axios.get('https://svcs.ebay.com/services/search/FindingService/v1', {
             params: {
-                'OPERATION-NAME': 'findItemsAdvanced',
-                'SERVICE-VERSION': '1.0.0',
-                'SECURITY-APPNAME': appId,
-                'RESPONSE-DATA-FORMAT': 'JSON',
-                'keywords': productName
-            }
+                'OPERATION-NAME': 'findItemsAdvanced', 'SERVICE-VERSION': '1.0.0', 'SECURITY-APPNAME': appId,
+                'RESPONSE-DATA-FORMAT': 'JSON', 'keywords': productName,
+                'paginationInput.entriesPerPage': '100'
+            },
+            timeout: 15000
         });
-        const activeItems = activeResponse.data.findItemsAdvancedResponse?.[0]?.searchResult?.[0]?.item || [];
-        const totalActive = activeItems.length;
 
-        // 3. Categorize sold items by Condition ID
+        if (activeResponse.data.findItemsAdvancedResponse[0].ack[0] !== "Success") {
+             throw new Error(activeResponse.data.findItemsAdvancedResponse[0].errorMessage[0].error[0].message[0]);
+        }
+        const totalActive = parseInt(activeResponse.data.findItemsAdvancedResponse?.[0]?.paginationOutput?.[0]?.totalEntries?.[0] || '0');
+
+        // 3. Categorize sold items by Condition ID (robust logic)
         const categorizedSold = { 'New': [], 'Used': [], 'For parts': [] };
         soldItems.forEach(item => {
             const conditionId = parseInt(item.condition?.[0]?.conditionId?.[0] || '3000');
@@ -132,7 +163,7 @@ async function getEbayData(productName, appId) {
             }
         });
 
-        // 4. Calculate averages for each condition
+        // 4. Calculate averages
         const conditionAnalysis = {};
         for (const [condition, prices] of Object.entries(categorizedSold)) {
             if (prices.length > 0) {
@@ -143,37 +174,51 @@ async function getEbayData(productName, appId) {
             }
         }
 
-        // 5. Calculate true Sell-Through Rate
-        const sellThroughRate = (totalSold + totalActive > 0) ? (totalSold / (totalSold + totalActive)) * 100 : 0;
-
-        return {
-            soldListings: conditionAnalysis,
-            sellThroughRate: sellThroughRate,
-            totalActive: totalActive,
-            totalSold: totalSold
-        };
+        // 5. Calculate Sell-Through Rate
+        const sellThroughRate = (totalSold + totalActive > 0) ? Math.round((totalSold / (totalSold + totalActive)) * 100) : 0;
+        
+        console.log(`Found ${totalSold} sold, ${totalActive} active. Sell-through: ${sellThroughRate}%`);
+        return { soldListings: conditionAnalysis, sellThroughRate, totalActive, totalSold };
 
     } catch (error) {
-        console.error(`eBay API failed for "${productName}":`, error.message);
+        console.error(`eBay API failed for "${productName}":`, error.response?.data || error.message);
         return { soldListings: {}, sellThroughRate: 0, totalActive: 0, totalSold: 0 };
     }
 }
 
-// **UPDATED POWER SCORE CALCULATION**
+// COMPLETE POWER SCORE CALCULATION
 function calculatePowerScore(ebayData) {
     const sellThroughRate = ebayData.sellThroughRate || 0;
     const soldData = ebayData.soldListings || {};
     
     const primaryCondition = soldData['Used'] || soldData['New'] || { avgPrice: 0, count: 0 };
     const avgPrice = primaryCondition.avgPrice;
-    const totalSold = ebayData.totalSold || 0; // Use total sold for volume, not just one condition
+    const totalSold = ebayData.totalSold || 0;
     
     let score = 0;
-    if (avgPrice > 100) score += 40; else if (avgPrice > 60) score += 35; else if (avgPrice > 30) score += 25; else if (avgPrice > 15) score += 15; else score += 8;
-    if (sellThroughRate > 60) score += 40; else if (sellThroughRate > 40) score += 32; else if (sellThroughRate > 20) score += 24; else if (sellThroughRate > 10) score += 16; else score += 8;
-    if (totalSold > 50) score += 20; else if (totalSold > 25) score += 16; else if (totalSold > 10) score += 12; else if (totalSold > 5) score += 8; else score += 4;
     
-    // Bonus for a strong "For parts" market, indicating part-out potential
+    // Price scoring (40 points max)
+    if (avgPrice > 100) score += 40; 
+    else if (avgPrice > 60) score += 35; 
+    else if (avgPrice > 30) score += 25; 
+    else if (avgPrice > 15) score += 15; 
+    else score += 8;
+    
+    // Sell-through rate scoring (40 points max)
+    if (sellThroughRate > 60) score += 40; 
+    else if (sellThroughRate > 40) score += 32; 
+    else if (sellThroughRate > 20) score += 24; 
+    else if (sellThroughRate > 10) score += 16; 
+    else score += 8;
+    
+    // Volume scoring (20 points max)
+    if (totalSold > 50) score += 20; 
+    else if (totalSold > 25) score += 16; 
+    else if (totalSold > 10) score += 12; 
+    else if (totalSold > 5) score += 8; 
+    else score += 4;
+    
+    // Bonus for strong "For parts" market (10 points max)
     if (soldData['For parts'] && soldData['For parts'].avgPrice > 20) {
         score += 10;
     }

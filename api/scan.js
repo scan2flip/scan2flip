@@ -63,42 +63,55 @@ export default async function handler(req, res) {
         let productName = 'Unknown Product';
         
         if (DECODO_USERNAME && DECODO_PASSWORD && imageUrl) {
-            try {
-                const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
-                
-                // Call Decodo's Google Lens API
-                const decodoResponse = await axios.post('https://scraper-api.decodo.com/v2/scrape', {
-                    target: 'google_lens',
-                    query: imageUrl,
-                    parse: true
-                }, {
-                    headers: {
-                        'Authorization': `Basic ${auth}`,
-                        'Content-Type': 'application/json'
-                    },
-                    timeout: 30000
-                });
-
-                // Parse the Google Lens response
-                if (decodoResponse.data && decodoResponse.data.results) {
-                    const results = decodoResponse.data.results;
-                    
-                    // Get product name from organic results
-                    if (results.organic && results.organic.length > 0) {
-                        // Extract product name from the first result
-                        productName = results.organic[0].title || 'Unknown Product';
-                        // Clean up the product name
-                        productName = productName.split('|')[0].trim();
-                        productName = productName.replace(/\s+on\s+.*$/i, '').trim();
-                    }
-                }
-                
-                console.log('Decodo identified product as:', productName);
-                
-            } catch (error) {
-                console.error('Decodo Google Lens failed:', error.response?.data || error.message);
+    try {
+        const auth = Buffer.from(`${DECODO_USERNAME}:${DECODO_PASSWORD}`).toString('base64');
+        
+        console.log('Calling Decodo with image URL:', imageUrl);
+        
+        const decodoResponse = await axios.post(
+            'https://scraper-api.decodo.com/v2/scrape',
+            {
+                target: 'google_lens',
+                query: imageUrl,
+                headless: 'html',
+                parse: true
+            },
+            {
+                headers: {
+                    'Authorization': `Basic ${auth}`,
+                    'Content-Type': 'application/json'
+                },
+                timeout: 30000
             }
+        );
+
+        console.log('Decodo status:', decodoResponse.status);
+        console.log('Decodo response structure:', JSON.stringify(decodoResponse.data, null, 2));
+        
+        // Navigate the nested structure from your playground test
+        if (decodoResponse.data?.results?.results?.organic && 
+            decodoResponse.data.results.results.organic.length > 0) {
+            
+            const firstResult = decodoResponse.data.results.results.organic[0];
+            productName = firstResult.title || 'Unknown Product';
+            
+            // Clean up common patterns in product names
+            productName = productName
+                .split('|')[0]
+                .split('-')[0]
+                .replace(/\s+on\s+.*$/i, '')
+                .replace(/Buy Online.*$/i, '')
+                .trim();
+            
+            console.log('Extracted product name:', productName);
+        } else {
+            console.log('No organic results found in Decodo response');
         }
+        
+    } catch (error) {
+        console.error('Decodo API error:', error.response?.status, error.response?.data || error.message);
+    }
+}
 
         // Step 3: Get eBay data
         const ebayData = await getEbayData(productName, EBAY_APP_ID);

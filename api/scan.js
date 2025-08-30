@@ -86,7 +86,6 @@ export default async function handler(req, res) {
                 );
 
                 console.log('Decodo status:', decodoResponse.status);
-                console.log('Decodo response structure:', JSON.stringify(decodoResponse.data, null, 2));
                 
                 const organicResults = decodoResponse.data?.results?.[0]?.content?.results?.results?.organic;
 
@@ -94,16 +93,16 @@ export default async function handler(req, res) {
                     const firstResult = organicResults[0];
                     
                     // **FINALIZED BLOCK STARTS HERE**
-                    // This simpler, safer cleaning logic is recommended.
+                    // This refined logic, agreed upon with Claude, is the best approach.
                     let cleanedName = firstResult.title || 'Unknown Product';
                     
-                    // Only remove the most problematic patterns
-                    cleanedName = cleanedName.split('|')[0];      // Remove after pipe
-                    cleanedName = cleanedName.split(' - ')[0];    // Remove after dash with spaces
-                    cleanedName = cleanedName.replace(/\s+at\s+.*$/i, ''); // Remove "at [Store]"
-                    cleanedName = cleanedName.replace(/^(Buy|Shop)\s+/i, ''); // Remove leading Buy/Shop
+                    // Minimal cleaning - only remove store/marketplace noise
+                    cleanedName = cleanedName.split('|')[0].trim();
+                    cleanedName = cleanedName.replace(/\s+-\s+.*$/i, '').trim();
+                    cleanedName = cleanedName.replace(/\s+at\s+.*$/i, '').trim();
+                    cleanedName = cleanedName.replace(/^(Buy|Shop)\s+/i, '').trim();
                     
-                    productName = cleanedName.trim();
+                    productName = cleanedName;
                     // **FINALIZED BLOCK ENDS HERE**
                     
                     console.log('Extracted product name:', productName);
